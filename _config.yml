@@ -3,9 +3,9 @@
 # ----------------------- #
 
 url: http://mather.github.io
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+title: "Reveal My Ignorance"
+subtitle: "エンジニアリングとか趣味とか書いていきます"
+author: mather
 simple_search: https://www.google.com/search
 description:
 
@@ -33,12 +33,18 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-markdown: rdiscount
+markdown: redcarpet
 rdiscount:
   extensions:
     - autolink
     - footnotes
     - smart
+redcarpet:
+  extensions:
+    - hard_wrap
+    - no_intra_emphasis
+    - fenced_code_blocks
+    - with_toc_data
 highlighter: pygments # default python pygments have been replaced by pygments.rb
 
 paginate: 10          # Posts per page on the blog index
@@ -64,7 +70,7 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 # Github repositories
-github_user:
+github_user: mather
 github_repo_count: 0
 github_show_profile_link: true
 github_skip_forks: true
@@ -91,11 +97,11 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
+disqus_short_name: revealmyignorance
 disqus_show_comment_count: false
 
 # Google Analytics
-google_analytics_tracking_id:
+google_analytics_tracking_id: UA-39290733-1
 
 # Facebook Like
 facebook_like: false
