@@ -1,0 +1,6 @@
+baseURL = "https://mather.github.io/"
+languageCode = "ja-jp"
+title = "mather"
+
+theme = "beautifulhugo"
+
