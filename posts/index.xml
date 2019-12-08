@@ -1,0 +1,150 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on mather</title>
+		<link>https://mather.github.io/posts/</link>
+		<description>Recent content in Posts on mather</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>ja-jp</language>
+		<copyright>All rights reserved.</copyright>
+		<lastBuildDate>Sat, 07 Dec 2019 23:57:04 +0900</lastBuildDate>
+		<atom:link href="https://mather.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>ポートフォリオサイトを Hugo で Github Pages &#43; Github Actions で構築する話</title>
+			<link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link>
+			<pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate>
+			
+			<guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid>
+			<description>宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
+皆さん、Github 活用してますか？
+Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。 特に、 [アカウント名].github.io という名前のリポジトリの場合はドメイン直下のページが作成できます。
+参考: GitHub Pages サイトの種類
+それに加えて、Github Actions が一般に公開されました。 これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。
+これらを組み合わせると、以下のようなワークフローが可能になります。
+ 静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る ローカルでレビューし、問題なければ指定のブランチにプッシュ Github Actions でプッシュを検知し、静的サイトをビルド [アカウント名].github.io の場合、ビルド完了した静的サイトを master ブランチにデプロイ  それ以外のリポジトリの場合は gh-pages ブランチがデプロイ先となります    今回はこれを Hugo でやってみよう、という話です。
+ポートフォリオを作る Hugo をインストールします。Mac なので Homebrew でインストールできます。
+$ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</description>
+			<content type="html"><![CDATA[<p><a href="https://qiita.com/advent-calendar/2019/miyazaki">宮崎 IT 関連勉強会 Advent Calendar 2019</a> 8 日目の記事です。</p>
+<p>皆さん、Github 活用してますか？</p>
+<p>Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。
+特に、 <code>[アカウント名].github.io</code> という名前のリポジトリの場合はドメイン直下のページが作成できます。</p>
+<p>参考: <a href="https://help.github.com/ja/github/working-with-github-pages/about-github-pages#github-pages-%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E">GitHub Pages サイトの種類</a></p>
+<p>それに加えて、<a href="https://github.blog/changelog/2019-11-11-github-actions-is-generally-available/">Github Actions が一般に公開されました</a>。
+これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。</p>
+<p>これらを組み合わせると、以下のようなワークフローが可能になります。</p>
+<ul>
+<li>静的サイトジェネレーター(Hugo, Jekyll, etc&hellip;) でサイトを作る</li>
+<li>ローカルでレビューし、問題なければ指定のブランチにプッシュ</li>
+<li>Github Actions でプッシュを検知し、静的サイトをビルド</li>
+<li><code>[アカウント名].github.io</code> の場合、ビルド完了した静的サイトを <code>master</code> ブランチにデプロイ
+<ul>
+<li>それ以外のリポジトリの場合は <code>gh-pages</code> ブランチがデプロイ先となります</li>
+</ul>
+</li>
+</ul>
+<p>今回はこれを <a href="https://gohugo.io/">Hugo</a> でやってみよう、という話です。</p>
+<h2 id="heading">ポートフォリオを作る</h2>
+<p>Hugo をインストールします。Mac なので Homebrew でインストールできます。</p>
+<pre><code>$ brew install hugo
+</code></pre><p>今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</p>
+<pre><code>$ hugo new site . --force
+</code></pre><p>Hugo のテーマはシンプルな <a href="https://themes.gohugo.io/hermit/">hermit</a> にしてみました。
+個人的にはこのくらい落ち着いた色合いが好みです。</p>
+<p>インストール手順はテーマのページに記載されているドキュメントのとおりですので割愛します。</p>
+<p>設定ファイルである <code>config.toml</code> は<a href="https://github.com/Track3/hermit/blob/master/exampleSite/config.toml">テーマのデモページで適用されているもの</a>を参考に自分のページに合わせて編集します。</p>
+<p>トップページのメニューはこれから作るパスを考えながら設定します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">menu</span><span class="p">]</span>
+
+  <span class="p">[</span><span class="p">[</span><span class="nx">menu</span><span class="p">.</span><span class="nx">main</span><span class="p">]</span><span class="p">]</span>
+    <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;Posts&#34;</span>
+    <span class="nx">url</span> <span class="p">=</span> <span class="s2">&#34;posts/&#34;</span>
+    <span class="nx">weight</span> <span class="p">=</span> <span class="mi">10</span>
+
+  <span class="p">[</span><span class="p">[</span><span class="nx">menu</span><span class="p">.</span><span class="nx">main</span><span class="p">]</span><span class="p">]</span>
+    <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;About&#34;</span>
+    <span class="nx">url</span> <span class="p">=</span> <span class="s2">&#34;pages/about/&#34;</span>
+    <span class="nx">weight</span> <span class="p">=</span> <span class="mi">20</span>
+</code></pre></div><p>以下のコマンドで Hugo のホットリロードサーバーを起動します。</p>
+<pre><code>$ hugo server -D
+</code></pre><p><code>-D</code> は <code>draft: true</code> となっているドラフト記事（本番ではまだ表示しない）もビルドして表示してくれるフラグです。</p>
+<h3 id="heading1">自己紹介を書く</h3>
+<p><code>pages/about/</code> に自己紹介を掲載するので、以下のコマンドでページを作ります。</p>
+<pre><code>$ hugo new pages/about.md
+</code></pre><p>このコマンドで <code>content/pages/about.md</code> が生成されます。
+生成されたファイルの内容は <code>archetypes/default.md</code> をテンプレートとして生成したものですが、この <code>archetypes/</code> フォルダには固定ページ向け、ブログ記事向けなどに切り分けたテンプレートも設置できます。</p>
+<p>参考: <a href="https://gohugo.io/content-management/archetypes/">Archetypes | Hugo</a></p>
+<p>生成された Markdown ファイルに内容を記載して保存すると自動的にビルドが行われ、ブラウザで表示している場合は自動的にリロードされます。</p>
+<p>表示された内容を確認し、内容に問題がなければ <code>draft: true</code> を削除し <code>git commit</code> しましょう。
+今回は <code>hugo</code> ブランチを作ってコミットします。</p>
+<pre><code>$ git checkout -b hugo
+$ git commit -v
+</code></pre><h2 id="github-actions-">Github Actions の準備</h2>
+<p>リポジトリメニューの Actions を選択すると Github Actions のワークフロー (workflow) を作成できます。</p>
+<p>ワークフローを作るときはすでに用意されているワークフローを参考に生成することもできますが、今回は自分で作るので &ldquo;Set up a workflow yourself&rdquo; ボタンを押します。</p>
+<p>すると YAML ファイルを作成するエディタとマーケットプレイス(Marketplace)が表示されます。
+エディタではワークフロー定義の文法エラーなどを指摘してくれます。
+また、Marketplace にはすでに Actions で利用可能なアクションが検索可能な状態になっていますので、目当てのものを探して導入することでワークフローを手軽に構成できます。</p>
+<p>今回はエディタ開始時にすでに指定されている <code>actions/checkout@v1</code> 以外に、以下の action を利用します。</p>
+<ul>
+<li><code>peaceiris/actions-hugo@v2.3.0</code> : Hugo をインストールする</li>
+<li><code>peaceiris/actions-gh-pages@v2.5.1</code> : Github Pages をデプロイする</li>
+</ul>
+<p>これらを使って構成した Workflow は次のようになります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-yml" data-lang="yml">name<span class="p">:</span><span class="w"> </span>Deploy<span class="w"> </span>Github<span class="w"> </span>Pages<span class="w">
+</span><span class="w">
+</span><span class="w"></span>on<span class="p">:</span><span class="w">
+</span><span class="w">  </span>push<span class="p">:</span><span class="w">
+</span><span class="w">    </span>branches<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>hugo<span class="w">
+</span><span class="w">
+</span><span class="w"></span>jobs<span class="p">:</span><span class="w">
+</span><span class="w">  </span>build<span class="p">:</span><span class="w">
+</span><span class="w">    </span>runs-on<span class="p">:</span><span class="w"> </span>ubuntu-latest<span class="w">
+</span><span class="w">    </span>steps<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>Checkout<span class="w"> </span>Source<span class="w">
+</span><span class="w">        </span>uses<span class="p">:</span><span class="w"> </span>actions/checkout@v1<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>Clone<span class="w"> </span>submodule<span class="w">
+</span><span class="w">        </span>run<span class="p">:</span><span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init<span class="w"> </span>--recursive<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>Hugo<span class="w"> </span>setup<span class="w">
+</span><span class="w">        </span>uses<span class="p">:</span><span class="w"> </span>peaceiris/actions-hugo@v2<span class="m">.3</span><span class="m">.0</span><span class="w">
+</span><span class="w">        </span>with<span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="c"># The Hugo version to download (if necessary) and use. Example: 0.58.2</span><span class="w">
+</span><span class="w">          </span>hugo-version<span class="p">:</span><span class="w"> </span><span class="m">0.60</span><span class="m">.1</span><span class="w">
+</span><span class="w">          </span><span class="c"># Download (if necessary) and use Hugo extended version. Example: true</span><span class="w">
+</span><span class="w">          </span>extended<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>Build<span class="w"> </span>Hugo<span class="w">
+</span><span class="w">        </span>run<span class="p">:</span><span class="w"> </span>hugo<span class="w"> </span>-v<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>GitHub<span class="w"> </span>Pages<span class="w"> </span>action<span class="w">
+</span><span class="w">        </span>uses<span class="p">:</span><span class="w"> </span>peaceiris/actions-gh-pages@v2<span class="m">.5</span><span class="m">.1</span><span class="w">
+</span><span class="w">        </span>env<span class="p">:</span><span class="w">
+</span><span class="w">          </span>ACTIONS_DEPLOY_KEY<span class="p">:</span><span class="w"> </span>${{<span class="w"> </span>secrets.ACTIONS_DEPLOY_KEY<span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>PUBLISH_BRANCH<span class="p">:</span><span class="w"> </span>master<span class="w">
+</span><span class="w">          </span>PUBLISH_DIR<span class="p">:</span><span class="w"> </span>./public<span class="w">
+</span></code></pre></div><p>内容は各ステップの <code>name</code> にあるとおりです。</p>
+<ul>
+<li>ソースコードをチェックアウト</li>
+<li>submodule をチェックアウト ( <code>themes/hermit</code> を submodule で導入したため )</li>
+<li>Hugo をインストール</li>
+<li>Hugo をビルド</li>
+<li>Github Pages へデプロイ</li>
+</ul>
+<p><code>uses</code> ではなく <code>run</code> になっているステップでは、実際にこのコマンドをシェルで実行するだけです。</p>
+<p>作成が完了したら &ldquo;Start Commit&rdquo; を押してコミットを作成するのですが、直接 <code>master</code> ブランチにコミットするのではなく、 <code>hugo</code> ブランチに作成したいのでプルリクエストを作成する方を選びます。</p>
+<h3 id="-deploy-key-">デプロイキー (Deploy Key) の登録</h3>
+<p>上記ワークフロー定義の <code>ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}</code> となっている部分でデプロイキーの指定が必要なのですが、こちらはローカルで SSH 鍵ペアを生成する必要があります。</p>
+<p>以下はパスフレーズなしの鍵ペアを作成するコマンドの例です。</p>
+<pre><code>$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &quot;[Githubアカウントのメールアドレス]&quot; -N &quot;&quot;
+</code></pre><p>生成した鍵ペアをリポジトリのメニューから以下のように登録します。</p>
+<ul>
+<li><code>Setting</code> -&gt; <code>Deploy Key</code> -&gt; 公開鍵 (<code>.pub</code> の方) を追加</li>
+<li><code>Setting</code> -&gt; <code>Secrets</code> -&gt; <code>ACTIONS_DEPLOY_KEY</code> というキー名で秘密鍵を登録</li>
+</ul>
+<p>これで準備完了です。 <code>hugo</code> ブランチが更新されたら、ワークフローが起動します。</p>
+<h2 id="heading2">まとめ</h2>
+<p>やや操作は多くなりましたが、静的サイトジェネレーターを使って Github Pages を自動デプロイする方法が Github だけで完結するのはとても便利だと思います。</p>
+<p>ぜひ皆さんもワークフローを作ってみてください。</p>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>
