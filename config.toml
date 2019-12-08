@@ -31,7 +31,7 @@ copyright = "All rights reserved."
   dateformNumTime = "2006-01-02 15:04 -0700"
 
   # Metadata mostly used in document's head
-  # description = ""
+  description = "Portfolio and Blog of mather."
   # images = [""]
   themeColor = "#1b3159"
 
@@ -76,5 +76,5 @@ copyright = "All rights reserved."
 
   [[menu.main]]
     name = "About"
-    url = "about/"
+    url = "pages/about/"
     weight = 20
