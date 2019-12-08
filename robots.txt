@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: 
-
-Sitemap: http://mather.github.io/sitemap.xml 
