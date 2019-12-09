@@ -11,7 +11,7 @@ pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
 copyright = "All rights reserved."
-#googleAnalytics = "XXX"
+googleAnalytics = "UA-39290733-1"
 
 [author]
   name = "Eisuke Kuwahata"
