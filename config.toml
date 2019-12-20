@@ -1,7 +1,7 @@
 baseURL = "https://mather.github.io"
 languageCode = "ja-jp"
 defaultContentLanguage = "ja"
-title = "mather"
+title = "Reveal My Ignorance"
 
 theme = "hermit"
 
@@ -75,6 +75,6 @@ googleAnalytics = "UA-39290733-1"
     weight = 10
 
   [[menu.main]]
-    name = "About"
-    url = "pages/about/"
+    name = "Profile"
+    url = "pages/profile/"
     weight = 20
