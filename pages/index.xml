@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Pages on mather</title>
+    <title>Pages on Reveal My Ignorance</title>
     <link>https://mather.github.io/pages/</link>
-    <description>Recent content in Pages on mather</description>
+    <description>Recent content in Pages on Reveal My Ignorance</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <copyright>All rights reserved.</copyright>
@@ -13,11 +13,11 @@
     
     
     <item>
-      <title>About</title>
-      <link>https://mather.github.io/pages/about/</link>
+      <title>Profile</title>
+      <link>https://mather.github.io/pages/profile/</link>
       <pubDate>Fri, 06 Dec 2019 16:36:41 +0900</pubDate>
       
-      <guid>https://mather.github.io/pages/about/</guid>
+      <guid>https://mather.github.io/pages/profile/</guid>
       <description>桑畑英資について 宮崎県宮崎市在住の数学好き Web エンジニア。
 京都大学大学院の修士課程（数学専攻）を終了し、東京・宮崎でエンジニアとして活動し、2020 年からフリーランスとして活動しています。
 趣味はスキューバダイビング、ドローン、カメラ（一眼レフ、全天球カメラ、スマホ用スタビライザーなど多数）。
