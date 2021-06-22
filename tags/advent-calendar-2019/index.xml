@@ -1,48 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>advent calendar 2019 on Reveal My Ignorance</title>
-    <link>https://mather.github.io/tags/advent-calendar-2019/</link>
-    <description>Recent content in advent calendar 2019 on Reveal My Ignorance</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>ja-jp</language>
-    <copyright>All rights reserved.</copyright>
-    <lastBuildDate>Mon, 09 Dec 2019 14:01:16 +0900</lastBuildDate>
-    
-	<atom:link href="https://mather.github.io/tags/advent-calendar-2019/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>自分が感じる東京と宮崎の勉強会の違い</title>
-      <link>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</link>
-      <pubDate>Mon, 09 Dec 2019 14:01:16 +0900</pubDate>
-      
-      <guid>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</guid>
-      <description>宮崎 IT 関連勉強会 Advent Calendar 2019 9 日目の記事です。 投稿がものすごく遅れてしまい申し訳ない…。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>advent calendar 2019 on Reveal My Ignorance</title><link>https://mather.github.io/tags/advent-calendar-2019/</link><description>Recent content in advent calendar 2019 on Reveal My Ignorance</description><generator>Hugo -- gohugo.io</generator><language>ja-jp</language><copyright>All rights reserved.</copyright><lastBuildDate>Mon, 09 Dec 2019 14:01:16 +0900</lastBuildDate><atom:link href="https://mather.github.io/tags/advent-calendar-2019/index.xml" rel="self" type="application/rss+xml"/><item><title>自分が感じる東京と宮崎の勉強会の違い</title><link>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</link><pubDate>Mon, 09 Dec 2019 14:01:16 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</guid><description>宮崎 IT 関連勉強会 Advent Calendar 2019 9 日目の記事です。 投稿がものすごく遅れてしまい申し訳ない…。
 数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。
 東京の場合 まずはそもそもエンジニア  を含む人口密度が大きいために、勉強会の開催数や参加人数がものすごく多いです。 そのため、こんなことが起こります。
- 細分化 : 地域型、専門化、ニッチな領域の勉強会 参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい  宮崎の場合 エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。 東京の場合とは逆に次のような状況です。
- 総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある キャンセル率が低い（これは僕も結構驚き） ある程度定番の登壇者や LT 登壇者がいる 多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい ゆるふわ  まとめ 僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。
+細分化 : 地域型、専門化、ニッチな領域の勉強会 参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい 宮崎の場合 エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。 東京の場合とは逆に次のような状況です。
+総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある キャンセル率が低い（これは僕も結構驚き） ある程度定番の登壇者や LT 登壇者がいる 多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい ゆるふわ まとめ 僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。
 宮崎は点と点の結びつきでアットホームなコミュニティが形成されている面白い場所だと感じています。 そのようなコミュニティをより盛り上げていくために、会社という枠を超えたところでエンジニア同士の会話や意見交換を楽しむ場として勉強会の形を模索していくことになるでしょう。
-これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。 そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。</description>
-    </item>
-    
-    <item>
-      <title>ポートフォリオサイトを Hugo で Github Pages &#43; Github Actions で構築する話</title>
-      <link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link>
-      <pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate>
-      
-      <guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid>
-      <description>宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
+これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。 そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。</description></item><item><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link><pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid><description>宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
 皆さん、Github 活用してますか？
 Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。 特に、 [アカウント名].github.io という名前のリポジトリの場合はドメイン直下のページが作成できます。
 参考: GitHub Pages サイトの種類
 それに加えて、Github Actions が一般に公開されました。 これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。
 これらを組み合わせると、以下のようなワークフローが可能になります。
- 静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る ローカルでレビューし、問題なければ指定のブランチにプッシュ Github Actions でプッシュを検知し、静的サイトをビルド [アカウント名].github.io の場合、ビルド完了した静的サイトを master ブランチにデプロイ  それ以外のリポジトリの場合は gh-pages ブランチがデプロイ先となります    今回はこれを Hugo でやってみよう、という話です。
+静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る ローカルでレビューし、問題なければ指定のブランチにプッシュ Github Actions でプッシュを検知し、静的サイトをビルド [アカウント名].github.io の場合、ビルド完了した静的サイトを master ブランチにデプロイ それ以外のリポジトリの場合は gh-pages ブランチがデプロイ先となります 今回はこれを Hugo でやってみよう、という話です。
 ポートフォリオを作る Hugo をインストールします。Mac なので Homebrew でインストールできます。
-$ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</description>
-    </item>
-    
-  </channel>
-</rss>
+$ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</description></item></channel></rss>
