@@ -12,9 +12,7 @@ Github には Github Pages という機能があり、静的サイトのホス�
 これらを組み合わせると、以下のようなワークフローが可能になります。
 静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る ローカルでレビューし、問題なければ指定のブランチにプッシュ Github Actions でプッシュを検知し、静的サイトをビルド [アカウント名].github.io の場合、ビルド完了した静的サイトを master ブランチにデプロイ それ以外のリポジトリの場合は gh-pages ブランチがデプロイ先となります 今回はこれを Hugo でやってみよう、という話です。
 ポートフォリオを作る Hugo をインストールします。Mac なので Homebrew でインストールできます。
-$ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</description></item><item><title>Profile</title><link>https://mather.github.io/pages/profile/</link><pubDate>Fri, 06 Dec 2019 16:36:41 +0900</pubDate><guid>https://mather.github.io/pages/profile/</guid><description>桑畑英資について 宮崎県宮崎市在住の数学好き Web エンジニア。
-京都大学大学院の修士課程（数学専攻）を終了し、東京・宮崎でエンジニアとして活動し、2020 年からフリーランスとして活動しています。
-趣味はスキューバダイビング、ドローン、カメラ（一眼レフ、全天球カメラ、スマホ用スタビライザーなど多数）。
-自然に触れるのが好きで満員電車が苦手なタイプです。
-IT 系勉強会には積極的に参加し、自分で開催することもあります。
-スキルセット プログラミング言語 Java Scala Python Ruby C JavaScript PHP 趣味程度に Haskell, Elm など フレームワーク Play Framework Ruby on Rails (知識としては少し古い) Flask Nuxt.js ミドルウェア PostgreSQL Redis サービス AWS (Serverless Framework) GCP (BigQuery, Cloud Functions, etc) Firebase 設計手法 DDD (Domain Driven Design, ドメイン駆動設計) マネジメント アジャイル これまでの業務経験 アクセス解析サービスの保守（開発・インフラ） マーケティングサービスの保守(主にメールサーバー)、新規開発 EC サイトの保守 EC サイトの流通システムを支えるサービスの新規開発 思考の癖 数学を考えるときの癖のようなものがあります。</description></item></channel></rss>
+$ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</description></item><item><title>プロフィール - Profile</title><link>https://mather.github.io/pages/profile/</link><pubDate>Fri, 06 Dec 2019 16:36:41 +0900</pubDate><guid>https://mather.github.io/pages/profile/</guid><description>(2021 年 6 月現在の情報です)
+桑畑英資 (Kuwahata Eisuke) 宮崎県宮崎市在住の 38 歳、男性
+フリーランスでソフトウェアエンジニアをしています
+略歴 - History 宮崎市出身 京都大学、京都大学大学院で数学を専攻し修士課程修了 東京で就職 アクセス解析  サービスの開発・サポート タクシー配車業務システムのスタートアップ開発（未達） マーケティングサービスのメールシステム保守開発 投票券用のシリアルコードの作成、投票システムの開発 宮崎で活動開始 EC システムの保守・開発 フリーランスエンジニアとして業務委託 メンター事業 好きなこと - Favorites スキューバダイビング PADI MSD 取得 経験本数は約 400 本 今までで最高のツアー → コモド諸島クルーズ 全般的にカメラガジェット好き ドローン 全天球カメラ スマホ用スタビライザー VR ゴーグル 数学 代数(整数論) プログラミング言語 関数型言語 (Scala, Elm, Haskell) 苦手なこと - Avoids 満員電車 わさび・からし 酒（全く飲みません） ハイスピード（ジェットコースターとか） スキルセット - Skills プログラミング言語 Java Scala Python Ruby C JavaScript PHP Golang 趣味程度に Haskell, Elm など Web フレームワーク Play Framework Ruby on Rails (知識としては古い) Flask Vue.</description></item></channel></rss>
