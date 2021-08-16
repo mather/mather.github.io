@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Reveal My Ignorance</title><link>https://mather.github.io/posts/</link><description>Recent content in Posts on Reveal My Ignorance</description><generator>Hugo -- gohugo.io</generator><language>ja-jp</language><copyright>All rights reserved.</copyright><lastBuildDate>Mon, 16 Aug 2021 16:43:12 +0900</lastBuildDate><atom:link href="https://mather.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>同時視聴配信用のタイマーを作った話</title><link>https://mather.github.io/posts/2021/08/sync-timer/</link><pubDate>Mon, 16 Aug 2021 16:43:12 +0900</pubDate><guid>https://mather.github.io/posts/2021/08/sync-timer/</guid><description>同時視聴配信用のタイマーを作った話 作ったものはこちら
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Reveal My Ignorance</title><link>https://mather.github.io/posts/</link><description>Recent content in Posts on Reveal My Ignorance</description><generator>Hugo -- gohugo.io</generator><language>ja-jp</language><copyright>All rights reserved.</copyright><lastBuildDate>Mon, 16 Aug 2021 16:43:12 +0900</lastBuildDate><atom:link href="https://mather.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>同時視聴配信用のタイマーを作った話</title><link>https://mather.github.io/posts/2021/08/sync-timer/</link><pubDate>Mon, 16 Aug 2021 16:43:12 +0900</pubDate><guid>https://mather.github.io/posts/2021/08/sync-timer/</guid><description>作ったものはこちら
 https://sync-timer.netlify.app/
 ソースコードはこちら
 https://github.com/mather/simple-stopwatch
@@ -10,8 +10,7 @@ https://github.com/mather/simple-stopwatch
 使い慣れてたので Tailwind CSS を使ってたけど、1 ページだけのアプリに Tailwind はやりすぎ感があった Elm アプリに対してもっと簡単に導入できる CSS はないだろうかと考えてた 最近 Pico.css というものの存在を知って使ってみたくなった どうせ開発するならグリーンバックとか作っちゃえ どうせ開発するならヘルプとか作って使いやすくしたい と週末に思いついたことをガンガン作ってみた。
 ひとまず、やりたいことはやったかな。 あとはもし誰かからフィードバックがあったら考えよう。
 技術について 言語、フレームワークなど技術的な要素は次のようなものです。
-Elm 0.19.1 関数型プログラミング言語 TEA (The Elm Architecture) 0.19.0 がリリースされたのが 2018 年。 0.19.1 が 2019 年。なんかもうこれで慣れてきた。 未体験の方はぜひ一度触ってみて欲しい。エラーメッセージの丁寧さは群を抜いている。 Pico.css master(2021-08-13) ミニマル CSS フレームワーク div とかではなく main, section, article など適切な HTML を書くことで自然にスタイルが適用されるように設計されている Parcel 2 設定ファイルの（ほぼ）不要なビルドツール Elm にも対応している 昨年の段階で使っていた v1 が非推奨になったので v2 へ変更したが、 2.</description><content type="html"><![CDATA[<h1 id="同時視聴配信用のタイマーを作った話">同時視聴配信用のタイマーを作った話</h1>
-<p>作ったものはこちら</p>
+Elm 0.19.1 関数型プログラミング言語 TEA (The Elm Architecture) 0.19.0 がリリースされたのが 2018 年。 0.19.1 が 2019 年。なんかもうこれで慣れてきた。 未体験の方はぜひ一度触ってみて欲しい。エラーメッセージの丁寧さは群を抜いている。 Pico.css master(2021-08-13) ミニマル CSS フレームワーク div とかではなく main, section, article など適切な HTML を書くことで自然にスタイルが適用されるように設計されている Parcel 2 設定ファイルの（ほぼ）不要なビルドツール Elm にも対応している 昨年の段階で使っていた v1 が非推奨になったので v2 へ変更したが、 2.</description><content type="html"><![CDATA[<p>作ったものはこちら</p>
 <p><a href="https://sync-timer.netlify.app/">https://sync-timer.netlify.app/</a></p>
 <p>ソースコードはこちら</p>
 <p><a href="https://github.com/mather/simple-stopwatch">https://github.com/mather/simple-stopwatch</a></p>
