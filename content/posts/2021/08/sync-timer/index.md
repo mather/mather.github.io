@@ -19,7 +19,7 @@ https://github.com/mather/simple-stopwatch
 
 きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。
 
-<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">以前VTuberの磁富モノエさん( <a href="https://twitter.com/Jitomi_Monoe?ref_src=twsrc%5Etfw">@Jitomi_Monoe</a> )の Nintendo Direct 同時視聴配信で「マイナスからスタートするストップウォッチがほしい」って話があったから、最近Elmを書いてなかったから試しに作ってみた。<a href="https://t.co/kCVSEZBV0C">https://t.co/kCVSEZBV0C</a></p>&mdash; mather (@mather314) <a href="https://twitter.com/mather314/status/1292112179018137600?ref_src=twsrc%5Etfw">August 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{{<tweet 1292112179018137600>}}
 
 誰かに使われる予定もなく自己満足で開発を終え早一年…。
 
