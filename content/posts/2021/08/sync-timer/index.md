@@ -7,8 +7,6 @@ tags:
   - サービス
 ---
 
-# 同時視聴配信用のタイマーを作った話
-
 作ったものはこちら
 
 https://sync-timer.netlify.app/
