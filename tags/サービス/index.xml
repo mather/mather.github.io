@@ -4,11 +4,11 @@ https://sync-timer.netlify.app/
 https://github.com/mather/simple-stopwatch
 経緯 きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。
 以前VTuberの磁富モノエさん( @Jitomi_Monoe )の Nintendo Direct 同時視聴配信で「マイナスからスタートするストップウォッチがほしい」って話があったから、最近Elmを書いてなかったから試しに作ってみた。https://t.co/kCVSEZBV0C
-&amp;mdash; mather (@mather314) August 8, 2020 誰かに使われる予定もなく自己満足で開発を終え早一年…。
+&amp;mdash; mather / Eisuke Kuwahata (@mather314) August 8, 2020 誰かに使われる予定もなく自己満足で開発を終え早一年…。
 本当はグリーンバックとか入れたほうがいいのかな、とか考えながらやり残した感はあったのですが、細かく実装を追加してもどうせ使わないかと思うのでとりあえず放置していた。
 そんな折、きっかけとなった VTuber の方も突然の引退…。 「推しは推せるときに推しておけ」とはこのこと。
 しかし、そういったイベントとは一切関係なく開発意欲は突然湧き上がってくるもので、
 使い慣れてたので Tailwind CSS を使ってたけど、1 ページだけのアプリに Tailwind はやりすぎ感があった Elm アプリに対してもっと簡単に導入できる CSS はないだろうかと考えてた 最近 Pico.css というものの存在を知って使ってみたくなった どうせ開発するならグリーンバックとか作っちゃえ どうせ開発するならヘルプとか作って使いやすくしたい と週末に思いついたことをガンガン作ってみた。
 ひとまず、やりたいことはやったかな。 あとはもし誰かからフィードバックがあったら考えよう。
 技術について 言語、フレームワークなど技術的な要素は次のようなものです。
-Elm 0.19.1 関数型プログラミング言語 TEA (The Elm Architecture) 0.19.0 がリリースされたのが 2018 年。 0.</description></item></channel></rss>
+Elm 0.19.1 関数型プログラミング言語 TEA (The Elm Architecture) 0.</description></item></channel></rss>
