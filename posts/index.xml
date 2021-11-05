@@ -144,15 +144,15 @@ $ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作�
 <p>今回はこれを <a href="https://gohugo.io/">Hugo</a> でやってみよう、という話です。</p>
 <h2 id="ポートフォリオを作る">ポートフォリオを作る</h2>
 <p>Hugo をインストールします。Mac なので Homebrew でインストールできます。</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ brew install hugo
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">$ brew install hugo
 </code></pre></div><p>今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ hugo new site . --force
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">$ hugo new site . --force
 </code></pre></div><p>Hugo のテーマはシンプルな <a href="https://themes.gohugo.io/hermit/">hermit</a> にしてみました。
 個人的にはこのくらい落ち着いた色合いが好みです。</p>
 <p>インストール手順はテーマのページに記載されているドキュメントのとおりですので割愛します。</p>
 <p>設定ファイルである <code>config.toml</code> は<a href="https://github.com/Track3/hermit/blob/master/exampleSite/config.toml">テーマのデモページで適用されているもの</a>を参考に自分のページに合わせて編集します。</p>
 <p>トップページのメニューはこれから作るパスを考えながら設定します。</p>
-<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">menu</span><span class="p">]</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">menu</span><span class="p">]</span>
 
   <span class="p">[[</span><span class="nx">menu</span><span class="p">.</span><span class="nx">main</span><span class="p">]]</span>
     <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;Posts&#34;</span>
@@ -164,18 +164,18 @@ $ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作�
     <span class="nx">url</span> <span class="p">=</span> <span class="s2">&#34;pages/about/&#34;</span>
     <span class="nx">weight</span> <span class="p">=</span> <span class="mi">20</span>
 </code></pre></div><p>以下のコマンドで Hugo のホットリロードサーバーを起動します。</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ hugo server -D
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">$ hugo server -D
 </code></pre></div><p><code>-D</code> は <code>draft: true</code> となっているドラフト記事（本番ではまだ表示しない）もビルドして表示してくれるフラグです。</p>
 <h3 id="自己紹介を書く">自己紹介を書く</h3>
 <p><code>pages/about/</code> に自己紹介を掲載するので、以下のコマンドでページを作ります。</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ hugo new pages/about.md
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">$ hugo new pages/about.md
 </code></pre></div><p>このコマンドで <code>content/pages/about.md</code> が生成されます。
 生成されたファイルの内容は <code>archetypes/default.md</code> をテンプレートとして生成したものですが、この <code>archetypes/</code> フォルダには固定ページ向け、ブログ記事向けなどに切り分けたテンプレートも設置できます。</p>
 <p>参考: <a href="https://gohugo.io/content-management/archetypes/">Archetypes | Hugo</a></p>
 <p>生成された Markdown ファイルに内容を記載して保存すると自動的にビルドが行われ、ブラウザで表示している場合は自動的にリロードされます。</p>
 <p>表示された内容を確認し、内容に問題がなければ <code>draft: true</code> を削除し <code>git commit</code> しましょう。
 今回は <code>hugo</code> ブランチを作ってコミットします。</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ git checkout -b hugo
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">$ git checkout -b hugo
 $ git commit -v
 </code></pre></div><h2 id="github-actions-の準備">Github Actions の準備</h2>
 <p>リポジトリメニューの Actions を選択すると Github Actions のワークフロー (workflow) を作成できます。</p>
@@ -189,7 +189,7 @@ $ git commit -v
 <li><code>peaceiris/actions-gh-pages@v2.5.1</code> : Github Pages をデプロイする</li>
 </ul>
 <p>これらを使って構成した Workflow は次のようになります。</p>
-<div class="highlight"><pre class="chroma"><code class="language-yml" data-lang="yml"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Deploy Github Pages</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Deploy Github Pages</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="nt">on</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">push</span><span class="p">:</span><span class="w">
@@ -232,7 +232,7 @@ $ git commit -v
 <h3 id="デプロイキー-deploy-key-の登録">デプロイキー (Deploy Key) の登録</h3>
 <p>上記ワークフロー定義の <code>ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}</code> となっている部分でデプロイキーの指定が必要なのですが、こちらはローカルで SSH 鍵ペアを生成する必要があります。</p>
 <p>以下はパスフレーズなしの鍵ペアを作成するコマンドの例です。</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &#34;[Githubアカウントのメールアドレス]&#34; -N &#34;&#34;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &#34;[Githubアカウントのメールアドレス]&#34; -N &#34;&#34;
 </code></pre></div><p>生成した鍵ペアをリポジトリのメニューから以下のように登録します。</p>
 <ul>
 <li><code>Setting</code> -&gt; <code>Deploy Key</code> -&gt; 公開鍵 (<code>.pub</code> の方) を追加</li>
