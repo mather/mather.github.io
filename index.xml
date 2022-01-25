@@ -1,31 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Reveal My Ignorance</title><link>https://mather.github.io/</link><description>Recent content on Reveal My Ignorance</description><generator>Hugo -- gohugo.io</generator><language>ja-jp</language><copyright>All rights reserved.</copyright><lastBuildDate>Mon, 16 Aug 2021 16:43:12 +0900</lastBuildDate><atom:link href="https://mather.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>同時視聴配信用のタイマーを作った話</title><link>https://mather.github.io/posts/2021/08/sync-timer/</link><pubDate>Mon, 16 Aug 2021 16:43:12 +0900</pubDate><guid>https://mather.github.io/posts/2021/08/sync-timer/</guid><description>作ったものはこちら
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://mather.github.io/</link><description>Recent content on</description><generator>Hugo -- gohugo.io</generator><language>ja-jp</language><lastBuildDate>Mon, 16 Aug 2021 16:43:12 +0900</lastBuildDate><atom:link href="https://mather.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>同時視聴配信用のタイマーを作った話</title><link>https://mather.github.io/posts/2021/08/sync-timer/</link><pubDate>Mon, 16 Aug 2021 16:43:12 +0900</pubDate><guid>https://mather.github.io/posts/2021/08/sync-timer/</guid><description>作ったものはこちら
 https://sync-timer.netlify.app/
 ソースコードはこちら
 https://github.com/mather/simple-stopwatch
-経緯 きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。
-以前VTuberの磁富モノエさん( @Jitomi_Monoe )の Nintendo Direct 同時視聴配信で「マイナスからスタートするストップウォッチがほしい」って話があったから、最近Elmを書いてなかったから試しに作ってみた。https://t.co/kCVSEZBV0C
-&amp;mdash; mather / Eisuke Kuwahata (@mather314) August 8, 2020 誰かに使われる予定もなく自己満足で開発を終え早一年…。
-本当はグリーンバックとか入れたほうがいいのかな、とか考えながらやり残した感はあったのですが、細かく実装を追加してもどうせ使わないかと思うのでとりあえず放置していた。
-そんな折、きっかけとなった VTuber の方も突然の引退…。 「推しは推せるときに推しておけ」とはこのこと。
-しかし、そういったイベントとは一切関係なく開発意欲は突然湧き上がってくるもので、
-使い慣れてたので Tailwind CSS を使ってたけど、1 ページだけのアプリに Tailwind はやりすぎ感があった Elm アプリに対してもっと簡単に導入できる CSS はないだろうかと考えてた 最近 Pico.css というものの存在を知って使ってみたくなった どうせ開発するならグリーンバックとか作っちゃえ どうせ開発するならヘルプとか作って使いやすくしたい と週末に思いついたことをガンガン作ってみた。
-ひとまず、やりたいことはやったかな。 あとはもし誰かからフィードバックがあったら考えよう。
-技術について 言語、フレームワークなど技術的な要素は次のようなものです。
-Elm 0.19.1 関数型プログラミング言語 TEA (The Elm Architecture) 0.</description></item><item><title>自分が感じる東京と宮崎の勉強会の違い</title><link>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</link><pubDate>Mon, 09 Dec 2019 14:01:16 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</guid><description>宮崎 IT 関連勉強会 Advent Calendar 2019 9 日目の記事です。 投稿がものすごく遅れてしまい申し訳ない…。
-数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。
-東京の場合 まずはそもそもエンジニア  を含む人口密度が大きいために、勉強会の開催数や参加人数がものすごく多いです。 そのため、こんなことが起こります。
-細分化 : 地域型、専門化、ニッチな領域の勉強会 参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい 宮崎の場合 エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。 東京の場合とは逆に次のような状況です。
-総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある キャンセル率が低い（これは僕も結構驚き） ある程度定番の登壇者や LT 登壇者がいる 多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい ゆるふわ まとめ 僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。
-宮崎は点と点の結びつきでアットホームなコミュニティが形成されている面白い場所だと感じています。 そのようなコミュニティをより盛り上げていくために、会社という枠を超えたところでエンジニア同士の会話や意見交換を楽しむ場として勉強会の形を模索していくことになるでしょう。
-これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。 そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。</description></item><item><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link><pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid><description>宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
-皆さん、Github 活用してますか？
-Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。 特に、 [アカウント名].github.io という名前のリポジトリの場合はドメイン直下のページが作成できます。
-参考: GitHub Pages サイトの種類
-それに加えて、Github Actions が一般に公開されました。 これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。
-これらを組み合わせると、以下のようなワークフローが可能になります。
-静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る ローカルでレビューし、問題なければ指定のブランチにプッシュ Github Actions でプッシュを検知し、静的サイトをビルド [アカウント名].github.io の場合、ビルド完了した静的サイトを master ブランチにデプロイ それ以外のリポジトリの場合は gh-pages ブランチがデプロイ先となります 今回はこれを Hugo でやってみよう、という話です。
-ポートフォリオを作る Hugo をインストールします。Mac なので Homebrew でインストールできます。
-$ brew install hugo 今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</description></item><item><title>プロフィール - Profile</title><link>https://mather.github.io/pages/profile/</link><pubDate>Fri, 06 Dec 2019 16:36:41 +0900</pubDate><guid>https://mather.github.io/pages/profile/</guid><description>(2021 年 6 月現在の情報です)
-桑畑英資 (Kuwahata Eisuke) 宮崎県宮崎市在住の 38 歳、男性
-フリーランスでソフトウェアエンジニアをしています
-略歴 - History 宮崎市出身 京都大学、京都大学大学院で数学を専攻し修士課程修了 東京で就職 アクセス解析  サービスの開発・サポート タクシー配車業務システムのスタートアップ開発（未達） マーケティングサービスのメールシステム保守開発 投票券用のシリアルコードの作成、投票システムの開発 宮崎で活動開始 EC システムの保守・開発 フリーランスエンジニアとして業務委託 メンター事業 好きなこと - Favorites スキューバダイビング PADI MSD 取得 経験本数は約 400 本 今までで最高のツアー → コモド諸島クルーズ 全般的にカメラガジェット好き ドローン 全天球カメラ スマホ用スタビライザー VR ゴーグル 数学 代数(整数論) プログラミング言語 関数型言語 (Scala, Elm, Haskell) 苦手なこと - Avoids 満員電車 わさび・からし 酒（全く飲みません） ハイスピード（ジェットコースターとか） スキルセット - Skills プログラミング言語 Java Scala Python Ruby C JavaScript PHP Golang 趣味程度に Haskell, Elm など Web フレームワーク Play Framework Ruby on Rails (知識としては古い) Flask Vue.</description></item></channel></rss>
+経緯 きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。</description></item><item><title>自分が感じる東京と宮崎の勉強会の違い</title><link>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</link><pubDate>Mon, 09 Dec 2019 14:01:16 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</guid><description>宮崎 IT 関連勉強会 Advent Calendar 2019 9 日目の記事です。 投稿がものすごく遅れてしまい申し訳ない…。
+数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。</description></item><item><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link><pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid><description>宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
+皆さん、Github 活用してますか？</description></item><item><title>プロフィール - Profile</title><link>https://mather.github.io/pages/profile/</link><pubDate>Fri, 06 Dec 2019 16:36:41 +0900</pubDate><guid>https://mather.github.io/pages/profile/</guid><description>(2022 年 1 月現在の情報です)
+桑畑英資 (Kuwahata Eisuke) 宮崎県宮崎市在住の 38 歳、男性</description></item></channel></rss>
