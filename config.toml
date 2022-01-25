@@ -1,80 +1,96 @@
 baseURL = "https://mather.github.io"
 languageCode = "ja-jp"
 defaultContentLanguage = "ja"
-title = "Reveal My Ignorance"
 
-theme = "hermit"
+summarylength = 10
+enableEmoji = true
+enableRobotsTXT = true
 
 metaDataFormat = "yaml"
+
+# Syntax highlighting
 pygmentsStyle = "trac"
 pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
-copyright = "All rights reserved."
-googleAnalytics = "UA-39290733-1"
 
-[author]
-  name = "Eisuke Kuwahata"
+
+# Google Analytics
+googleAnalytics = "UA-39290733-1"
 
 [blackfriday]
   # hrefTargetBlank = true
   # noreferrerLinks = true
   # nofollowLinks = true
 
+[module]
+  # uncomment line below for temporary local development of module
+  # replacements = "github.com/lxndrblz/anatole -> ../../anatole"
+  [[module.imports]]
+    path = "github.com/lxndrblz/anatole"
+    disable = false
+
 [taxonomies]
+  category = "categories"
+  series = "series"
   tag = "tags"
 
 [params]
+  title = "Reveal My Ignorance"
+  author = "Kuwahata Eisuke"
+  description = "Blog and Profile for Eisuke"
+  profilePicture = "images/EisukeProfileHawaii.png"
+  copyright = "2018-{{ YEAR }} Kuwahata Eisuke All rights reserved."
+
   dateform        = "Jan 2, 2006"
   dateformShort   = "Jan 2"
   dateformNum     = "2006-01-02"
   dateformNumTime = "2006-01-02 15:04 -0700"
 
-  # Metadata mostly used in document's head
-  description = "Portfolio and Blog of mather."
   # images = [""]
-  themeColor = "#1b3159"
 
-  homeSubtitle = "Eisuke Kuwahata"
-  # footerCopyright = ' &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
-  # bgImg = ""  # Homepage background-image URL
+  doNotLoadAnimations = true
 
-  # Prefix of link to the git commit detail page. GitInfo must be enabled.
-  # gitUrl = "https://github.com/username/repository/commit/"
-
-  # Toggling this option needs to rebuild SCSS, requires Hugo extended version
-  justifyContent = false  # Set "text-align: justify" to `.content`.
-
-  relatedPosts = false  # Add a related content section to all single posts page
-
-  code_copy_button = true # Turn on/off the code-copy-button for code-fields
-  
-  # Add custom css
-  # customCSS = ["css/foo.css", "css/bar.css"]
+  gtagId = "GTM-M3PT4KW"
 
   # Social Icons
-  # Check https://github.com/Track3/hermit#social-icons for more info.
-  [[params.social]]
-    name = "github"
+  [[params.socialIcons]]
+    icon = "fab fa-github"
+    title = "Github"
     url = "https://github.com/mather"
 
-  [[params.social]]
-    name = "facebook"
+  [[params.socialIcons]]
+    icon = "fab fa-facebook"
+    title = "Facebook"
     url = "https://facebook.com/ekuwahata"
 
-  [[params.social]]
-    name = "instagram"
+  [[params.socialIcons]]
+    icon = "fab fa-instagram"
+    title = "Instagram"
     url = "https://instagram.com/mather"
 
+  [[params.socialIcons]]
+    icon = "fab fa-youtube"
+    title = "YouTube"
+    url = "https://www.youtube.com/user/mather314"
+
+  # KaTeX setting
+  [params.math]
+    enable = false  # options: true, false. Enable math support globally, default: false. You can always enable math on per page.
+    use = "katex"  # options: "katex", "mathjax". default is "katex".
 
 [menu]
-
   [[menu.main]]
-    name = "Posts"
-    url = "posts/"
+    name = "Home"
+    url = "/"
     weight = 10
 
   [[menu.main]]
-    name = "Profile"
-    url = "pages/profile/"
+    name = "Posts"
+    url = "/posts/"
     weight = 20
+
+  [[menu.main]]
+    name = "Profile"
+    url = "/pages/profile/"
+    weight = 30
