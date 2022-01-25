@@ -1,9 +1,7 @@
-name: Deploy Github Pages
+name: Check PR
 
 on:
-  push:
-    branches:
-      - main
+  push
 
 jobs:
   build:
@@ -30,9 +28,3 @@ jobs:
             ${{ runner.os }}-hugomod-
       - name: Build Hugo
         run: hugo -v --minify
-      - name: GitHub Pages action
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./public
