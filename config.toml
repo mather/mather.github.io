@@ -2,6 +2,8 @@ baseURL = "https://mather.github.io"
 languageCode = "ja-jp"
 defaultContentLanguage = "ja"
 
+theme = "github.com/lxndrblz/anatole"
+
 summarylength = 10
 enableEmoji = true
 enableRobotsTXT = true
@@ -15,8 +17,9 @@ pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
 
 
+
 # Google Analytics
-googleAnalytics = "UA-39290733-1"
+# googleAnalytics = "UA-39290733-1"
 
 [blackfriday]
   # hrefTargetBlank = true
@@ -46,19 +49,19 @@ googleAnalytics = "UA-39290733-1"
   dateformShort   = "Jan 2"
   dateformNum     = "2006-01-02"
   dateformNumTime = "2006-01-02 15:04 -0700"
+  singleDateFormat = "2006-01-02"
+  indexDateFormat = "2006-01-02"
+  listDateFormat = "2006-01-02"
 
   # images = [""]
+  googleFonts = ["M+PLUS+1p:wght@400;700"]
+  customCss = ["css/fonts.css"]
 
   doNotLoadAnimations = true
 
   gtagId = "GTM-M3PT4KW"
 
   # Social Icons
-  [[params.socialIcons]]
-    icon = "fab fa-github"
-    title = "Github"
-    url = "https://github.com/mather"
-
   [[params.socialIcons]]
     icon = "fab fa-facebook"
     title = "Facebook"
@@ -73,6 +76,11 @@ googleAnalytics = "UA-39290733-1"
     icon = "fab fa-youtube"
     title = "YouTube"
     url = "https://www.youtube.com/user/mather314"
+
+  [[params.socialIcons]]
+    icon = "fab fa-github"
+    title = "Github"
+    url = "https://github.com/mather"
 
   # KaTeX setting
   [params.math]
