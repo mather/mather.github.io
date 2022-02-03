@@ -2,6 +2,8 @@ baseURL = "https://mather.github.io"
 languageCode = "ja-jp"
 defaultContentLanguage = "ja"
 
+theme = "github.com/lxndrblz/anatole"
+
 summarylength = 10
 enableEmoji = true
 enableRobotsTXT = true
