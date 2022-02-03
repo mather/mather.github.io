@@ -5,6 +5,7 @@ toc: false
 images:
 tags:
   - meetup
+  - 宮崎
   - advent calendar 2019
 ---
 

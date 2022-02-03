@@ -3,6 +3,7 @@ title: 同時視聴配信用のタイマーを作った話
 date: 2021-08-16T16:43:12+09:00
 image: sync-timer.png
 tags:
+  - 技術
   - Elm
   - サービス
 ---

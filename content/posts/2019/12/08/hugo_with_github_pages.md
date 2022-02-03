@@ -4,7 +4,8 @@ date: 2019-12-07T23:57:04+09:00
 toc: false
 images:
 tags:
-  - tech
+  - 技術
+  - hugo
   - advent calendar 2019
 ---
 
