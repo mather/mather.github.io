@@ -48,8 +48,13 @@ googleAnalytics = "UA-39290733-1"
   dateformShort   = "Jan 2"
   dateformNum     = "2006-01-02"
   dateformNumTime = "2006-01-02 15:04 -0700"
+  singleDateFormat = "2006-01-02"
+  indexDateFormat = "2006-01-02"
+  listDateFormat = "2006-01-02"
 
   # images = [""]
+  googleFonts = ["M+PLUS+1p:wght@400;700"]
+  customCss = ["css/fonts.css"]
 
   doNotLoadAnimations = true
 
