@@ -69,11 +69,11 @@ $$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$
 Node.js で次のようなコードを実行してみる
 
 ```js
-const M = 10**9;
+const M = 10**8;
 let p_nc = 1.0;
 let n = 1;
 
-while (p_nc > 0.99) {
+while (p_nc > 0.5) {
   n += 1;
   p_nc *= (M - (n-1)) / M;
 }
