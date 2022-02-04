@@ -55,7 +55,7 @@ pygmentsCodefencesGuessSyntax = true
 
   # images = [""]
   googleFonts = ["M+PLUS+1p:wght@400;700"]
-  customCss = ["css/fonts.css"]
+  customCss = ["css/text_style.css"]
 
   doNotLoadAnimations = true
 
