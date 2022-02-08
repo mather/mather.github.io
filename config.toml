@@ -42,8 +42,10 @@ pygmentsCodefencesGuessSyntax = true
   title = "Reveal My Ignorance"
   author = "Kuwahata Eisuke"
   description = "Blog and Profile for Eisuke"
-  profilePicture = "images/EisukeProfileHawaii.png"
+  profilePicture = "images/friendly-bear.png"
+  images = ["images/friendly-bear.png"]
   copyright = "2018-{{ YEAR }} Kuwahata Eisuke All rights reserved."
+  reversepagetitle = true
 
   dateform        = "Jan 2, 2006"
   dateformShort   = "Jan 2"
