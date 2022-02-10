@@ -1,0 +1,230 @@
+<!doctype html><html dir=ltr lang=ja data-theme><head>
+<title>
+Kuwahata Eisuke
+|
+続・ランダム生成IDの衝突確率について
+</title>
+<meta charset=utf-8><meta name=generator content="Hugo 0.92.1"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name=description content="
+      Blog and Profile for Eisuke
+
+
+    ">
+<link rel=stylesheet href=/css/main.min.861c630407a306e1a79890bffbab9b381c5a0b03cd0c3b79755cc5eeea04b6b0.css integrity="sha256-hhxjBAejBuGnmJC/+6ubOBxaCwPNDDt5dVzF7uoEtrA=" crossorigin=anonymous type=text/css>
+<link rel=stylesheet href=/css/markupHighlight.min.058b31f17db60602cc415fd63b0427e7932fbf35c70d8e341a4c39385f5f6f3e.css integrity="sha256-BYsx8X22BgLMQV/WOwQn55MvvzXHDY40Gkw5OF9fbz4=" crossorigin=anonymous type=text/css>
+<link rel=stylesheet href=/css/text_style.min.f60eaf033de4cd7a76f3f2b36cd73b10e95d20ecff1cc619cd85c68505d61717.css integrity="sha256-9g6vAz3kzXp28/KzbNc7EOldIOz/HMYZzYXGhQXWFxc=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin=anonymous>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel=stylesheet>
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=canonical href=https://mather.github.io/posts/2022/02/another-form-for-hash-collision/>
+<script type=text/javascript src=/js/anatole-header.min.2a2cd9614b7d007dfbb75e8da19e3a0fa872ceab53c6d000c00b7a0c89b85bfc.js integrity="sha256-KizZYUt9AH37t16NoZ46D6hyzqtTxtAAwAt6DIm4W/w=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/anatole-theme-switcher.min.7fd87181cdd7e8413aa64b6867bb32f3a8dc242e684fc7d5bbb9f600dbc2b6eb.js integrity="sha256-f9hxgc3X6EE6pktoZ7sy86jcJC5oT8fVu7n2ANvCtus=" crossorigin=anonymous></script>
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://mather.github.io/images/friendly-bear.png">
+<meta name=twitter:title content="続・ランダム生成IDの衝突確率について">
+<meta name=twitter:description content="前回 では数学的な側面として誕生日パラドックスに関する確率を求めた。
+$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!">
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","articleSection":"posts","name":"続・ランダム生成IDの衝突確率について","headline":"続・ランダム生成IDの衝突確率について","alternativeHeadline":"","description":"
+      
+        前回 では数学的な側面として誕生日パラドックスに関する確率を求めた。\n$$ P_{\\text{nc}}(n) = \\frac{M}{M}\\frac{M-1}{M} \\dots \\frac{M-(n-1)}{M} = \\frac{M!}{M^n (M-n)!
+
+
+      
+
+
+    ","inLanguage":"ja-jp","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/mather.github.io\/posts\/2022\/02\/another-form-for-hash-collision\/"},"author":{"@type":"Person","name":"Kuwahata Eisuke"},"creator":{"@type":"Person","name":"Kuwahata Eisuke"},"accountablePerson":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightHolder":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightYear":"2022","dateCreated":"2022-02-10T17:25:18.00Z","datePublished":"2022-02-10T17:25:18.00Z","dateModified":"2022-02-10T17:25:18.00Z","publisher":{"@type":"Organization","name":"Kuwahata Eisuke","url":"https://mather.github.io","logo":{"@type":"ImageObject","url":"https:\/\/mather.github.iofavicon-32x32.png","width":"32","height":"32"}},"image":["https://mather.github.io/images/friendly-bear.png"],"url":"https:\/\/mather.github.io\/posts\/2022\/02\/another-form-for-hash-collision\/","wordCount":"257","genre":[],"keywords":["Math"]}</script>
+</head>
+<body>
+<header><div class="page-top
+.">
+<a role=button class=navbar-burger data-target=navMenu aria-label=menu aria-expanded=false>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+</a>
+<nav>
+<ul class=nav__list id=navMenu>
+<div class=nav__links>
+<li>
+<a href=/ title>Home</a>
+</li>
+<li>
+<a href=/posts/ title>Posts</a>
+</li>
+<li>
+<a href=/pages/profile/ title>Profile</a>
+</li>
+</div>
+<ul>
+<li>
+<a class=theme-switch title="Switch Theme">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</li>
+</ul>
+</ul>
+</nav>
+</div>
+</header>
+<div class=wrapper>
+<aside><div class="sidebar
+.">
+<div class=sidebar__content>
+<div class=logo-title>
+<div class=title>
+<img src=/images/friendly-bear.png alt="profile picture">
+<h3 title><a href=/>Reveal My Ignorance</a></h3>
+<div class=description>
+<p>Blog and Profile for Eisuke</p>
+</div>
+</div>
+</div>
+<ul class=social-links>
+<li>
+<a href=https://facebook.com/ekuwahata rel=me aria-label=Facebook title=Facebook>
+<i class="fab fa-facebook fa-2x" aria-hidden=true></i>
+</a>
+</li>
+<li>
+<a href=https://instagram.com/mather rel=me aria-label=Instagram title=Instagram>
+<i class="fab fa-instagram fa-2x" aria-hidden=true></i>
+</a>
+</li>
+<li>
+<a href=https://www.youtube.com/user/mather314 rel=me aria-label=YouTube title=YouTube>
+<i class="fab fa-youtube fa-2x" aria-hidden=true></i>
+</a>
+</li>
+<li>
+<a href=https://github.com/mather rel=me aria-label=Github title=Github>
+<i class="fab fa-github fa-2x" aria-hidden=true></i>
+</a>
+</li>
+</ul>
+</div><footer class="footer footer--sidebar">
+<div class=by_farbox>
+<ul class=footer__list>
+<li class=footer__item>
+&copy;
+2018-2022 Kuwahata Eisuke All rights reserved.
+</li>
+</ul>
+</div>
+</footer>
+<script type=text/javascript src=/js/medium-zoom.min.71100d84fab0ad794b8399a66ac810700cc78d703f715dc10af4d7ba7b761362.js integrity="sha256-cRANhPqwrXlLg5mmasgQcAzHjXA/cV3BCvTXunt2E2I=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css integrity=sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js integrity=sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js integrity=sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=GTM-M3PT4KW"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','GTM-M3PT4KW')</script>
+</div>
+</aside>
+<main>
+<div class=autopagerize_page_element>
+<div class=content>
+<div class="post
+.">
+<div class=post-content>
+<div class=post-title>
+<h1>続・ランダム生成IDの衝突確率について</h1>
+</div><p><a href=/posts/2022/02/hash-collision>前回</a> では数学的な側面として誕生日パラドックスに関する確率を求めた。</p>
+<p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$</p>
+<p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$</p>
+<p>これは余事象である「一度も衝突しない確率」を求めることで計算したが、余事象を使わずに求めることができるだろうか？</p>
+<h2 id=余事象を使わない方法>余事象を使わない方法</h2>
+<p>「 \(n\) 回目までに衝突が発生する確率」を求めるには</p>
+<ul>
+<li>1回目に「初めて」衝突する確率 \(P_\text{fc}(1)\)( = 0 )</li>
+<li>2回目に「初めて」衝突する確率 \(P_\text{fc}(2)\)</li>
+<li>&mldr;</li>
+<li>\(n\) 回目に「初めて」衝突する確率 \(P_\text{fc}(n)\)</li>
+</ul>
+<p>をそれぞれ求めて足し合わせれば良い。
+注意すべきポイントはそれぞれの「初めて衝突する事象」が重複していないことである。</p>
+<p>具体的に求めていこう。</p>
+<p>\(n = 1\) ならばどれが選ばれても衝突しないので、</p>
+<p>$$ P_\text{fc}(1) = \frac{0}{M} = 0$$</p>
+<p>となる。次に \(n = 2\) ならば、1つ目は何を選んでもよく、最初に選んだ1つと一致した場合なので、</p>
+<p>$$ P_\text{fc}(2) = \frac{M}{M}\frac{1}{M} = \frac{1}{M}$$</p>
+<p>となる。続いて、 \(n = 3\) ならば、2つ目までは衝突せず、先に選ばれた2つと一致した場合なので、</p>
+<p>$$ P_\text{fc}(3) = \frac{M}{M}\frac{M-1}{M}\frac{2}{M}$$</p>
+<p>となる。これを \(n\) の場合について考えると</p>
+<p>$$ P_\text{fc}(n) = \frac{M!}{M^{n-1}(M-(n-1))!}\frac{n-1}{M}$$</p>
+<p>となる。したがって求めるべき \(n\) 回目までに衝突が発生する確率は</p>
+<p>$$ P_{\text{c}}'(n) = \sum_{k=1}^n P_\text{fc}(k) = \sum_{k=1}^n \frac{M!}{M^{k-1}(M-(k-1))!}\frac{k-1}{M}$$</p>
+<p>となるはずである。</p>
+<p>はたして、 \( P_{\text{c}}(n) = P_{\text{c}}'(n)\) となるだろうか？（一致しないとおかしいはずだが）</p>
+<h2 id=一致することを示す>一致することを示す</h2>
+<p>一致することを示そう。</p>
+<p>まず、 \( P_\text{nc}(k)\) のときの数式とよく見比べて、形の違う部分 \(\frac{k-1}{M}\) に注目し次のように変形する。</p>
+<p>$$ \frac{k-1}{M} = \frac{M-M+k-1}{M} = 1 - \frac{M-(k-1)}{M}$$</p>
+<p>これにより、 \(P_\text{fc}(k)\) は次のように変形できる。</p>
+<p>$$
+\begin{align*}
+P_\text{fc}(k) &= \frac{M!}{M^{k-1}(M-(k-1))!}\bigg\{1 - \frac{M-(k-1)}{M}\bigg\} \\
+&= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!}
+\end{align*}
+$$</p>
+<p>したがって、総和である \(P_{\text{c}}'(n)\) は</p>
+<p>$$ P_{\text{c}}'(n) = \sum_{k=1}^n \bigg\{ \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \bigg\} $$</p>
+<p>となるが、総和の各項は次のように打ち消すことができる。</p>
+<p>$$
+\begin{align*}
+P_\text{fc}(k) + P_\text{fc}(k+1) &= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} + \frac{M!}{M^{k}(M-k)!} - \frac{M!}{M^{k+1}(M-(k+1))!} \\ &= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^{k+1}(M-(k+1))!}
+\end{align*}
+$$</p>
+<p>結果として最初と最後だけが残り、次の結果が得られる。</p>
+<p>$$
+\begin{align*}
+P_{\text{c}}'(n) &= \sum_{k=1}^n \bigg\{ \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \bigg\} \\
+&= 1 - \frac{M!}{M^n(M-n)!} \\
+&= P_{\text{c}}(n)
+\end{align*}
+$$</p>
+<p>よって、一致することが示せた。</p>
+<h2 id=別の考え方>別の考え方</h2>
+<p>\(n\) 回目で初めて衝突する確率 \(P_\text{fc}(n)\) から \(n\) 回目までに衝突が発生する確率 \(P_\text{c}(n)\) を計算してみたが、逆に考えることもできる。</p>
+<p>\(P_\text{fc}(k)\) の変形後の数式を更に変形すると( \(P_\text{c}(0)\) は定義されていないため) \(k \geq 2\) の場合について次のことがわかる。</p>
+<p>$$
+\begin{align*}
+P_\text{fc}(k) &= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \\
+&= \bigg(1 - \frac{M!}{M^k(M-k)!}\bigg) - \bigg(1 - \frac{M!}{M^{k-1}(M-(k-1))!}\bigg) \\
+&= P_\text{c}(k) - P_\text{c}(k-1)
+\end{align*}
+$$</p>
+<p>よく考えればわかることだが、 \(n\) 回目で「初めて」衝突する場合というのは「\(n\) 回目までに衝突が起こる場合」から「 \(n-1\) 回目までに衝突が発生する場合」を取り除いたものに等しく、この変形は納得の行く結果となる。</p>
+<p>この結果から改めて \(P_{\text{c}}'(n)\) を計算してみると同様の結果が得られる。</p>
+<p>$$
+\begin{align*}
+P_{\text{c}}'(n) &= \sum_{k=2}^n\{P_\text{c}(k) - P_\text{c}(k-1)\} + P_\text{fc}(1) \\
+&= P_\text{c}(k) - P_\text{c}(1) + P_\text{fc}(1) \\
+&= P_\text{c}(k)
+\end{align*}
+$$</p>
+</div>
+<div class=post-footer>
+<div class=info>
+<span class=separator><a class=tag href=/tags/math/>Math</a></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div><footer class="footer footer--base">
+<div class=by_farbox>
+<ul class=footer__list>
+<li class=footer__item>
+&copy;
+2018-2022 Kuwahata Eisuke All rights reserved.
+</li>
+</ul>
+</div>
+</footer>
+<script type=text/javascript src=/js/medium-zoom.min.71100d84fab0ad794b8399a66ac810700cc78d703f715dc10af4d7ba7b761362.js integrity="sha256-cRANhPqwrXlLg5mmasgQcAzHjXA/cV3BCvTXunt2E2I=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css integrity=sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js integrity=sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js integrity=sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=GTM-M3PT4KW"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','GTM-M3PT4KW')</script>
+</body>
+</html>
