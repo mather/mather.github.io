@@ -3,8 +3,7 @@
 Kuwahata Eisuke
 |
 ランダムに生成したIDが衝突する確率の議論
-</title>
-<meta charset=utf-8><meta name=generator content="Hugo 0.92.1"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+</title><meta charset=utf-8><meta name=generator content="Hugo 0.93.1"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name=description content="
       Blog and Profile for Eisuke
 
@@ -22,8 +21,8 @@ Kuwahata Eisuke
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
 <link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
 <link rel=canonical href=https://mather.github.io/posts/2022/02/hash-collision/>
-<script type=text/javascript src=/js/anatole-header.min.2a2cd9614b7d007dfbb75e8da19e3a0fa872ceab53c6d000c00b7a0c89b85bfc.js integrity="sha256-KizZYUt9AH37t16NoZ46D6hyzqtTxtAAwAt6DIm4W/w=" crossorigin=anonymous></script>
-<script type=text/javascript src=/js/anatole-theme-switcher.min.7fd87181cdd7e8413aa64b6867bb32f3a8dc242e684fc7d5bbb9f600dbc2b6eb.js integrity="sha256-f9hxgc3X6EE6pktoZ7sy86jcJC5oT8fVu7n2ANvCtus=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/anatole-header.min.d0408165d31a17f17bba83038bf54e86121f85021bdf936382e636f0f77a952f.js integrity="sha256-0ECBZdMaF/F7uoMDi/VOhhIfhQIb35NjguY28Pd6lS8=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/anatole-theme-switcher.min.65e936b591bf81484a5ac438c8e4ae6454fb25516d58ce911e4888d7f230bdc5.js integrity="sha256-Zek2tZG/gUhKWsQ4yOSuZFT7JVFtWM6RHkiI1/IwvcU=" crossorigin=anonymous></script>
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image content="https://mather.github.io/images/friendly-bear.png">
 <meta name=twitter:title content="ランダムに生成したIDが衝突する確率の議論">
@@ -37,8 +36,7 @@ Kuwahata Eisuke
 
 
     ","inLanguage":"ja-jp","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/mather.github.io\/posts\/2022\/02\/hash-collision\/"},"author":{"@type":"Person","name":"Kuwahata Eisuke"},"creator":{"@type":"Person","name":"Kuwahata Eisuke"},"accountablePerson":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightHolder":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightYear":"2022","dateCreated":"2022-02-03T20:00:00.00Z","datePublished":"2022-02-03T20:00:00.00Z","dateModified":"2022-02-03T20:00:00.00Z","publisher":{"@type":"Organization","name":"Kuwahata Eisuke","url":"https://mather.github.io","logo":{"@type":"ImageObject","url":"https:\/\/mather.github.iofavicon-32x32.png","width":"32","height":"32"}},"image":["https://mather.github.io/images/friendly-bear.png"],"url":"https:\/\/mather.github.io\/posts\/2022\/02\/hash-collision\/","wordCount":"263","genre":[],"keywords":["技術","数学"]}</script>
-</head>
-<body>
+</head><body>
 <header><div class="page-top
 .">
 <a role=button class=navbar-burger data-target=navMenu aria-label=menu aria-expanded=false>
@@ -51,199 +49,123 @@ Kuwahata Eisuke
 <div class=nav__links>
 <li>
 <a href=/ title>Home</a>
-</li>
-<li>
+</li><li>
 <a href=/posts/ title>Posts</a>
-</li>
-<li>
+</li><li>
 <a href=/pages/profile/ title>Profile</a>
-</li>
-</div>
-<ul>
+</li></div><ul>
 <li>
 <a class=theme-switch title="Switch Theme">
 <i class="fas fa-adjust fa-fw" aria-hidden=true></i>
 </a>
-</li>
-</ul>
-</ul>
-</nav>
-</div>
-</header>
-<div class=wrapper>
+</li></ul></ul></nav></div></header><div class=wrapper>
 <aside><div class="sidebar
 .">
 <div class=sidebar__content>
 <div class=logo-title>
 <div class=title>
 <img src=/images/friendly-bear.png alt="profile picture">
-<h3 title><a href=/>Reveal My Ignorance</a></h3>
-<div class=description>
-<p>Blog and Profile for Eisuke</p>
-</div>
-</div>
-</div>
-<ul class=social-links>
+<h3 title><a href=/>Reveal My Ignorance</a></h3><div class=description>
+<p>Blog and Profile for Eisuke</p></div></div></div><ul class=social-links>
 <li>
 <a href=https://facebook.com/ekuwahata rel=me aria-label=Facebook title=Facebook>
 <i class="fab fa-facebook fa-2x" aria-hidden=true></i>
 </a>
-</li>
-<li>
+</li><li>
 <a href=https://instagram.com/mather rel=me aria-label=Instagram title=Instagram>
 <i class="fab fa-instagram fa-2x" aria-hidden=true></i>
 </a>
-</li>
-<li>
+</li><li>
 <a href=https://www.youtube.com/user/mather314 rel=me aria-label=YouTube title=YouTube>
 <i class="fab fa-youtube fa-2x" aria-hidden=true></i>
 </a>
-</li>
-<li>
+</li><li>
 <a href=https://github.com/mather rel=me aria-label=Github title=Github>
 <i class="fab fa-github fa-2x" aria-hidden=true></i>
 </a>
-</li>
-</ul>
-</div><footer class="footer footer--sidebar">
+</li></ul></div><footer class="footer footer--sidebar">
 <div class=by_farbox>
 <ul class=footer__list>
 <li class=footer__item>
 &copy;
 2018-2022 Kuwahata Eisuke All rights reserved.
-</li>
-</ul>
-</div>
-</footer>
-<script type=text/javascript src=/js/medium-zoom.min.71100d84fab0ad794b8399a66ac810700cc78d703f715dc10af4d7ba7b761362.js integrity="sha256-cRANhPqwrXlLg5mmasgQcAzHjXA/cV3BCvTXunt2E2I=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css integrity=sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js integrity=sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js integrity=sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+</li></ul></div></footer><script type=text/javascript src=/js/medium-zoom.min.4a40b20209bc12e56cf77caff5feaa93fecd6b0d97d51b33afb0265a732ce636.js integrity="sha256-SkCyAgm8EuVs93yv9f6qk/7Naw2X1Rszr7AmWnMs5jY=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css integrity=sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js integrity=sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js integrity=sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v crossorigin=anonymous onload=renderMathInElement(document.body)></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=GTM-M3PT4KW"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','GTM-M3PT4KW')</script>
-</div>
-</aside>
-<main>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-M3PT4KW")</script>
+</div></aside><main>
 <div class=autopagerize_page_element>
 <div class=content>
 <div class="post
 .">
 <div class=post-content>
 <div class=post-title>
-<h1>ランダムに生成したIDが衝突する確率の議論</h1>
-</div><p>「ランダムなIDをあるパターンに従って生成するとき、どう設計すべきか？」という質問があったので技術的な側面と数学的な側面で説明してみよう。</p>
-<h2 id=技術的な側面>技術的な側面</h2>
-<p>そもそも衝突したくないなら典型的な方法として「時間の情報を含めてIDを生成する」という方法があり、
-UUIDv1にもタイムスタンプが使われているし、 <a href=https://github.com/ulid/spec>ULID</a> という選択肢もある。</p>
-<p>しかし、UUIDv1はMACアドレスに依存してしまう設計なので現在はほぼ使われていないし、ULIDは最初の10桁がタイムスタンプ情報なので短く詰めることでランダム性を失ったり、IDそのものに特定の構造を定義したいという場合はそのままでは使えない。</p>
-<p>今回の質問でも特定の構造が指定された場合の話だったので、シンプルにランダム生成することを前提とした。</p>
-<h3 id=もし衝突したら何が問題か>もし衝突したら何が問題か</h3>
-<p>IDの生成直後にすぐDBに保存する仕組みであれば、DBに登録済みか確認し重複している場合には再生成すれば実用上は問題なく使える。
-（もちろん、衝突が何度も発生するような状況ではパフォーマンスの問題に発展してしまうが）</p>
-<p>それでも問題になるのは次のようなケースが考えられる。</p>
+<h1>ランダムに生成したIDが衝突する確率の議論</h1></div><p>「ランダムなIDをあるパターンに従って生成するとき、どう設計すべきか？」という質問があったので技術的な側面と数学的な側面で説明してみよう。</p><h2 id=技術的な側面>技術的な側面</h2><p>そもそも衝突したくないなら典型的な方法として「時間の情報を含めてIDを生成する」という方法があり、
+UUIDv1にもタイムスタンプが使われているし、 <a href=https://github.com/ulid/spec>ULID</a> という選択肢もある。</p><p>しかし、UUIDv1はMACアドレスに依存してしまう設計なので現在はほぼ使われていないし、ULIDは最初の10桁がタイムスタンプ情報なので短く詰めることでランダム性を失ったり、IDそのものに特定の構造を定義したいという場合はそのままでは使えない。</p><p>今回の質問でも特定の構造が指定された場合の話だったので、シンプルにランダム生成することを前提とした。</p><h3 id=もし衝突したら何が問題か>もし衝突したら何が問題か</h3><p>IDの生成直後にすぐDBに保存する仕組みであれば、DBに登録済みか確認し重複している場合には再生成すれば実用上は問題なく使える。
+（もちろん、衝突が何度も発生するような状況ではパフォーマンスの問題に発展してしまうが）</p><p>それでも問題になるのは次のようなケースが考えられる。</p><ul>
+<li>一時的にIDを生成しユーザーがデータを入力したタイミングでDBに保存するため、生成時には重複が検知できない</li><li>多数の同時リクエストや冗長構成によって、ほぼ同時にID生成される可能性が高く、DBに保存されていたとして生成時の重複が検知できない可能性がある
 <ul>
-<li>一時的にIDを生成しユーザーがデータを入力したタイミングでDBに保存するため、生成時には重複が検知できない</li>
-<li>多数の同時リクエストや冗長構成によって、ほぼ同時にID生成される可能性が高く、DBに保存されていたとして生成時の重複が検知できない可能性がある
-<ul>
-<li>かといってINSERT時のテーブルロックなどをしてしまうとパフォーマンス上の問題となってしまう</li>
-</ul>
-</li>
-</ul>
-<p>そのような状況の解決を図ったID生成方法の実例に <a href=https://developer.twitter.com/ja/docs/basics/twitter-ids>Twitter IDs(Snowflake)</a> がある。
-大規模なサービスではID生成だけでもミッションクリティカルな機能になったりもする。</p>
-<h2 id=数学的な側面>数学的な側面</h2>
-<p>数学的には「<a href=https://ja.wikipedia.org/wiki/%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AE%E3%83%91%E3%83%A9%E3%83%89%E3%83%83%E3%82%AF%E3%82%B9>誕生日のパラドックス</a>」が有名である。</p>
-<p>\( M \) を生成可能なパターン数とする。
-例えば 8 桁の数字でランダムな値を作る場合、<code>00000000</code> から <code>99999999</code> までの範囲で \(10^8\) 個生成可能である。</p>
-<p>このうち、 \(n\) 回ランダムに生成したとき「一度でも衝突が発生する確率」を考える。
-「\( n \) 回目で発生する確率」と読み間違えないように注意してほしい。</p>
-<h3 id=余事象の確率で考える>余事象の確率で考える</h3>
-<p>「\(n\) 回生成したときに一度でも衝突が発生する」ということを考えたいとき、「\(n\) 回生成しても一度も衝突が発生しなかった場合」の余事象を考えれば良い。</p>
-<p>「全く衝突が発生しなかった場合」の反対なので、「少なくとも一度は衝突が発生している場合」ということになる。</p>
-<p>「\(n\) 回生成しても一度も衝突が発生しない確率 \(P_\text{nc}(n)\)」を求めよう。</p>
-<p>\(n=1\) ならば、 \(M\)個中どれが選ばれても衝突することがないので、 \(\frac{M}{M} = 1\) (100%)である。</p>
-<p>次に \(n=2\) ならば、 \(M\)個中最初に選んだものを除く \(M-1\) 個から選ばれても衝突することがないので、 \(\frac{M}{M} \frac{M-1}{M}\) である。</p>
-<p>このようにして、衝突が発生しない確率が次のように計算できる</p>
-<p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$</p>
-<p>つまり衝突が発生する確率は全確率 1 から発生しない確率を引いたものとなる。</p>
-<p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$</p>
-<h3 id=数値計算してみる>数値計算してみる</h3>
-<p>Node.js で次のようなコードを実行してみる</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=kr>const</span> <span class=nx>M</span> <span class=o>=</span> <span class=mi>10</span><span class=o>**</span><span class=mi>8</span><span class=p>;</span>
-<span class=kd>let</span> <span class=nx>p_nc</span> <span class=o>=</span> <span class=mf>1.0</span><span class=p>;</span>
-<span class=kd>let</span> <span class=nx>n</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-
-<span class=k>while</span> <span class=p>(</span><span class=nx>p_nc</span> <span class=o>&gt;</span> <span class=mf>0.5</span><span class=p>)</span> <span class=p>{</span>
-  <span class=nx>n</span> <span class=o>+=</span> <span class=mi>1</span><span class=p>;</span>
-  <span class=nx>p_nc</span> <span class=o>*=</span> <span class=p>(</span><span class=nx>M</span> <span class=o>-</span> <span class=p>(</span><span class=nx>n</span><span class=o>-</span><span class=mi>1</span><span class=p>))</span> <span class=o>/</span> <span class=nx>M</span><span class=p>;</span>
-<span class=p>}</span>
-
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=sb>`n = </span><span class=si>${</span><span class=nx>n</span><span class=si>}</span><span class=sb>`</span><span class=p>);</span>
-</code></pre></div><p>数値計算上の誤差はあるだろうが、計算結果は <code>n = 11775</code> となる。
-上記の「8桁の数字」で生成されるIDでは、11,775回生成するだけで衝突が発生する確率が50%を超える結果となる。</p>
-<p>では、実際に生成してみて衝突が発生するまでの生成回数を調べてみよう。100回試してみて、その平均値を取ってみる。</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=kr>const</span> <span class=nx>M</span> <span class=o>=</span> <span class=mi>10</span><span class=o>**</span><span class=mi>8</span><span class=p>;</span>
-
-<span class=kd>function</span> <span class=nx>collisionTest</span><span class=p>()</span> <span class=p>{</span>
-  <span class=kd>let</span> <span class=nx>memo</span> <span class=o>=</span> <span class=p>{};</span>
-  <span class=kd>let</span> <span class=nx>generated</span> <span class=o>=</span> <span class=nb>Math</span><span class=p>.</span><span class=nx>ceil</span><span class=p>(</span><span class=nb>Math</span><span class=p>.</span><span class=nx>random</span><span class=p>()</span> <span class=o>*</span> <span class=nx>M</span><span class=p>);</span>
-  <span class=k>while</span> <span class=p>(</span><span class=o>!</span><span class=nx>memo</span><span class=p>[</span><span class=nx>generated</span><span class=p>])</span> <span class=p>{</span>
-    <span class=nx>memo</span><span class=p>[</span><span class=nx>generated</span><span class=p>]</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-    <span class=nx>generated</span> <span class=o>=</span> <span class=nb>Math</span><span class=p>.</span><span class=nx>ceil</span><span class=p>(</span><span class=nb>Math</span><span class=p>.</span><span class=nx>random</span><span class=p>()</span> <span class=o>*</span> <span class=nx>M</span><span class=p>);</span>
-  <span class=p>}</span>
-  <span class=k>return</span> <span class=nb>Object</span><span class=p>.</span><span class=nx>keys</span><span class=p>(</span><span class=nx>memo</span><span class=p>).</span><span class=nx>length</span><span class=p>;</span>
-<span class=p>}</span>
-
-<span class=kr>const</span> <span class=nx>trial</span> <span class=o>=</span> <span class=mi>100</span><span class=p>;</span>
-<span class=kr>const</span> <span class=nx>results</span> <span class=o>=</span> <span class=p>[...</span><span class=nb>Array</span><span class=p>(</span><span class=nx>trial</span><span class=p>).</span><span class=nx>keys</span><span class=p>()].</span><span class=nx>map</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=nx>collisionTest</span><span class=p>());</span>
-<span class=kr>const</span> <span class=nx>average</span> <span class=o>=</span> <span class=nx>results</span><span class=p>.</span><span class=nx>reduce</span><span class=p>((</span><span class=nx>a</span><span class=p>,</span><span class=nx>b</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=nx>a</span><span class=o>+</span><span class=nx>b</span><span class=p>)</span> <span class=o>*</span> <span class=mf>1.0</span> <span class=o>/</span> <span class=nx>trial</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=sb>`average = </span><span class=si>${</span><span class=nx>average</span><span class=si>}</span><span class=sb>`</span><span class=p>);</span>
-</code></pre></div><p><code>average = 11866.35</code> という結果になる。
-ランダムなので実行ごとにばらつきはあるが、平均値が上記の50%の確率で衝突する値に近いことがわかる。</p>
-<h3 id=実用的な範囲は>実用的な範囲は？</h3>
-<p>実用性を考えると、衝突確率が1%未満である安全性の高い範囲を考えておきたい。
+<li>かといってINSERT時のテーブルロックなどをしてしまうとパフォーマンス上の問題となってしまう</li></ul></li></ul><p>そのような状況の解決を図ったID生成方法の実例に <a href=https://developer.twitter.com/ja/docs/basics/twitter-ids>Twitter IDs(Snowflake)</a> がある。
+大規模なサービスではID生成だけでもミッションクリティカルな機能になったりもする。</p><h2 id=数学的な側面>数学的な側面</h2><p>数学的には「<a href=https://ja.wikipedia.org/wiki/%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AE%E3%83%91%E3%83%A9%E3%83%89%E3%83%83%E3%82%AF%E3%82%B9>誕生日のパラドックス</a>」が有名である。</p><p>\( M \) を生成可能なパターン数とする。
+例えば 8 桁の数字でランダムな値を作る場合、<code>00000000</code> から <code>99999999</code> までの範囲で \(10^8\) 個生成可能である。</p><p>このうち、 \(n\) 回ランダムに生成したとき「一度でも衝突が発生する確率」を考える。
+「\( n \) 回目で発生する確率」と読み間違えないように注意してほしい。</p><h3 id=余事象の確率で考える>余事象の確率で考える</h3><p>「\(n\) 回生成したときに一度でも衝突が発生する」ということを考えたいとき、「\(n\) 回生成しても一度も衝突が発生しなかった場合」の余事象を考えれば良い。</p><p>「全く衝突が発生しなかった場合」の反対なので、「少なくとも一度は衝突が発生している場合」ということになる。</p><p>「\(n\) 回生成しても一度も衝突が発生しない確率 \(P_\text{nc}(n)\)」を求めよう。</p><p>\(n=1\) ならば、 \(M\)個中どれが選ばれても衝突することがないので、 \(\frac{M}{M} = 1\) (100%)である。</p><p>次に \(n=2\) ならば、 \(M\)個中最初に選んだものを除く \(M-1\) 個から選ばれても衝突することがないので、 \(\frac{M}{M} \frac{M-1}{M}\) である。</p><p>このようにして、衝突が発生しない確率が次のように計算できる</p><p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$</p><p>つまり衝突が発生する確率は全確率 1 から発生しない確率を引いたものとなる。</p><p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$</p><h3 id=数値計算してみる>数値計算してみる</h3><p>Node.js で次のようなコードを実行してみる</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>M</span> <span class=o>=</span> <span class=mi>10</span><span class=o>**</span><span class=mi>8</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=kd>let</span> <span class=nx>p_nc</span> <span class=o>=</span> <span class=mf>1.0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=kd>let</span> <span class=nx>n</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>while</span> <span class=p>(</span><span class=nx>p_nc</span> <span class=o>&gt;</span> <span class=mf>0.5</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>n</span> <span class=o>+=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p_nc</span> <span class=o>*=</span> <span class=p>(</span><span class=nx>M</span> <span class=o>-</span> <span class=p>(</span><span class=nx>n</span><span class=o>-</span><span class=mi>1</span><span class=p>))</span> <span class=o>/</span> <span class=nx>M</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=sb>`n = </span><span class=si>${</span><span class=nx>n</span><span class=si>}</span><span class=sb>`</span><span class=p>);</span>
+</span></span></code></pre></div><p>数値計算上の誤差はあるだろうが、計算結果は <code>n = 11775</code> となる。
+上記の「8桁の数字」で生成されるIDでは、11,775回生成するだけで衝突が発生する確率が50%を超える結果となる。</p><p>では、実際に生成してみて衝突が発生するまでの生成回数を調べてみよう。100回試してみて、その平均値を取ってみる。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>M</span> <span class=o>=</span> <span class=mi>10</span><span class=o>**</span><span class=mi>8</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>function</span> <span class=nx>collisionTest</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>let</span> <span class=nx>memo</span> <span class=o>=</span> <span class=p>{};</span>
+</span></span><span class=line><span class=cl>  <span class=kd>let</span> <span class=nx>generated</span> <span class=o>=</span> <span class=nb>Math</span><span class=p>.</span><span class=nx>ceil</span><span class=p>(</span><span class=nb>Math</span><span class=p>.</span><span class=nx>random</span><span class=p>()</span> <span class=o>*</span> <span class=nx>M</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=k>while</span> <span class=p>(</span><span class=o>!</span><span class=nx>memo</span><span class=p>[</span><span class=nx>generated</span><span class=p>])</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>memo</span><span class=p>[</span><span class=nx>generated</span><span class=p>]</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=nx>generated</span> <span class=o>=</span> <span class=nb>Math</span><span class=p>.</span><span class=nx>ceil</span><span class=p>(</span><span class=nb>Math</span><span class=p>.</span><span class=nx>random</span><span class=p>()</span> <span class=o>*</span> <span class=nx>M</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nb>Object</span><span class=p>.</span><span class=nx>keys</span><span class=p>(</span><span class=nx>memo</span><span class=p>).</span><span class=nx>length</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>trial</span> <span class=o>=</span> <span class=mi>100</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>results</span> <span class=o>=</span> <span class=p>[...</span><span class=nb>Array</span><span class=p>(</span><span class=nx>trial</span><span class=p>).</span><span class=nx>keys</span><span class=p>()].</span><span class=nx>map</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=nx>collisionTest</span><span class=p>());</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>average</span> <span class=o>=</span> <span class=nx>results</span><span class=p>.</span><span class=nx>reduce</span><span class=p>((</span><span class=nx>a</span><span class=p>,</span><span class=nx>b</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=nx>a</span><span class=o>+</span><span class=nx>b</span><span class=p>)</span> <span class=o>*</span> <span class=mf>1.0</span> <span class=o>/</span> <span class=nx>trial</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=sb>`average = </span><span class=si>${</span><span class=nx>average</span><span class=si>}</span><span class=sb>`</span><span class=p>);</span>
+</span></span></code></pre></div><p><code>average = 11866.35</code> という結果になる。
+ランダムなので実行ごとにばらつきはあるが、平均値が上記の50%の確率で衝突する値に近いことがわかる。</p><h3 id=実用的な範囲は>実用的な範囲は？</h3><p>実用性を考えると、衝突確率が1%未満である安全性の高い範囲を考えておきたい。
 <code>p_nc > 0.99</code> と置き換えればその値は計算でき、 <code>n = 1419</code> である。
-設計するサービスが1,000個未満のIDで運用できるなら衝突する可能性はかなり少ないだろうが、それを超え始めると度々衝突が発生することも考えられるため、サービスのスケールを見積もりながら安全な範囲を計算すると良い。</p>
-<p>一例として、先程の確率計算を関数化したものを使ってみる。</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=cm>/**
-</span><span class=cm> * max_ids: 生成可能なIDの数
-</span><span class=cm> * p_under: 衝突確率がこれ以下である最大値を求める (0以上1未満の値を指定)
-</span><span class=cm> */</span>
-<span class=kd>function</span> <span class=nx>collisionSafe</span><span class=p>(</span><span class=nx>max_ids</span><span class=p>,</span> <span class=nx>p_under</span><span class=p>)</span> <span class=p>{</span>
-  <span class=kd>let</span> <span class=nx>p_nc</span> <span class=o>=</span> <span class=mf>1.0</span><span class=p>;</span>
-  <span class=kd>let</span> <span class=nx>n</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
-
-  <span class=k>while</span> <span class=p>(</span><span class=nx>p_nc</span> <span class=o>&gt;</span> <span class=mi>1</span> <span class=o>-</span> <span class=nx>p_under</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>n</span> <span class=o>+=</span> <span class=mi>1</span><span class=p>;</span>
-    <span class=nx>p_nc</span> <span class=o>*=</span> <span class=p>(</span><span class=nx>max_ids</span> <span class=o>-</span> <span class=p>(</span><span class=nx>n</span><span class=o>-</span><span class=mi>1</span><span class=p>))</span> <span class=o>/</span> <span class=nx>max_ids</span><span class=p>;</span>
-  <span class=p>}</span>
-
-  <span class=k>return</span> <span class=nx>n</span><span class=p>;</span>
-<span class=p>}</span>
-
-<span class=nx>collisionSafe</span><span class=p>(</span><span class=mi>10</span><span class=o>**</span><span class=mi>8</span><span class=p>,</span> <span class=mf>0.01</span><span class=p>);</span>  <span class=c1>// =&gt; 1419
-</span><span class=c1></span><span class=nx>collisionSafe</span><span class=p>(</span><span class=mi>10</span><span class=o>**</span><span class=mi>9</span><span class=p>,</span> <span class=mf>0.01</span><span class=p>);</span>  <span class=c1>// =&gt; 4484
-</span><span class=c1></span><span class=nx>collisionSafe</span><span class=p>(</span><span class=mi>10</span><span class=o>**</span><span class=mi>10</span><span class=p>,</span> <span class=mf>0.01</span><span class=p>);</span> <span class=c1>// =&gt; 14179
-</span></code></pre></div><h2 id=まとめ>まとめ</h2>
-<p>「誕生日のパラドックス」の解説にもあるように、「思ったより少ない生成個数で衝突が発生しやすい」ということを意識して、ランダムなIDを生成すると良い。</p></div>
-<div class=post-footer>
+設計するサービスが1,000個未満のIDで運用できるなら衝突する可能性はかなり少ないだろうが、それを超え始めると度々衝突が発生することも考えられるため、サービスのスケールを見積もりながら安全な範囲を計算すると良い。</p><p>一例として、先程の確率計算を関数化したものを使ってみる。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * max_ids: 生成可能なIDの数
+</span></span></span><span class=line><span class=cl><span class=cm> * p_under: 衝突確率がこれ以下である最大値を求める (0以上1未満の値を指定)
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kd>function</span> <span class=nx>collisionSafe</span><span class=p>(</span><span class=nx>max_ids</span><span class=p>,</span> <span class=nx>p_under</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>let</span> <span class=nx>p_nc</span> <span class=o>=</span> <span class=mf>1.0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kd>let</span> <span class=nx>n</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=k>while</span> <span class=p>(</span><span class=nx>p_nc</span> <span class=o>&gt;</span> <span class=mi>1</span> <span class=o>-</span> <span class=nx>p_under</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>n</span> <span class=o>+=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=nx>p_nc</span> <span class=o>*=</span> <span class=p>(</span><span class=nx>max_ids</span> <span class=o>-</span> <span class=p>(</span><span class=nx>n</span><span class=o>-</span><span class=mi>1</span><span class=p>))</span> <span class=o>/</span> <span class=nx>max_ids</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>n</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>collisionSafe</span><span class=p>(</span><span class=mi>10</span><span class=o>**</span><span class=mi>8</span><span class=p>,</span> <span class=mf>0.01</span><span class=p>);</span>  <span class=c1>// =&gt; 1419
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>collisionSafe</span><span class=p>(</span><span class=mi>10</span><span class=o>**</span><span class=mi>9</span><span class=p>,</span> <span class=mf>0.01</span><span class=p>);</span>  <span class=c1>// =&gt; 4484
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>collisionSafe</span><span class=p>(</span><span class=mi>10</span><span class=o>**</span><span class=mi>10</span><span class=p>,</span> <span class=mf>0.01</span><span class=p>);</span> <span class=c1>// =&gt; 14179
+</span></span></span></code></pre></div><h2 id=まとめ>まとめ</h2><p>「誕生日のパラドックス」の解説にもあるように、「思ったより少ない生成個数で衝突が発生しやすい」ということを意識して、ランダムなIDを生成すると良い。</p></div><div class=post-footer>
 <div class=info>
 <span class=separator><a class=tag href=/tags/%E6%8A%80%E8%A1%93/>技術</a><a class=tag href=/tags/%E6%95%B0%E5%AD%A6/>数学</a></span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-</div><footer class="footer footer--base">
+</div></div></div></div></div></main></div><footer class="footer footer--base">
 <div class=by_farbox>
 <ul class=footer__list>
 <li class=footer__item>
 &copy;
 2018-2022 Kuwahata Eisuke All rights reserved.
-</li>
-</ul>
-</div>
-</footer>
-<script type=text/javascript src=/js/medium-zoom.min.71100d84fab0ad794b8399a66ac810700cc78d703f715dc10af4d7ba7b761362.js integrity="sha256-cRANhPqwrXlLg5mmasgQcAzHjXA/cV3BCvTXunt2E2I=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css integrity=sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js integrity=sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js integrity=sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+</li></ul></div></footer><script type=text/javascript src=/js/medium-zoom.min.4a40b20209bc12e56cf77caff5feaa93fecd6b0d97d51b33afb0265a732ce636.js integrity="sha256-SkCyAgm8EuVs93yv9f6qk/7Naw2X1Rszr7AmWnMs5jY=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css integrity=sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js integrity=sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js integrity=sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v crossorigin=anonymous onload=renderMathInElement(document.body)></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=GTM-M3PT4KW"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','GTM-M3PT4KW')</script>
-</body>
-</html>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-M3PT4KW")</script>
+</body></html>
