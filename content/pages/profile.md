@@ -104,4 +104,5 @@ date: 2019-12-06T16:36:41+09:00
   - プログラミング
 - メンター、セミナー、講義等の定期的な講師業
 
-ご連絡は [メール](mailto:mather314+work@gmail.com), [Facebook](https://facebook.com/ekuwahata) までお願いいたします。
+
+ご連絡は[フォームから送信](https://docs.google.com/forms/d/e/1FAIpQLSfZMZRxhjyaeFbQdsK1iWDWvXac5tpzdyI63SBVroqdnYOwnA/viewform?usp=sf_link)いただくか、または [メール](mailto:mather314+work@gmail.com), [Facebook](https://facebook.com/ekuwahata) までお願いいたします。
