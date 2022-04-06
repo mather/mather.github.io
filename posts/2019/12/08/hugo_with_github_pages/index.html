@@ -1,34 +1,12 @@
-<!doctype html><html dir=ltr lang=ja data-theme><head>
-<title>
-Kuwahata Eisuke
+<!doctype html><html dir=ltr lang=ja data-theme><head><title>Kuwahata Eisuke
 |
-ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話
-</title><meta charset=utf-8><meta name=generator content="Hugo 0.93.1"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name=description content="
+ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><meta charset=utf-8><meta name=generator content="Hugo 0.96.0"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=description content="
       Blog and Profile for Eisuke
 
 
-    ">
-<link rel=stylesheet href=/css/main.min.861c630407a306e1a79890bffbab9b381c5a0b03cd0c3b79755cc5eeea04b6b0.css integrity="sha256-hhxjBAejBuGnmJC/+6ubOBxaCwPNDDt5dVzF7uoEtrA=" crossorigin=anonymous type=text/css>
-<link rel=stylesheet href=/css/markupHighlight.min.058b31f17db60602cc415fd63b0427e7932fbf35c70d8e341a4c39385f5f6f3e.css integrity="sha256-BYsx8X22BgLMQV/WOwQn55MvvzXHDY40Gkw5OF9fbz4=" crossorigin=anonymous type=text/css>
-<link rel=stylesheet href=/css/text_style.min.f60eaf033de4cd7a76f3f2b36cd73b10e95d20ecff1cc619cd85c68505d61717.css integrity="sha256-9g6vAz3kzXp28/KzbNc7EOldIOz/HMYZzYXGhQXWFxc=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin=anonymous>
-<link rel=preconnect href=https://fonts.googleapis.com>
-<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel=stylesheet>
-<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
-<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
-<link rel=canonical href=https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/>
-<script type=text/javascript src=/js/anatole-header.min.d0408165d31a17f17bba83038bf54e86121f85021bdf936382e636f0f77a952f.js integrity="sha256-0ECBZdMaF/F7uoMDi/VOhhIfhQIb35NjguY28Pd6lS8=" crossorigin=anonymous></script>
-<script type=text/javascript src=/js/anatole-theme-switcher.min.65e936b591bf81484a5ac438c8e4ae6454fb25516d58ce911e4888d7f230bdc5.js integrity="sha256-Zek2tZG/gUhKWsQ4yOSuZFT7JVFtWM6RHkiI1/IwvcU=" crossorigin=anonymous></script>
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://mather.github.io/images/friendly-bear.png">
-<meta name=twitter:title content="ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話">
-<meta name=twitter:description content="宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
-皆さん、Github 活用してますか？">
-<script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","articleSection":"posts","name":"ポートフォリオサイトを Hugo で Github Pages \u002b Github Actions で構築する話","headline":"ポートフォリオサイトを Hugo で Github Pages \u002b Github Actions で構築する話","alternativeHeadline":"","description":"
+    "><link rel=stylesheet href=/css/main.min.861c630407a306e1a79890bffbab9b381c5a0b03cd0c3b79755cc5eeea04b6b0.css integrity="sha256-hhxjBAejBuGnmJC/+6ubOBxaCwPNDDt5dVzF7uoEtrA=" crossorigin=anonymous type=text/css><link rel=stylesheet href=/css/markupHighlight.min.058b31f17db60602cc415fd63b0427e7932fbf35c70d8e341a4c39385f5f6f3e.css integrity="sha256-BYsx8X22BgLMQV/WOwQn55MvvzXHDY40Gkw5OF9fbz4=" crossorigin=anonymous type=text/css><link rel=stylesheet href=/css/text_style.min.f60eaf033de4cd7a76f3f2b36cd73b10e95d20ecff1cc619cd85c68505d61717.css integrity="sha256-9g6vAz3kzXp28/KzbNc7EOldIOz/HMYZzYXGhQXWFxc=" crossorigin=anonymous media=screen><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin=anonymous><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel=stylesheet><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=canonical href=https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/><script type=text/javascript src=/js/anatole-header.min.d0408165d31a17f17bba83038bf54e86121f85021bdf936382e636f0f77a952f.js integrity="sha256-0ECBZdMaF/F7uoMDi/VOhhIfhQIb35NjguY28Pd6lS8=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/anatole-theme-switcher.min.65e936b591bf81484a5ac438c8e4ae6454fb25516d58ce911e4888d7f230bdc5.js integrity="sha256-Zek2tZG/gUhKWsQ4yOSuZFT7JVFtWM6RHkiI1/IwvcU=" crossorigin=anonymous></script><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://mather.github.io/images/friendly-bear.png"><meta name=twitter:title content="ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話"><meta name=twitter:description content="宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。
+皆さん、Github 活用してますか？"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","articleSection":"posts","name":"ポートフォリオサイトを Hugo で Github Pages \u002b Github Actions で構築する話","headline":"ポートフォリオサイトを Hugo で Github Pages \u002b Github Actions で構築する話","alternativeHeadline":"","description":"
       
         宮崎 IT 関連勉強会 Advent Calendar 2019 8 日目の記事です。\n皆さん、Github 活用してますか？
 
@@ -36,76 +14,17 @@ Kuwahata Eisuke
       
 
 
-    ","inLanguage":"ja-jp","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/mather.github.io\/posts\/2019\/12\/08\/hugo_with_github_pages\/"},"author":{"@type":"Person","name":"Kuwahata Eisuke"},"creator":{"@type":"Person","name":"Kuwahata Eisuke"},"accountablePerson":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightHolder":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightYear":"2019","dateCreated":"2019-12-07T23:57:04.00Z","datePublished":"2019-12-07T23:57:04.00Z","dateModified":"2019-12-07T23:57:04.00Z","publisher":{"@type":"Organization","name":"Kuwahata Eisuke","url":"https://mather.github.io","logo":{"@type":"ImageObject","url":"https:\/\/mather.github.iofavicon-32x32.png","width":"32","height":"32"}},"image":["https://mather.github.io/images/friendly-bear.png"],"url":"https:\/\/mather.github.io\/posts\/2019\/12\/08\/hugo_with_github_pages\/","wordCount":"323","genre":[],"keywords":["技術","hugo","advent calendar 2019"]}</script>
-</head><body>
-<header><div class="page-top
-.">
-<a role=button class=navbar-burger data-target=navMenu aria-label=menu aria-expanded=false>
+    ","inLanguage":"ja-jp","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/mather.github.io\/posts\/2019\/12\/08\/hugo_with_github_pages\/"},"author":{"@type":"Person","name":"Kuwahata Eisuke"},"creator":{"@type":"Person","name":"Kuwahata Eisuke"},"accountablePerson":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightHolder":{"@type":"Person","name":"Kuwahata Eisuke"},"copyrightYear":"2019","dateCreated":"2019-12-07T23:57:04.00Z","datePublished":"2019-12-07T23:57:04.00Z","dateModified":"2019-12-07T23:57:04.00Z","publisher":{"@type":"Organization","name":"Kuwahata Eisuke","url":"https://mather.github.io","logo":{"@type":"ImageObject","url":"https:\/\/mather.github.iofavicon-32x32.png","width":"32","height":"32"}},"image":["https://mather.github.io/images/friendly-bear.png"],"url":"https:\/\/mather.github.io\/posts\/2019\/12\/08\/hugo_with_github_pages\/","wordCount":"323","genre":[],"keywords":["技術","hugo","advent calendar 2019"]}</script></head><body><header><div class="page-top
+."><a role=button class=navbar-burger data-target=navMenu aria-label=menu aria-expanded=false><span aria-hidden=true></span>
 <span aria-hidden=true></span>
-<span aria-hidden=true></span>
-<span aria-hidden=true></span>
-</a>
-<nav>
-<ul class=nav__list id=navMenu>
-<div class=nav__links>
-<li>
-<a href=/ title>Home</a>
-</li><li>
-<a href=/posts/ title>Posts</a>
-</li><li>
-<a href=/pages/profile/ title>Profile</a>
-</li></div><ul>
-<li>
-<a class=theme-switch title="Switch Theme">
-<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</li></ul></ul></nav></div></header><div class=wrapper>
-<aside><div class="sidebar
-.">
-<div class=sidebar__content>
-<div class=logo-title>
-<div class=title>
-<img src=/images/friendly-bear.png alt="profile picture">
-<h3 title><a href=/>Reveal My Ignorance</a></h3><div class=description>
-<p>Blog and Profile for Eisuke</p></div></div></div><ul class=social-links>
-<li>
-<a href=https://facebook.com/ekuwahata rel=me aria-label=Facebook title=Facebook>
-<i class="fab fa-facebook fa-2x" aria-hidden=true></i>
-</a>
-</li><li>
-<a href=https://instagram.com/mather rel=me aria-label=Instagram title=Instagram>
-<i class="fab fa-instagram fa-2x" aria-hidden=true></i>
-</a>
-</li><li>
-<a href=https://www.youtube.com/user/mather314 rel=me aria-label=YouTube title=YouTube>
-<i class="fab fa-youtube fa-2x" aria-hidden=true></i>
-</a>
-</li><li>
-<a href=https://github.com/mather rel=me aria-label=Github title=Github>
-<i class="fab fa-github fa-2x" aria-hidden=true></i>
-</a>
-</li></ul></div><footer class="footer footer--sidebar">
-<div class=by_farbox>
-<ul class=footer__list>
-<li class=footer__item>
-&copy;
-2018-2022 Kuwahata Eisuke All rights reserved.
-</li></ul></div></footer><script type=text/javascript src=/js/medium-zoom.min.4a40b20209bc12e56cf77caff5feaa93fecd6b0d97d51b33afb0265a732ce636.js integrity="sha256-SkCyAgm8EuVs93yv9f6qk/7Naw2X1Rszr7AmWnMs5jY=" crossorigin=anonymous></script>
+<span aria-hidden=true></span></a><nav><ul class=nav__list id=navMenu><div class=nav__links><li><a href=/ title>Home</a></li><li><a href=/posts/ title>Posts</a></li><li><a href=/pages/profile/ title>Profile</a></li></div><ul><li><a class=theme-switch title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></li></ul></ul></nav></div></header><div class=wrapper><aside><div class="sidebar
+."><div class=sidebar__content><div class=logo-title><div class=title><img src=/images/friendly-bear.png alt="profile picture"><h3 title><a href=/>Reveal My Ignorance</a></h3><div class=description><p>Blog and Profile for Eisuke</p></div></div></div><ul class=social-links><li><a href=https://facebook.com/ekuwahata rel=me aria-label=Facebook title=Facebook><i class="fab fa-facebook fa-2x" aria-hidden=true></i></a></li><li><a href=https://instagram.com/mather rel=me aria-label=Instagram title=Instagram><i class="fab fa-instagram fa-2x" aria-hidden=true></i></a></li><li><a href=https://www.youtube.com/user/mather314 rel=me aria-label=YouTube title=YouTube><i class="fab fa-youtube fa-2x" aria-hidden=true></i></a></li><li><a href=https://github.com/mather rel=me aria-label=Github title=Github><i class="fab fa-github fa-2x" aria-hidden=true></i></a></li></ul></div><footer class="footer footer--sidebar"><div class=by_farbox><ul class=footer__list><li class=footer__item>&copy;
+2018-2022 Kuwahata Eisuke All rights reserved.</li></ul></div></footer><script type=text/javascript src=/js/medium-zoom.min.4a40b20209bc12e56cf77caff5feaa93fecd6b0d97d51b33afb0265a732ce636.js integrity="sha256-SkCyAgm8EuVs93yv9f6qk/7Naw2X1Rszr7AmWnMs5jY=" crossorigin=anonymous></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=GTM-M3PT4KW"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-M3PT4KW")</script>
-</div></aside><main>
-<div class=autopagerize_page_element>
-<div class=content>
-<div class="post
-.">
-<div class=post-content>
-<div class=post-title>
-<h1>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</h1></div><p><a href=https://qiita.com/advent-calendar/2019/miyazaki>宮崎 IT 関連勉強会 Advent Calendar 2019</a> 8 日目の記事です。</p><p>皆さん、Github 活用してますか？</p><p>Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-M3PT4KW")</script></div></aside><main><div class=autopagerize_page_element><div class=content><div class="post
+."><div class=post-content><div class=post-title><h1>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</h1></div><p><a href=https://qiita.com/advent-calendar/2019/miyazaki>宮崎 IT 関連勉強会 Advent Calendar 2019</a> 8 日目の記事です。</p><p>皆さん、Github 活用してますか？</p><p>Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。
 特に、 <code>[アカウント名].github.io</code> という名前のリポジトリの場合はドメイン直下のページが作成できます。</p><p>参考: <a href=https://help.github.com/ja/github/working-with-github-pages/about-github-pages#github-pages-%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E>GitHub Pages サイトの種類</a></p><p>それに加えて、<a href=https://github.blog/changelog/2019-11-11-github-actions-is-generally-available/>Github Actions が一般に公開されました</a>。
-これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。</p><p>これらを組み合わせると、以下のようなワークフローが可能になります。</p><ul>
-<li>静的サイトジェネレーター(Hugo, Jekyll, etc&mldr;) でサイトを作る</li><li>ローカルでレビューし、問題なければ指定のブランチにプッシュ</li><li>Github Actions でプッシュを検知し、静的サイトをビルド</li><li><code>[アカウント名].github.io</code> の場合、ビルド完了した静的サイトを <code>master</code> ブランチにデプロイ
-<ul>
-<li>それ以外のリポジトリの場合は <code>gh-pages</code> ブランチがデプロイ先となります</li></ul></li></ul><p>今回はこれを <a href=https://gohugo.io/>Hugo</a> でやってみよう、という話です。</p><h2 id=ポートフォリオを作る>ポートフォリオを作る</h2><p>Hugo をインストールします。Mac なので Homebrew でインストールできます。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ brew install hugo
+これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。</p><p>これらを組み合わせると、以下のようなワークフローが可能になります。</p><ul><li>静的サイトジェネレーター(Hugo, Jekyll, etc&mldr;) でサイトを作る</li><li>ローカルでレビューし、問題なければ指定のブランチにプッシュ</li><li>Github Actions でプッシュを検知し、静的サイトをビルド</li><li><code>[アカウント名].github.io</code> の場合、ビルド完了した静的サイトを <code>master</code> ブランチにデプロイ<ul><li>それ以外のリポジトリの場合は <code>gh-pages</code> ブランチがデプロイ先となります</li></ul></li></ul><p>今回はこれを <a href=https://gohugo.io/>Hugo</a> でやってみよう、という話です。</p><h2 id=ポートフォリオを作る>ポートフォリオを作る</h2><p>Hugo をインストールします。Mac なので Homebrew でインストールできます。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ brew install hugo
 </span></span></code></pre></div><p>今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ hugo new site . --force
 </span></span></code></pre></div><p>Hugo のテーマはシンプルな <a href=https://themes.gohugo.io/hermit/>hermit</a> にしてみました。
 個人的にはこのくらい落ち着いた色合いが好みです。</p><p>インストール手順はテーマのページに記載されているドキュメントのとおりですので割愛します。</p><p>設定ファイルである <code>config.toml</code> は<a href=https://github.com/Track3/hermit/blob/master/exampleSite/config.toml>テーマのデモページで適用されているもの</a>を参考に自分のページに合わせて編集します。</p><p>トップページのメニューはこれから作るパスを考えながら設定します。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-toml data-lang=toml><span class=line><span class=cl><span class=p>[</span><span class=nx>menu</span><span class=p>]</span>
@@ -127,8 +46,7 @@ Kuwahata Eisuke
 </span></span><span class=line><span class=cl>$ git commit -v
 </span></span></code></pre></div><h2 id=github-actions-の準備>Github Actions の準備</h2><p>リポジトリメニューの Actions を選択すると Github Actions のワークフロー (workflow) を作成できます。</p><p>ワークフローを作るときはすでに用意されているワークフローを参考に生成することもできますが、今回は自分で作るので &ldquo;Set up a workflow yourself&rdquo; ボタンを押します。</p><p>すると YAML ファイルを作成するエディタとマーケットプレイス(Marketplace)が表示されます。
 エディタではワークフロー定義の文法エラーなどを指摘してくれます。
-また、Marketplace にはすでに Actions で利用可能なアクションが検索可能な状態になっていますので、目当てのものを探して導入することでワークフローを手軽に構成できます。</p><p>今回はエディタ開始時にすでに指定されている <code>actions/checkout@v1</code> 以外に、以下の action を利用します。</p><ul>
-<li><code>peaceiris/actions-hugo@v2.3.0</code> : Hugo をインストールする</li><li><code>peaceiris/actions-gh-pages@v2.5.1</code> : Github Pages をデプロイする</li></ul><p>これらを使って構成した Workflow は次のようになります。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yml data-lang=yml><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy Github Pages</span><span class=w>
+また、Marketplace にはすでに Actions で利用可能なアクションが検索可能な状態になっていますので、目当てのものを探して導入することでワークフローを手軽に構成できます。</p><p>今回はエディタ開始時にすでに指定されている <code>actions/checkout@v1</code> 以外に、以下の action を利用します。</p><ul><li><code>peaceiris/actions-hugo@v2.3.0</code> : Hugo をインストールする</li><li><code>peaceiris/actions-gh-pages@v2.5.1</code> : Github Pages をデプロイする</li></ul><p>これらを使って構成した Workflow は次のようになります。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yml data-lang=yml><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy Github Pages</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>on</span><span class=p>:</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>push</span><span class=p>:</span><span class=w>
@@ -158,19 +76,8 @@ Kuwahata Eisuke
 </span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>ACTIONS_DEPLOY_KEY</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.ACTIONS_DEPLOY_KEY }}</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>PUBLISH_BRANCH</span><span class=p>:</span><span class=w> </span><span class=l>master</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>PUBLISH_DIR</span><span class=p>:</span><span class=w> </span><span class=l>./public</span><span class=w>
-</span></span></span></code></pre></div><p>内容は各ステップの <code>name</code> にあるとおりです。</p><ul>
-<li>ソースコードをチェックアウト</li><li>submodule をチェックアウト ( <code>themes/hermit</code> を submodule で導入したため )</li><li>Hugo をインストール</li><li>Hugo をビルド</li><li>Github Pages へデプロイ</li></ul><p><code>uses</code> ではなく <code>run</code> になっているステップでは、実際にこのコマンドをシェルで実行するだけです。</p><p>作成が完了したら &ldquo;Start Commit&rdquo; を押してコミットを作成するのですが、直接 <code>master</code> ブランチにコミットするのではなく、 <code>hugo</code> ブランチに作成したいのでプルリクエストを作成する方を選びます。</p><h3 id=デプロイキー-deploy-key-の登録>デプロイキー (Deploy Key) の登録</h3><p>上記ワークフロー定義の <code>ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}</code> となっている部分でデプロイキーの指定が必要なのですが、こちらはローカルで SSH 鍵ペアを生成する必要があります。</p><p>以下はパスフレーズなしの鍵ペアを作成するコマンドの例です。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &#34;[Githubアカウントのメールアドレス]&#34; -N &#34;&#34;
-</span></span></code></pre></div><p>生成した鍵ペアをリポジトリのメニューから以下のように登録します。</p><ul>
-<li><code>Setting</code> -> <code>Deploy Key</code> -> 公開鍵 (<code>.pub</code> の方) を追加</li><li><code>Setting</code> -> <code>Secrets</code> -> <code>ACTIONS_DEPLOY_KEY</code> というキー名で秘密鍵を登録</li></ul><p>これで準備完了です。 <code>hugo</code> ブランチが更新されたら、ワークフローが起動します。</p><h2 id=まとめ>まとめ</h2><p>やや操作は多くなりましたが、静的サイトジェネレーターを使って Github Pages を自動デプロイする方法が Github だけで完結するのはとても便利だと思います。</p><p>ぜひ皆さんもワークフローを作ってみてください。</p></div><div class=post-footer>
-<div class=info>
-<span class=separator><a class=tag href=/tags/%E6%8A%80%E8%A1%93/>技術</a><a class=tag href=/tags/hugo/>hugo</a><a class=tag href=/tags/advent-calendar-2019/>advent calendar 2019</a></span>
-</div></div></div></div></div></main></div><footer class="footer footer--base">
-<div class=by_farbox>
-<ul class=footer__list>
-<li class=footer__item>
-&copy;
-2018-2022 Kuwahata Eisuke All rights reserved.
-</li></ul></div></footer><script type=text/javascript src=/js/medium-zoom.min.4a40b20209bc12e56cf77caff5feaa93fecd6b0d97d51b33afb0265a732ce636.js integrity="sha256-SkCyAgm8EuVs93yv9f6qk/7Naw2X1Rszr7AmWnMs5jY=" crossorigin=anonymous></script>
+</span></span></span></code></pre></div><p>内容は各ステップの <code>name</code> にあるとおりです。</p><ul><li>ソースコードをチェックアウト</li><li>submodule をチェックアウト ( <code>themes/hermit</code> を submodule で導入したため )</li><li>Hugo をインストール</li><li>Hugo をビルド</li><li>Github Pages へデプロイ</li></ul><p><code>uses</code> ではなく <code>run</code> になっているステップでは、実際にこのコマンドをシェルで実行するだけです。</p><p>作成が完了したら &ldquo;Start Commit&rdquo; を押してコミットを作成するのですが、直接 <code>master</code> ブランチにコミットするのではなく、 <code>hugo</code> ブランチに作成したいのでプルリクエストを作成する方を選びます。</p><h3 id=デプロイキー-deploy-key-の登録>デプロイキー (Deploy Key) の登録</h3><p>上記ワークフロー定義の <code>ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}</code> となっている部分でデプロイキーの指定が必要なのですが、こちらはローカルで SSH 鍵ペアを生成する必要があります。</p><p>以下はパスフレーズなしの鍵ペアを作成するコマンドの例です。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &#34;[Githubアカウントのメールアドレス]&#34; -N &#34;&#34;
+</span></span></code></pre></div><p>生成した鍵ペアをリポジトリのメニューから以下のように登録します。</p><ul><li><code>Setting</code> -> <code>Deploy Key</code> -> 公開鍵 (<code>.pub</code> の方) を追加</li><li><code>Setting</code> -> <code>Secrets</code> -> <code>ACTIONS_DEPLOY_KEY</code> というキー名で秘密鍵を登録</li></ul><p>これで準備完了です。 <code>hugo</code> ブランチが更新されたら、ワークフローが起動します。</p><h2 id=まとめ>まとめ</h2><p>やや操作は多くなりましたが、静的サイトジェネレーターを使って Github Pages を自動デプロイする方法が Github だけで完結するのはとても便利だと思います。</p><p>ぜひ皆さんもワークフローを作ってみてください。</p></div><div class=post-footer><div class=info><span class=separator><a class=tag href=/tags/%E6%8A%80%E8%A1%93/>技術</a><a class=tag href=/tags/hugo/>hugo</a><a class=tag href=/tags/advent-calendar-2019/>advent calendar 2019</a></span></div></div></div></div></div></main></div><footer class="footer footer--base"><div class=by_farbox><ul class=footer__list><li class=footer__item>&copy;
+2018-2022 Kuwahata Eisuke All rights reserved.</li></ul></div></footer><script type=text/javascript src=/js/medium-zoom.min.4a40b20209bc12e56cf77caff5feaa93fecd6b0d97d51b33afb0265a732ce636.js integrity="sha256-SkCyAgm8EuVs93yv9f6qk/7Naw2X1Rszr7AmWnMs5jY=" crossorigin=anonymous></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=GTM-M3PT4KW"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-M3PT4KW")</script>
-</body></html>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-M3PT4KW")</script></body></html>
