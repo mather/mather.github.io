@@ -1,6 +1,8 @@
 ---
 title: "SyncTimerの使い方動画を作りました"
 date: 2022-03-15T19:00:00+09:00
+categories:
+  - SyncTimer開発
 tags:
   - SyncTimer
 ---

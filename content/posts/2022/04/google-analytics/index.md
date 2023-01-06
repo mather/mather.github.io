@@ -1,6 +1,8 @@
 ---
 title: "SyncTimer に Google Analytics を導入した"
 date: 2022-04-30T19:00:00+09:00
+categories:
+  - SyncTimer開発
 tags:
   - 技術
   - SyncTimer

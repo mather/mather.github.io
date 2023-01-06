@@ -2,6 +2,8 @@
 title: "Parcel to Vite"
 date: 2022-03-15T21:00:00+09:00
 draft: true
+categories:
+  - SyncTimer開発
 tags:
   - 技術
   - SyncTimer

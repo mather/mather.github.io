@@ -1,6 +1,8 @@
 ---
 title: "SyncTimerのリファクタリング"
 date: 2022-11-15T22:32:53+09:00
+categories:
+  - SyncTimer開発
 tags:
   - 技術
   - SyncTimer

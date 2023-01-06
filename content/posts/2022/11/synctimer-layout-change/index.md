@@ -1,6 +1,8 @@
 ---
 title: "SyncTimerのレイアウトを変更"
 date: 2022-11-10T10:42:00+09:00
+categories:
+  - SyncTimer開発
 tags:
   - SyncTimer
 ---

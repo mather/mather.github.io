@@ -1,6 +1,8 @@
 ---
 title: "時間の表示を切り替えられるようにした"
 date: 2022-11-18T00:29:11+09:00
+categories:
+  - SyncTimer開発
 tags:
   - SyncTimer
 ---
