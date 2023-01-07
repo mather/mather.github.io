@@ -94,10 +94,14 @@ menu:
       url: "/"
       weight: 10
 
+    - name: "Profile"
+      url: "/pages/profile/"
+      weight: 15
+
     - name: "Posts"
       url: "/posts/"
       weight: 20
 
-    - name: "Profile"
-      url: "/pages/profile/"
+    - name: "Tags"
+      url: "/tags/"
       weight: 30
