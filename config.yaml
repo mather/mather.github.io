@@ -41,7 +41,7 @@ params:
   author: "Kuwahata Eisuke"
   description: "Blog and Profile for Eisuke"
   profilePicture: "images/friendly-bear.png"
-  images: 
+  images:
     - "images/friendly-bear.png"
   copyright: "2018-{{ YEAR }} Kuwahata Eisuke All rights reserved."
   reversepagetitle: true
@@ -55,9 +55,9 @@ params:
   listDateFormat: "2006-01-02"
 
   # images: [""]
-  googleFonts: 
+  googleFonts:
     - "M+PLUS+1p:wght@400;700"
-  customCss: 
+  customCss:
     - "css/text_style.css"
 
   doNotLoadAnimations: true
@@ -85,8 +85,8 @@ params:
 
   # KaTeX setting
   math:
-    enable: false  # options: true, false. Enable math support globally, default: false. You can always enable math on per page.
-    use: "katex"  # options: "katex", "mathjax". default is "katex".
+    enable: false # options: true, false. Enable math support globally, default: false. You can always enable math on per page.
+    use: "katex" # options: "katex", "mathjax". default is "katex".
 
 menu:
   main:
