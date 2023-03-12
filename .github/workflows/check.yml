@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v1
       - uses: actions/cache@v3
         with:
-          path: $TMPDIR/hugo_cache/
+          path: /tmp/hugo_cache/
           key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugomod-
@@ -25,7 +25,5 @@ jobs:
           hugo-version: "latest"
           # Download (if necessary) and use Hugo extended version. Example: true
           extended: true
-      - name: Display Hugo Config
-        run: hugo config
       - name: Build Hugo
         run: hugo -v --minify
