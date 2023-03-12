@@ -10,6 +10,8 @@ tags:
 
 [Loraというセリフ体のフォント](https://fonts.google.com/specimen/Lora) を選択可能にしてみた。
 
+<!--more-->
+
 {{<figure src="synctimer-serif-font.png" width="80%">}}
 
 きっかけになったのは今回もとあるVTuberの方の動画がきっかけ。
