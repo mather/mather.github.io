@@ -11,10 +11,9 @@ enableRobotsTXT: true
 metaDataFormat: "yaml"
 
 # Syntax highlighting
-pygmentsStyle: "trac"
-pygmentsUseClasses: true
-pygmentsCodeFences: true
-pygmentsCodefencesGuessSyntax: true
+markup:
+  highlight:
+    style: solarized-dark
 
 # Google Analytics
 # googleAnalytics: "UA-39290733-1"
