@@ -1,26 +1,26 @@
-body {
-  font-family: Helvetica, 'M PLUS 1p', sans-serif;
+* {
+  font-family: Helvetica, "M PLUS 1p", sans-serif;
 }
 
-.post .post-title h1 {
+code,
+code * {
+  font-family: monospace;
+}
+
+.nav__list-item {
   text-transform: none;
-  font-size: 2.2em;
-  line-height: 1.3;
 }
 
-.post .post-title h3 {
-  text-transform: none;
-}
-
-.post .post-content h2:before {
+.post .post__content h2:before {
   content: "# ";
 }
 
-.post .post-content h3:before {
+.post .post__content h3:before {
   content: "## ";
 }
 
-.post .post-content p, .post .post-content li {
+.post .post__content p,
+.post .post__content li {
   font-size: 1.6rem;
   line-height: 1.6em;
 }
