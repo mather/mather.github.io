@@ -1,6 +1,7 @@
 ---
 title: "SyncTimerにフォントを追加した"
 date: 2023-02-25T18:00:00+09:00
+summary: Loraというセリフ体のフォントを追加してタイマー表示で選択可能にしてみた
 categories:
   - SyncTimer開発
 tags:
@@ -9,8 +10,6 @@ tags:
 ---
 
 [Loraというセリフ体のフォント](https://fonts.google.com/specimen/Lora) を選択可能にしてみた。
-
-<!--more-->
 
 {{<figure src="synctimer-serif-font.png" width="80%">}}
 
