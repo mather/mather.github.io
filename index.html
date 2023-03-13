@@ -7,6 +7,10 @@
 <span aria-hidden=true class=navbar-burger__line></span>
 <span aria-hidden=true class=navbar-burger__line></span></a><nav class=nav><ul class=nav__list id=navMenu><li class=nav__list-item><a class=nav__link--active href=/ title>Home</a></li><li class=nav__list-item><a href=/pages/profile/ title>Profile</a></li><li class=nav__list-item><a href=/posts/ title>Posts</a></li><li class=nav__list-item><a href=/tags/ title>Tags</a></li></ul><ul class="nav__list nav__list--end"><li class=nav__list-item><div class=themeswitch><a title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></li></ul></nav></div></header><div class="post
 ."><div class=post__content></div></div><div class="post
+."><div class=post__content><h3><a href=/posts/2023/03/synctimer-split-modules/>SyncTimerのコードをいくつかのモジュールに分解した</a></h3><p>これまで Main.elm だけで作ってきた Elm のコードが増えて見通しが悪くなってきたので、いくつかのモジュールに分解した。 今回はリファクタリングなので機能の変更はなし。</p></div><div class=post__footer><em class="fas fa-calendar-day"></em>
+<span class=post__footer-date>2023-03-13</span>
+<span><a class=category href=/categories/synctimer%E9%96%8B%E7%99%BA/>SyncTimer開発</a></span>
+<span><a class=tag href=/tags/%E6%8A%80%E8%A1%93/>技術</a><a class=tag href=/tags/elm/>Elm</a></span></div></div><div class="post
 ."><div class=post__content><h3><a href=/posts/2023/02/synctimer-font/>SyncTimerにフォントを追加した</a></h3><p>Loraというセリフ体のフォントを追加してタイマー表示で選択可能にしてみた</p></div><div class=post__footer><em class="fas fa-calendar-day"></em>
 <span class=post__footer-date>2023-02-25</span>
 <span><a class=category href=/categories/synctimer%E9%96%8B%E7%99%BA/>SyncTimer開発</a></span>
@@ -43,12 +47,7 @@ https://sync-timer.netlify.app/about/
 ."><div class=post__content><h3><a href=/posts/2022/11/synctimer-layout-change/>SyncTimerのレイアウトを変更</a></h3><p>開始・リセットボタンとタイマーの表示設定の配置を変更した。</p></div><div class=post__footer><em class="fas fa-calendar-day"></em>
 <span class=post__footer-date>2022-11-10</span>
 <span><a class=category href=/categories/synctimer%E9%96%8B%E7%99%BA/>SyncTimer開発</a></span>
-<span><a class=tag href=/tags/synctimer/>SyncTimer</a></span></div></div><div class="post
-."><div class=post__content><h3><a href=/posts/2022/04/google-analytics/>SyncTimer に Google Analytics を導入した</a></h3><p>たぶん使ってる人はいるんだろうなー、と思いつつも利用報告をしてくれるユーザーはほぼいない。 それは当然で、報告するメリットもないし、不具合があったり使い勝手が悪いなーと思っても似たような手段はいくらでもあるので別のツールに切り替えるだけになる。 だったら自分で調べるしか無いよね、ということで Google Analytics を導入して実際のアクセスを調査するしか無いのである。
-今回は Elm で書いたアプリケーション内のイベントをGA4に送信する実装のお話。</p></div><div class=post__footer><em class="fas fa-calendar-day"></em>
-<span class=post__footer-date>2022-04-30</span>
-<span><a class=category href=/categories/synctimer%E9%96%8B%E7%99%BA/>SyncTimer開発</a></span>
-<span><a class=tag href=/tags/%E6%8A%80%E8%A1%93/>技術</a><a class=tag href=/tags/synctimer/>SyncTimer</a></span></div></div><div class=pagination><ul class=pagination__list><li class=pagination__list-item><span class="page-link current">1</span></li><li class=pagination__list-item><a class=page-link href=/page/2/>2</a></li><li class=pagination__list-item><a class=page-link href=/page/2/><i class="fa fa-angle-right" aria-label=Next></i></a></li></ul></div></main></div><footer class="footer footer__base"><ul class=footer__list><li class=footer__item>&copy;
+<span><a class=tag href=/tags/synctimer/>SyncTimer</a></span></div></div><div class=pagination><ul class=pagination__list><li class=pagination__list-item><span class="page-link current">1</span></li><li class=pagination__list-item><a class=page-link href=/page/2/>2</a></li><li class=pagination__list-item><a class=page-link href=/page/2/><i class="fa fa-angle-right" aria-label=Next></i></a></li></ul></div></main></div><footer class="footer footer__base"><ul class=footer__list><li class=footer__item>&copy;
 2018-2023 Kuwahata Eisuke All rights reserved.</li></ul></footer><script type=text/javascript src=/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ=" crossorigin=anonymous></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZCQPRE4NBR"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-ZCQPRE4NBR")</script></body></html>
