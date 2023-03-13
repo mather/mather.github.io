@@ -11,6 +11,10 @@ code * {
   text-transform: none;
 }
 
+.archive__list-title {
+  text-transform: none;
+}
+
 .post .post__content h2:before {
   content: "# ";
 }
