@@ -10,27 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: /tmp/hugo_cache
           key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
       - name: Setup Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
-          go-version: "^1.20.2"
+          go-version: '^1.20.2'
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
-          # The Hugo version to download (if necessary) and use. Example: 0.58.2
           hugo-version: "latest"
-          # Download (if necessary) and use Hugo extended version. Example: true
           extended: true
       - name: Build Hugo
         run: hugo -v --minify
       - name: GitHub Pages action
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./public
