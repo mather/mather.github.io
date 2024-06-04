@@ -26,3 +26,12 @@ ul.sns-links {
   display: inline-block;
   margin: .25rem;
 }
+
+.tag-items {
+  list-style: none;
+  padding-left: 10px;
+  line-height: normal;
+}
+.tag-items a {
+  text-decoration: none;
+}
