@@ -8,6 +8,8 @@ tags:
 
 [前回](/posts/2022/02/hash-collision) では数学的な側面として誕生日パラドックスに関する確率を求めた。
 
+{{<katex display>}}{{</katex>}}
+
 $$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$
 
 $$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$

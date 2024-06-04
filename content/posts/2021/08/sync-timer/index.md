@@ -1,9 +1,8 @@
 ---
 title: 同時視聴配信用のタイマーを作った話
 date: 2021-08-16T16:43:12+09:00
+summary: "SyncTimerを作るきっかけと、どんなライブラリを使っているかの話"
 image: sync-timer.png
-categories:
-  - SyncTimer開発
 tags:
   - 技術
   - Elm
