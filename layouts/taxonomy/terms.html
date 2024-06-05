@@ -1,0 +1,27 @@
+{{ define "main" }}
+  {{ $paginator := .Paginate .Paginator.Pages }}
+  {{ range $paginator.Pages.ByTitle }}
+    {{ $pageCount := len .Pages }}
+    <article class="gblog-post">
+      <header class="gblog-post__header">
+        <h1 class="gblog-post__title">
+          <a href="{{ .RelPermalink }}">{{ partial "utils/title" . }} ({{ len .Pages }} Post{{ if ne $pageCount 1 }}s{{ end }})</a>
+        </h1>
+      </header>
+
+      <footer class="gblog-post__meta">
+        <ul class="tag-items">
+          {{ range .Pages.ByDate.Reverse }}
+          <li>
+            <svg class="gblog-icon gblog_star"><use xlink:href="#gblog_star"></use></svg>
+            <span>
+              <a href="{{ .RelPermalink }}">{{ partial "utils/title" . }}</a>
+            </span>
+          </li>
+          {{ end }}
+        </ul>
+      </footer>
+    </article>
+  {{ end }}
+  {{ partial "pagination.html" . }}
+{{ end }}
