@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.127.0">Hugo</generator><title>宮崎 on Reveal My Ignorance</title><subtitle>Blog by Eisuke Kuwahata</subtitle><link href="https://mather.github.io/tags/%E5%AE%AE%E5%B4%8E/" rel="alternate" type="text/html" title="html"/><link href="https://mather.github.io/tags/%E5%AE%AE%E5%B4%8E/feed.xml" rel="self" type="application/atom+xml" title="atom"/><updated>2024-06-05T17:06:10+00:00</updated><id>https://mather.github.io/tags/%E5%AE%AE%E5%B4%8E/</id><entry><title>自分が感じる東京と宮崎の勉強会の違い</title><link href="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</id><published>2019-12-09T14:01:16+09:00</published><updated>2019-12-09T14:01:16+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://qiita.com/advent-calendar/2019/miyazaki"
+>宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a> 9 日目の記事です。
+投稿がものすごく遅れてしまい申し訳ない…。&lt;/p>
+&lt;p>数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="東京の場合"
+>
+東京の場合
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#東京の場合" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 東京の場合" href="#%e6%9d%b1%e4%ba%ac%e3%81%ae%e5%a0%b4%e5%90%88">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>まずはそもそもエンジニア  を含む人口密度が大きいために、勉強会の開催数や参加人数がものすごく多いです。
+そのため、こんなことが起こります。&lt;/p>
+&lt;ul>
+&lt;li>細分化 : 地域型、専門化、ニッチな領域の勉強会&lt;/li>
+&lt;li>参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い&lt;/li>
+&lt;li>ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="宮崎の場合"
+>
+宮崎の場合
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#宮崎の場合" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 宮崎の場合" href="#%e5%ae%ae%e5%b4%8e%e3%81%ae%e5%a0%b4%e5%90%88">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。
+東京の場合とは逆に次のような状況です。&lt;/p>
+&lt;ul>
+&lt;li>総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある&lt;/li>
+&lt;li>キャンセル率が低い（これは僕も結構驚き）&lt;/li>
+&lt;li>ある程度定番の登壇者や LT 登壇者がいる&lt;/li>
+&lt;li>多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい&lt;/li>
+&lt;li>ゆるふわ&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。&lt;/p>
+&lt;p>宮崎は点と点の結びつきでアットホームなコミュニティが形成されている面白い場所だと感じています。
+そのようなコミュニティをより盛り上げていくために、会社という枠を超えたところでエンジニア同士の会話や意見交換を楽しむ場として勉強会の形を模索していくことになるでしょう。&lt;/p>
+&lt;p>これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。
+そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。&lt;/p></content><category scheme="https://mather.github.io/tags/meetup" term="meetup" label="meetup"/><category scheme="https://mather.github.io/tags/%E5%AE%AE%E5%B4%8E" term="%E5%AE%AE%E5%B4%8E" label="宮崎"/><category scheme="https://mather.github.io/tags/advent-calendar-2019" term="advent-calendar-2019" label="advent calendar 2019"/></entry></feed>

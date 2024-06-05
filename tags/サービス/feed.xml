@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.127.0">Hugo</generator><title>サービス on Reveal My Ignorance</title><subtitle>Blog by Eisuke Kuwahata</subtitle><link href="https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9/" rel="alternate" type="text/html" title="html"/><link href="https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9/feed.xml" rel="self" type="application/atom+xml" title="atom"/><updated>2024-06-05T17:06:10+00:00</updated><id>https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9/</id><entry><title>同時視聴配信用のタイマーを作った話</title><link href="https://mather.github.io/posts/2021/08/sync-timer/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2021/08/sync-timer/</id><published>2021-08-16T16:43:12+09:00</published><updated>2021-08-16T16:43:12+09:00</updated><content type="html">
+&lt;p>作ったものはこちら&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://sync-timer.netlify.app/"
+>https://sync-timer.netlify.app/&lt;/a>&lt;/p>
+&lt;p>ソースコードはこちら&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://github.com/mather/simple-stopwatch"
+>https://github.com/mather/simple-stopwatch&lt;/a>&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="経緯"
+>
+経緯
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#経緯" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 経緯" href="#%e7%b5%8c%e7%b7%af">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。&lt;/p>
+&lt;blockquote class="twitter-tweet">&lt;p lang="ja" dir="ltr">以前VTuberの磁富モノエさん( &lt;a href="https://twitter.com/Jitomi_Monoe?ref_src=twsrc%5Etfw">@Jitomi_Monoe&lt;/a> )の Nintendo Direct 同時視聴配信で「マイナスからスタートするストップウォッチがほしい」って話があったから、最近Elmを書いてなかったから試しに作ってみた。&lt;a href="https://t.co/kCVSEZBV0C">https://t.co/kCVSEZBV0C&lt;/a>&lt;/p>&amp;mdash; mather / Eisuke Kuwahata (@mather314) &lt;a href="https://twitter.com/mather314/status/1292112179018137600?ref_src=twsrc%5Etfw">August 8, 2020&lt;/a>&lt;/blockquote>
+&lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8">&lt;/script>
+&lt;p>誰かに使われる予定もなく自己満足で開発を終え早一年…。&lt;/p>
+&lt;p>本当はグリーンバックとか入れたほうがいいのかな、とか考えながらやり残した感はあったのですが、細かく実装を追加してもどうせ使わないかと思うのでとりあえず放置していた。&lt;/p>
+&lt;p>そんな折、きっかけとなった VTuber の方も突然の引退…。
+「推しは推せるときに推しておけ」とはこのこと。&lt;/p>
+&lt;p>しかし、そういったイベントとは一切関係なく開発意欲は突然湧き上がってくるもので、&lt;/p>
+&lt;ul>
+&lt;li>使い慣れてたので Tailwind CSS を使ってたけど、1 ページだけのアプリに Tailwind はやりすぎ感があった&lt;/li>
+&lt;li>Elm アプリに対してもっと簡単に導入できる CSS はないだろうかと考えてた
+&lt;ul>
+&lt;li>最近 Pico.css というものの存在を知って使ってみたくなった&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>どうせ開発するならグリーンバックとか作っちゃえ&lt;/li>
+&lt;li>どうせ開発するならヘルプとか作って使いやすくしたい&lt;/li>
+&lt;/ul>
+&lt;p>と週末に思いついたことをガンガン作ってみた。&lt;/p>
+&lt;p>ひとまず、やりたいことはやったかな。
+あとはもし誰かからフィードバックがあったら考えよう。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="技術について"
+>
+技術について
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#技術について" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 技術について" href="#%e6%8a%80%e8%a1%93%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>言語、フレームワークなど技術的な要素は次のようなものです。&lt;/p>
+&lt;ul>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://elm-lang.org/"
+>Elm&lt;/a> 0.19.1
+&lt;ul>
+&lt;li>関数型プログラミング言語&lt;/li>
+&lt;li>TEA (The Elm Architecture)&lt;/li>
+&lt;li>0.19.0 がリリースされたのが 2018 年。 0.19.1 が 2019 年。なんかもうこれで慣れてきた。&lt;/li>
+&lt;li>未体験の方はぜひ一度触ってみて欲しい。エラーメッセージの丁寧さは群を抜いている。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://picocss.com/"
+>Pico.css&lt;/a> master(2021-08-13)
+&lt;ul>
+&lt;li>ミニマル CSS フレームワーク&lt;/li>
+&lt;li>&lt;code>div&lt;/code> とかではなく &lt;code>main&lt;/code>, &lt;code>section&lt;/code>, &lt;code>article&lt;/code> など適切な HTML を書くことで自然にスタイルが適用されるように設計されている&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://v2.parceljs.org/"
+>Parcel 2&lt;/a>
+&lt;ul>
+&lt;li>設定ファイルの（ほぼ）不要なビルドツール&lt;/li>
+&lt;li>Elm にも対応している&lt;/li>
+&lt;li>昨年の段階で使っていた v1 が非推奨になったので v2 へ変更したが、 &lt;code>2.0.0-rc.0&lt;/code> が最新だった。正式版をリリースしてから旧バージョンを非推奨にしたほうが良いのでは…？&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://www.netlify.com/"
+>Netlify&lt;/a>
+&lt;ul>
+&lt;li>Github と連携すると Github Actions なしでもある程度の CI, CD を行ってくれるホスティングサービス&lt;/li>
+&lt;li>静的ホスティングだけなら 10 サイトまで無料で公開できる&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="振り返って"
+>
+振り返って
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#振り返って" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 振り返って" href="#%e6%8c%af%e3%82%8a%e8%bf%94%e3%81%a3%e3%81%a6">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="ユーザーテストをしていない"
+>
+ユーザーテストをしていない
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#ユーザーテストをしていない" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ユーザーテストをしていない" href="#%e3%83%a6%e3%83%bc%e3%82%b6%e3%83%bc%e3%83%86%e3%82%b9%e3%83%88%e3%82%92%e3%81%97%e3%81%a6%e3%81%84%e3%81%aa%e3%81%84">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>本来ならちゃんと動いて満足行く出来になっているかユーザーにテストしてもらいたいのだが、そもそもユーザーを捕まえてテストしようとしていない。&lt;/p>
+&lt;p>誰か使ってみてくれないか。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="elm-と-css"
+>
+Elm と CSS
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#elm-と-css" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Elm と CSS" href="#elm-%e3%81%a8-css">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>関数型プログラミング言語のため、 &lt;a
+class="gblog-markdown__link"
+href="https://github.com/rtfeldman/elm-css"
+>elm-css&lt;/a> などで型付きの CSS 記述(CSS-in-JS)をするなどの選択肢も考えられる。&lt;/p>
+&lt;p>今回は CSS フレームワークに乗っかって手軽に書きたいという考えで、敢えて CSS を分離することにしてみた。
+個人的にはこれもありだと感じている。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="技術を試す"
+>
+技術を試す
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#技術を試す" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 技術を試す" href="#%e6%8a%80%e8%a1%93%e3%82%92%e8%a9%a6%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>不利益をもたらさない小さなサービスで新しい技術要素や実験的な試みをするのは大事だと改めて思った。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="小ネタ"
+>
+小ネタ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#小ネタ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 小ネタ" href="#%e5%b0%8f%e3%83%8d%e3%82%bf">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>タイマーのフォントは「D-DIN」。
+きっかけとなった VTuber の初回配信のカウントダウンに使われているフォント（だと思う）。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/><category scheme="https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9" term="%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9" label="サービス"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry></feed>

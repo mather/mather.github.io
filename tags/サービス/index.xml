@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>サービス on</title><link>https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9/</link><description>Recent content in サービス on</description><generator>Hugo -- gohugo.io</generator><language>ja-jp</language><lastBuildDate>Mon, 16 Aug 2021 16:43:12 +0900</lastBuildDate><atom:link href="https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9/index.xml" rel="self" type="application/rss+xml"/><item><title>同時視聴配信用のタイマーを作った話</title><link>https://mather.github.io/posts/2021/08/sync-timer/</link><pubDate>Mon, 16 Aug 2021 16:43:12 +0900</pubDate><guid>https://mather.github.io/posts/2021/08/sync-timer/</guid><description>作ったものはこちら
-https://sync-timer.netlify.app/
-ソースコードはこちら
-https://github.com/mather/simple-stopwatch
-経緯 きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。</description></item></channel></rss>

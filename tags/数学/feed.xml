@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.127.0">Hugo</generator><title>数学 on Reveal My Ignorance</title><subtitle>Blog by Eisuke Kuwahata</subtitle><link href="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6/" rel="alternate" type="text/html" title="html"/><link href="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6/feed.xml" rel="self" type="application/atom+xml" title="atom"/><updated>2024-06-05T17:06:10+00:00</updated><id>https://mather.github.io/tags/%E6%95%B0%E5%AD%A6/</id><entry><title>続・ランダム生成IDの衝突確率について</title><link href="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/02/another-form-for-hash-collision/</id><published>2022-02-10T17:25:18+09:00</published><updated>2022-02-10T17:25:18+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="/posts/2022/02/hash-collision"
+>前回&lt;/a> では数学的な側面として誕生日パラドックスに関する確率を求めた。&lt;/p>
+&lt;link
+rel="stylesheet"
+href="/"
+/>
+&lt;script defer src="/js/katex-e9218a95.bundle.min.js">&lt;/script>
+&lt;span class="gblog-katex ">
+\[\]&lt;/span>
+&lt;p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;p>これは余事象である「一度も衝突しない確率」を求めることで計算したが、余事象を使わずに求めることができるだろうか？&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="余事象を使わない方法"
+>
+余事象を使わない方法
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/#余事象を使わない方法" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 余事象を使わない方法" href="#%e4%bd%99%e4%ba%8b%e8%b1%a1%e3%82%92%e4%bd%bf%e3%82%8f%e3%81%aa%e3%81%84%e6%96%b9%e6%b3%95">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>「 \(n\) 回目までに衝突が発生する確率」を求めるには&lt;/p>
+&lt;ul>
+&lt;li>1回目に「初めて」衝突する確率 \(P_\text{fc}(1)\)( = 0 )&lt;/li>
+&lt;li>2回目に「初めて」衝突する確率 \(P_\text{fc}(2)\)&lt;/li>
+&lt;li>&amp;hellip;&lt;/li>
+&lt;li>\(n\) 回目に「初めて」衝突する確率 \(P_\text{fc}(n)\)&lt;/li>
+&lt;/ul>
+&lt;p>をそれぞれ求めて足し合わせれば良い。
+注意すべきポイントはそれぞれの「初めて衝突する事象」が重複していないことである。&lt;/p>
+&lt;p>具体的に求めていこう。&lt;/p>
+&lt;p>\(n = 1\) ならばどれが選ばれても衝突しないので、&lt;/p>
+&lt;p>$$ P_\text{fc}(1) = \frac{0}{M} = 0$$&lt;/p>
+&lt;p>となる。次に \(n = 2\) ならば、1つ目は何を選んでもよく、最初に選んだ1つと一致した場合なので、&lt;/p>
+&lt;p>$$ P_\text{fc}(2) = \frac{M}{M}\frac{1}{M} = \frac{1}{M}$$&lt;/p>
+&lt;p>となる。続いて、 \(n = 3\) ならば、2つ目までは衝突せず、先に選ばれた2つと一致した場合なので、&lt;/p>
+&lt;p>$$ P_\text{fc}(3) = \frac{M}{M}\frac{M-1}{M}\frac{2}{M}$$&lt;/p>
+&lt;p>となる。これを \(n\) の場合について考えると&lt;/p>
+&lt;p>$$ P_\text{fc}(n) = \frac{M!}{M^{n-1}(M-(n-1))!}\frac{n-1}{M}$$&lt;/p>
+&lt;p>となる。したがって求めるべき \(n\) 回目までに衝突が発生する確率は&lt;/p>
+&lt;p>$$ P_{\text{c}}&amp;rsquo;(n) = \sum_{k=1}^n P_\text{fc}(k) = \sum_{k=1}^n \frac{M!}{M^{k-1}(M-(k-1))!}\frac{k-1}{M}$$&lt;/p>
+&lt;p>となるはずである。&lt;/p>
+&lt;p>はたして、 \( P_{\text{c}}(n) = P_{\text{c}}&amp;rsquo;(n)\) となるだろうか？（一致しないとおかしいはずだが）&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="一致することを示す"
+>
+一致することを示す
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/#一致することを示す" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 一致することを示す" href="#%e4%b8%80%e8%87%b4%e3%81%99%e3%82%8b%e3%81%93%e3%81%a8%e3%82%92%e7%a4%ba%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>一致することを示そう。&lt;/p>
+&lt;p>まず、 \( P_\text{nc}(k)\) のときの数式とよく見比べて、形の違う部分 \(\frac{k-1}{M}\) に注目し次のように変形する。&lt;/p>
+&lt;p>$$ \frac{k-1}{M} = \frac{M-M+k-1}{M} = 1 - \frac{M-(k-1)}{M}$$&lt;/p>
+&lt;p>これにより、 \(P_\text{fc}(k)\) は次のように変形できる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_\text{fc}(k) &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!}\bigg\{1 - \frac{M-(k-1)}{M}\bigg\} \\
+&amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!}
+\end{align*}
+$$&lt;/p>
+&lt;p>したがって、総和である \(P_{\text{c}}&amp;rsquo;(n)\) は&lt;/p>
+&lt;p>$$ P_{\text{c}}&amp;rsquo;(n) = \sum_{k=1}^n \bigg\{ \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \bigg\} $$&lt;/p>
+&lt;p>となるが、総和の各項は次のように打ち消すことができる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_\text{fc}(k) + P_\text{fc}(k+1) &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} + \frac{M!}{M^{k}(M-k)!} - \frac{M!}{M^{k+1}(M-(k+1))!} \\ &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^{k+1}(M-(k+1))!}
+\end{align*}
+$$&lt;/p>
+&lt;p>結果として最初と最後だけが残り、次の結果が得られる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_{\text{c}}&amp;rsquo;(n) &amp;amp;= \sum_{k=1}^n \bigg\{ \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \bigg\} \\
+&amp;amp;= 1 - \frac{M!}{M^n(M-n)!} \\
+&amp;amp;= P_{\text{c}}(n)
+\end{align*}
+$$&lt;/p>
+&lt;p>よって、一致することが示せた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="別の考え方"
+>
+別の考え方
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/#別の考え方" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 別の考え方" href="#%e5%88%a5%e3%81%ae%e8%80%83%e3%81%88%e6%96%b9">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>\(n\) 回目で初めて衝突する確率 \(P_\text{fc}(n)\) から \(n\) 回目までに衝突が発生する確率 \(P_\text{c}(n)\) を計算してみたが、逆に考えることもできる。&lt;/p>
+&lt;p>\(P_\text{fc}(k)\) の変形後の数式を更に変形すると( \(P_\text{c}(0)\) は定義されていないため) \(k \geq 2\) の場合について次のことがわかる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_\text{fc}(k) &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \\
+&amp;amp;= \bigg(1 - \frac{M!}{M^k(M-k)!}\bigg) - \bigg(1 - \frac{M!}{M^{k-1}(M-(k-1))!}\bigg) \\
+&amp;amp;= P_\text{c}(k) - P_\text{c}(k-1)
+\end{align*}
+$$&lt;/p>
+&lt;p>よく考えればわかることだが、 \(n\) 回目で「初めて」衝突する場合というのは「\(n\) 回目までに衝突が起こる場合」から「 \(n-1\) 回目までに衝突が発生する場合」を取り除いたものに等しく、この変形は納得の行く結果となる。&lt;/p>
+&lt;p>この結果から改めて \(P_{\text{c}}&amp;rsquo;(n)\) を計算してみると同様の結果が得られる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_{\text{c}}&amp;rsquo;(n) &amp;amp;= \sum_{k=2}^n\{P_\text{c}(k) - P_\text{c}(k-1)\} + P_\text{fc}(1) \\
+&amp;amp;= P_\text{c}(k) - P_\text{c}(1) + P_\text{fc}(1) \\
+&amp;amp;= P_\text{c}(k)
+\end{align*}
+$$&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6" term="%E6%95%B0%E5%AD%A6" label="数学"/></entry><entry><title>ランダムに生成したIDが衝突する確率の議論</title><link href="https://mather.github.io/posts/2022/02/hash-collision/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/02/hash-collision/</id><published>2022-02-03T20:00:00+09:00</published><updated>2022-02-03T20:00:00+09:00</updated><content type="html">
+&lt;p>「ランダムなIDをあるパターンに従って生成するとき、どう設計すべきか？」という質問があったので技術的な側面と数学的な側面で説明してみよう。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="技術的な側面"
+>
+技術的な側面
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#技術的な側面" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 技術的な側面" href="#%e6%8a%80%e8%a1%93%e7%9a%84%e3%81%aa%e5%81%b4%e9%9d%a2">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そもそも衝突したくないなら典型的な方法として「時間の情報を含めてIDを生成する」という方法があり、
+UUIDv1にもタイムスタンプが使われているし、 &lt;a
+class="gblog-markdown__link"
+href="https://github.com/ulid/spec"
+>ULID&lt;/a> という選択肢もある。&lt;/p>
+&lt;p>しかし、UUIDv1はMACアドレスに依存してしまう設計なので現在はほぼ使われていないし、ULIDは最初の10桁がタイムスタンプ情報なので短く詰めることでランダム性を失ったり、IDそのものに特定の構造を定義したいという場合はそのままでは使えない。&lt;/p>
+&lt;p>今回の質問でも特定の構造が指定された場合の話だったので、シンプルにランダム生成することを前提とした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="もし衝突したら何が問題か"
+>
+もし衝突したら何が問題か
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#もし衝突したら何が問題か" class="gblog-post__anchor clip flex align-center" aria-label="Anchor もし衝突したら何が問題か" href="#%e3%82%82%e3%81%97%e8%a1%9d%e7%aa%81%e3%81%97%e3%81%9f%e3%82%89%e4%bd%95%e3%81%8c%e5%95%8f%e9%a1%8c%e3%81%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>IDの生成直後にすぐDBに保存する仕組みであれば、DBに登録済みか確認し重複している場合には再生成すれば実用上は問題なく使える。
+（もちろん、衝突が何度も発生するような状況ではパフォーマンスの問題に発展してしまうが）&lt;/p>
+&lt;p>それでも問題になるのは次のようなケースが考えられる。&lt;/p>
+&lt;ul>
+&lt;li>一時的にIDを生成しユーザーがデータを入力したタイミングでDBに保存するため、生成時には重複が検知できない&lt;/li>
+&lt;li>多数の同時リクエストや冗長構成によって、ほぼ同時にID生成される可能性が高く、DBに保存されていたとして生成時の重複が検知できない可能性がある
+&lt;ul>
+&lt;li>かといってINSERT時のテーブルロックなどをしてしまうとパフォーマンス上の問題となってしまう&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>そのような状況の解決を図ったID生成方法の実例に &lt;a
+class="gblog-markdown__link"
+href="https://developer.twitter.com/ja/docs/basics/twitter-ids"
+>Twitter IDs(Snowflake)&lt;/a> がある。
+大規模なサービスではID生成だけでもミッションクリティカルな機能になったりもする。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="数学的な側面"
+>
+数学的な側面
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#数学的な側面" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 数学的な側面" href="#%e6%95%b0%e5%ad%a6%e7%9a%84%e3%81%aa%e5%81%b4%e9%9d%a2">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;link
+rel="stylesheet"
+href="/"
+/>
+&lt;script defer src="/js/katex-e9218a95.bundle.min.js">&lt;/script>
+&lt;span class="gblog-katex ">
+\(\)&lt;/span>
+&lt;p>数学的には「&lt;a
+class="gblog-markdown__link"
+href="https://ja.wikipedia.org/wiki/%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AE%E3%83%91%E3%83%A9%E3%83%89%E3%83%83%E3%82%AF%E3%82%B9"
+>誕生日のパラドックス&lt;/a>」が有名である。&lt;/p>
+&lt;p>\( M \) を生成可能なパターン数とする。
+例えば 8 桁の数字でランダムな値を作る場合、&lt;code>00000000&lt;/code> から &lt;code>99999999&lt;/code> までの範囲で \(10^8\) 個生成可能である。&lt;/p>
+&lt;p>このうち、 \(n\) 回ランダムに生成したとき「一度でも衝突が発生する確率」を考える。
+「\( n \) 回目で発生する確率」と読み間違えないように注意してほしい。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="余事象の確率で考える"
+>
+余事象の確率で考える
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#余事象の確率で考える" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 余事象の確率で考える" href="#%e4%bd%99%e4%ba%8b%e8%b1%a1%e3%81%ae%e7%a2%ba%e7%8e%87%e3%81%a7%e8%80%83%e3%81%88%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>「\(n\) 回生成したときに一度でも衝突が発生する」ということを考えたいとき、「\(n\) 回生成しても一度も衝突が発生しなかった場合」の余事象を考えれば良い。&lt;/p>
+&lt;p>「全く衝突が発生しなかった場合」の反対なので、「少なくとも一度は衝突が発生している場合」ということになる。&lt;/p>
+&lt;p>「\(n\) 回生成しても一度も衝突が発生しない確率 \(P_\text{nc}(n)\)」を求めよう。&lt;/p>
+&lt;p>\(n=1\) ならば、 \(M\)個中どれが選ばれても衝突することがないので、 \(\frac{M}{M} = 1\) (100%)である。&lt;/p>
+&lt;p>次に \(n=2\) ならば、 \(M\)個中最初に選んだものを除く \(M-1\) 個から選ばれても衝突することがないので、 \(\frac{M}{M} \frac{M-1}{M}\) である。&lt;/p>
+&lt;p>このようにして、衝突が発生しない確率が次のように計算できる&lt;/p>
+&lt;p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;p>つまり衝突が発生する確率は全確率 1 から発生しない確率を引いたものとなる。&lt;/p>
+&lt;p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="数値計算してみる"
+>
+数値計算してみる
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#数値計算してみる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 数値計算してみる" href="#%e6%95%b0%e5%80%a4%e8%a8%88%e7%ae%97%e3%81%97%e3%81%a6%e3%81%bf%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>Node.js で次のようなコードを実行してみる&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">M&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">8&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">1.0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">p_nc&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mf">0.5&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">n&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">*=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">M&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="nx">M&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sb">`n = &lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">`&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>数値計算上の誤差はあるだろうが、計算結果は &lt;code>n = 11775&lt;/code> となる。
+上記の「8桁の数字」で生成されるIDでは、11,775回生成するだけで衝突が発生する確率が50%を超える結果となる。&lt;/p>
+&lt;p>では、実際に生成してみて衝突が発生するまでの生成回数を調べてみよう。100回試してみて、その平均値を取ってみる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">M&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">8&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">function&lt;/span> &lt;span class="nx">collisionTest&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">memo&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">generated&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ceil&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">random&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">M&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">memo&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">generated&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">memo&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">generated&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">generated&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ceil&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">random&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">M&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nb">Object&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">keys&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">memo&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nx">length&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">trial&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">100&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">results&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[...&lt;/span>&lt;span class="nb">Array&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">trial&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nx">keys&lt;/span>&lt;span class="p">()].&lt;/span>&lt;span class="nx">map&lt;/span>&lt;span class="p">(()&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="nx">collisionTest&lt;/span>&lt;span class="p">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">average&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">results&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">reduce&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="nx">a&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">b&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="nx">a&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="nx">b&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mf">1.0&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="nx">trial&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sb">`average = &lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">average&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">`&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>average = 11866.35&lt;/code> という結果になる。
+ランダムなので実行ごとにばらつきはあるが、平均値が上記の50%の確率で衝突する値に近いことがわかる。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="実用的な範囲は"
+>
+実用的な範囲は？
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#実用的な範囲は" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 実用的な範囲は？" href="#%e5%ae%9f%e7%94%a8%e7%9a%84%e3%81%aa%e7%af%84%e5%9b%b2%e3%81%af">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>実用性を考えると、衝突確率が1%未満である安全性の高い範囲を考えておきたい。
+&lt;code>p_nc &amp;gt; 0.99&lt;/code> と置き換えればその値は計算でき、 &lt;code>n = 1419&lt;/code> である。
+設計するサービスが1,000個未満のIDで運用できるなら衝突する可能性はかなり少ないだろうが、それを超え始めると度々衝突が発生することも考えられるため、サービスのスケールを見積もりながら安全な範囲を計算すると良い。&lt;/p>
+&lt;p>一例として、先程の確率計算を関数化したものを使ってみる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * max_ids: 生成可能なIDの数
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * p_under: 衝突確率がこれ以下である最大値を求める (0以上1未満の値を指定)
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">function&lt;/span> &lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">max_ids&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">p_under&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">1.0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">p_nc&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="nx">p_under&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">n&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">*=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">max_ids&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="nx">max_ids&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">8&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.01&lt;/span>&lt;span class="p">);&lt;/span> &lt;span class="c1">// =&amp;gt; 1419
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">9&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.01&lt;/span>&lt;span class="p">);&lt;/span> &lt;span class="c1">// =&amp;gt; 4484
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.01&lt;/span>&lt;span class="p">);&lt;/span> &lt;span class="c1">// =&amp;gt; 14179
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>「誕生日のパラドックス」の解説にもあるように、「思ったより少ない生成個数で衝突が発生しやすい」ということを意識して、ランダムなIDを生成すると良い。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6" term="%E6%95%B0%E5%AD%A6" label="数学"/></entry></feed>

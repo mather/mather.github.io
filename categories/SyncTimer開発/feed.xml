@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.127.0">Hugo</generator><title>Sync Timer開発 on Reveal My Ignorance</title><subtitle>Blog by Eisuke Kuwahata</subtitle><link href="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA/" rel="alternate" type="text/html" title="html"/><link href="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA/feed.xml" rel="self" type="application/atom+xml" title="atom"/><updated>2024-06-05T17:06:10+00:00</updated><id>https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA/</id><entry><title>SyncTimerのコードをいくつかのモジュールに分解した</title><link href="https://mather.github.io/posts/2023/03/synctimer-split-modules/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2023/03/synctimer-split-modules/</id><published>2023-03-13T17:28:02+09:00</published><updated>2023-03-13T17:28:02+09:00</updated><content type="html">
+&lt;p>これまで &lt;code>Main.elm&lt;/code> だけで作ってきた Elm のコードが増えて見通しが悪くなってきたので、いくつかのモジュールに分解した。
+今回はリファクタリングなので機能の変更はなし。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="モジュールへの分解"
+>
+モジュールへの分解
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#モジュールへの分解" class="gblog-post__anchor clip flex align-center" aria-label="Anchor モジュールへの分解" href="#%e3%83%a2%e3%82%b8%e3%83%a5%e3%83%bc%e3%83%ab%e3%81%b8%e3%81%ae%e5%88%86%e8%a7%a3">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>分解前のコードが691行になっていた。ここまで増えるとスクロールも疲れるし、どこに何があるかわからなくなってしまう。&lt;/p>
+&lt;p>そこで、大きな構成要素を整理しモジュールに分けてみることにした。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Main.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>main&lt;/code> 関数、および起動時のパラメータ管理。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>Model.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>Model&lt;/code> 型を中心としたデータの定義とデータの変換に関する関数群。&lt;/li>
+&lt;li>&lt;code>Cmd Msg&lt;/code> , &lt;code>Html Msg&lt;/code> を含まない純粋なもの。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>Msg.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>Msg&lt;/code> 型、 &lt;code>update&lt;/code> 関数の定義。&lt;/li>
+&lt;li>ユーザーインタラクションに対するふるまい。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>View.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>view&lt;/code> 関数の定義。&lt;/li>
+&lt;li>画面表示に関するもの。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>Analytics.elm&lt;/code>
+&lt;ul>
+&lt;li>Google Analytics 向けのイベント送信の定義。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>どうやって分解するかは我流だが、それぞれのファイルがどのライブラリやモジュールに依存するか見るとだいぶスッキリしたように見える。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="import-で見る依存関係"
+>
+import で見る依存関係
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#import-で見る依存関係" class="gblog-post__anchor clip flex align-center" aria-label="Anchor import で見る依存関係" href="#import-%e3%81%a7%e8%a6%8b%e3%82%8b%e4%be%9d%e5%ad%98%e9%96%a2%e4%bf%82">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>それぞれのファイルから &lt;code>import&lt;/code> を抜き出してみる。&lt;/p>
+&lt;p>&lt;code>Main.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Browser&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Browser.Events&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeBoolean&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeFgFont&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Msg&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Msg&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">update&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">View&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">view&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>main&lt;/code> 関数はすべての起点なので &lt;code>Model&lt;/code>, &lt;code>Msg&lt;/code>, &lt;code>View&lt;/code> のモジュールを使っていることは当然なのだが、
+それ以外が &lt;code>main&lt;/code> 関数を作るための &lt;code>Browser&lt;/code> と、 &lt;code>subscriptions&lt;/code> に使う &lt;code>Browser.Events&lt;/code> だけになっていてかなりシンプルになった。&lt;/p>
+&lt;p>&lt;code>Model.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Dict&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Time&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>たったこれだけ。他のモジュールへの依存もなく、データを中心とした純粋なモジュールになった。&lt;/p>
+&lt;p>&lt;code>Msg.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Analytics&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">timerFastForwardEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerPauseEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerResetEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerRewindEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerStartEvent&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Dict&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">BgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">FgFont&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBoolean&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeFgFont&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Time&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Url.Builder&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">UB&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>設定の更新時にURLを同期させる目的で &lt;code>Url.Builder&lt;/code> を使用している以外は、 &lt;code>View&lt;/code> にも依存しておらず &lt;code>Model&lt;/code> を中心に動作していることがはっきりしている。&lt;/p>
+&lt;p>&lt;code>View.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">button&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">details&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">div&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">input&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">option&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">select&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">span&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">summary&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">text&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Attributes&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">A&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">checked&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">class&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">for&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">id&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">selected&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">step&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">type_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">value&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Events&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">onClick&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">onInput&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">BgColor&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">FgFont&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeFgFont&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeFgFont&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Msg&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Msg&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>Model&lt;/code>, &lt;code>Msg&lt;/code> に依存しているのは言うまでもないが、それ以外は完全に &lt;code>Html&lt;/code> 関連のインポートだけになっている。
+逆に言えば、 &lt;code>Html&lt;/code> 関連のインポートは &lt;code>View.elm&lt;/code> だけしか存在しない。&lt;/p>
+&lt;p>&lt;code>Analytics.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">port&lt;/span> &lt;span class="kr">module&lt;/span> &lt;span class="kt">Analytics&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="nf">(..)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Json.Encode&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">E&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeFgFont&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Analytics に送信するための &lt;code>port&lt;/code> の定義もここに配置したので最初の宣言が &lt;code>port module&lt;/code> となっている。
+また、 &lt;code>Json&lt;/code> 関連のモジュールもここでしか使わないことが明確になっている。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="変更前の-import-を見てみる"
+>
+変更前の import を見てみる
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#変更前の-import-を見てみる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更前の import を見てみる" href="#%e5%a4%89%e6%9b%b4%e5%89%8d%e3%81%ae-import-%e3%82%92%e8%a6%8b%e3%81%a6%e3%81%bf%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>変更前はどうだったかというと、当たり前だが上記を全部放り込んだ形になっている。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Browser&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Dict&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">button&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">details&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">div&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">input&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">option&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">select&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">span&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">summary&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">text&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Attributes&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">A&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">checked&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">class&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">for&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">id&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">selected&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">step&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">type_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">value&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Events&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">onClick&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">onInput&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Json.Encode&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">E&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Time&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Url.Builder&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">UB&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>どこかで使ってるんだろうな、ということは理解できるものの、やはり見通しが悪くなるのは否めない。
+（フォーマッタがよしなに整理してくれて使ってないモジュールもエディタがグレーアウトしてくれるのでなんとかなっているが）&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="スコープは小さく依存も小さく"
+>
+スコープは小さく、依存も小さく
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#スコープは小さく依存も小さく" class="gblog-post__anchor clip flex align-center" aria-label="Anchor スコープは小さく、依存も小さく" href="#%e3%82%b9%e3%82%b3%e3%83%bc%e3%83%97%e3%81%af%e5%b0%8f%e3%81%95%e3%81%8f%e4%be%9d%e5%ad%98%e3%82%82%e5%b0%8f%e3%81%95%e3%81%8f">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>アプリケーションコードが持っている構造を見えるように整理することは読み手を手助けしてくれるし、一つのモジュールについて集中して考えるときに余計なコードが目につかなくなる。&lt;/p>
+&lt;p>また、モジュールに分解されたことで変更履歴の差分をファイル一覧で見るだけでもどこに変更が加わったか予想しやすくなったりする。&lt;/p>
+&lt;p>この規模のコードで一人で開発している分にはメリットはあまりないと思うかもしれないが、逆に大規模になったりチームで開発するときはこのようなリファクタリングを行うタイミングすら少なくなり、
+「いつかコードを整理したい」と思っていても練習すらままならない状態でいきなり取り掛かることも難しいので実現できないリファクタリングをいつまでも夢見ることになる。&lt;/p>
+&lt;p>コードの構造に注目して分解するなどのリファクタリングの実践練習は自己責任で変更できる小さいプロダクトで試しておくのがいいかもしれない。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/></entry><entry><title>SyncTimerにフォントを追加した</title><link href="https://mather.github.io/posts/2023/02/synctimer-font/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2023/02/synctimer-font/</id><published>2023-02-25T18:00:00+09:00</published><updated>2023-02-25T18:00:00+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://fonts.google.com/specimen/Lora"
+>Loraというセリフ体のフォント&lt;/a> を選択可能にしてみた。&lt;/p>
+&lt;figure>&lt;img src="/posts/2023/02/synctimer-font/synctimer-serif-font.png" width="80%">
+&lt;/figure>
+&lt;p>きっかけになったのは今回もとあるVTuberの方の動画がきっかけ。&lt;/p>
+&lt;blockquote class="twitter-tweet">&lt;p lang="ja" dir="ltr">きっかけはreplica.Bさん ( &lt;a href="https://twitter.com/re_plica_B?ref_src=twsrc%5Etfw">@re_plica_B&lt;/a> ) のこちらの配信を見かけたから、需要ありそうだなと思って取り急ぎ作ってみました。&lt;a href="https://t.co/pCtB01iBNr">https://t.co/pCtB01iBNr&lt;/a>&lt;/p>&amp;mdash; mather / Eisuke Kuwahata (@mather314) &lt;a href="https://twitter.com/mather314/status/1628682464700026880?ref_src=twsrc%5Etfw">February 23, 2023&lt;/a>&lt;/blockquote>
+&lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8">&lt;/script>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="google-フォントを使う"
+>
+Google フォントを使う
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#google-フォントを使う" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Google フォントを使う" href="#google-%e3%83%95%e3%82%a9%e3%83%b3%e3%83%88%e3%82%92%e4%bd%bf%e3%81%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>最初から使っている D-DIN フォントはGoogleフォントに存在しないのでダウンロードして著作権表記を入れて利用している。&lt;/p>
+&lt;p>今回は Google フォントを指定して使ってみることにする。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="使いたい文字の分だけ取得する"
+>
+使いたい文字の分だけ取得する
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#使いたい文字の分だけ取得する" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 使いたい文字の分だけ取得する" href="#%e4%bd%bf%e3%81%84%e3%81%9f%e3%81%84%e6%96%87%e5%ad%97%e3%81%ae%e5%88%86%e3%81%a0%e3%81%91%e5%8f%96%e5%be%97%e3%81%99%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>基本的には使いたいフォントをプレビューしながら選択し、表示されるCSSの &lt;code>@import&lt;/code> 文を貼り付けるだけでWebフォントが利用できる。&lt;/p>
+&lt;p>ただ、今回使う部分はタイマーの時刻表示のみなので、 「0から9」と 「-」 と 「:」 の表示に必要な部分だけに絞った最小限のダウンロードサイズであることが望ましい。&lt;/p>
+&lt;p>そこで、フォントを取得するURLの指定方法を&lt;a
+class="gblog-markdown__link"
+href="https://developers.google.com/fonts/docs/css2?hl=en#api_url_specification"
+>APIドキュメント&lt;/a>で確認すると、
+&lt;code>text&lt;/code> パラメータで表示したい文字を指定する事ができるので、次のような &lt;code>@import&lt;/code> を行うことにした。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-css" data-lang="css">&lt;span class="line">&lt;span class="cl">&lt;span class="p">@&lt;/span>&lt;span class="k">import&lt;/span> &lt;span class="nt">url&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s2">&amp;#34;https://fonts.googleapis.com/css2?family=Lora&amp;amp;display=swap&amp;amp;text=-:.0123456789&amp;#34;&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>（使うかどうかわからないけど、 「.」もひっそり追加している）&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="フォント切り替えのアレコレ"
+>
+フォント切り替えのアレコレ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#フォント切り替えのアレコレ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor フォント切り替えのアレコレ" href="#%e3%83%95%e3%82%a9%e3%83%b3%e3%83%88%e5%88%87%e3%82%8a%e6%9b%bf%e3%81%88%e3%81%ae%e3%82%a2%e3%83%ac%e3%82%b3%e3%83%ac">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>新しいフォントをただ適用すればいいかというと実はそんなことはなかったりする。&lt;/p>
+&lt;p>理由は「フォントによって文字の横幅が違う」「コロン(:)の位置を調整できたりできなかったりする」などのブレがあるので個別に表示確認して調整する必要があるためだ。&lt;/p>
+&lt;p>そこで、等幅にするために &lt;code>display: inline-block;&lt;/code> を指定する共通部分とフォントごとに幅調整などのパラメータをいじる部分とにCSSを整理した。&lt;/p>
+&lt;p>これによって新しいフォントを追加することに障壁は少なくなったが、正直なところ面倒なのであんまりやりたくない。
+誰かプルリクエストで実装してくれないか。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="開発しないんじゃなかったの"
+>
+開発しないんじゃなかったの？
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#開発しないんじゃなかったの" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 開発しないんじゃなかったの？" href="#%e9%96%8b%e7%99%ba%e3%81%97%e3%81%aa%e3%81%84%e3%82%93%e3%81%98%e3%82%83%e3%81%aa%e3%81%8b%e3%81%a3%e3%81%9f%e3%81%ae">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>一通りやりきったかなとか思ってたけど、やっぱり追加開発したいときもある。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>早送り・早戻しボタンを追加してみた</title><link href="https://mather.github.io/posts/2022/12/add-ff-bwd-button/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/12/add-ff-bwd-button/</id><published>2022-12-09T19:40:52+09:00</published><updated>2022-12-09T19:40:52+09:00</updated><content type="html">
+&lt;p>エゴサーチしながらライブを拝見してたら、
+とある方がタイマーを停止したときのコメントを話していたのでフィードバックとして受け取り、
+簡単ながら「1秒戻る・1秒進める」ボタンを追加してみた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ご意見ありがとうございます"
+>
+ご意見ありがとうございます
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-ff-bwd-button/#ご意見ありがとうございます" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ご意見ありがとうございます" href="#%e3%81%94%e6%84%8f%e8%a6%8b%e3%81%82%e3%82%8a%e3%81%8c%e3%81%a8%e3%81%86%e3%81%94%e3%81%96%e3%81%84%e3%81%be%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+&lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/arwDA7rupzI?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
+>&lt;/iframe>
+&lt;/div>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://youtu.be/arwDA7rupzI?t=662"
+>九条茘枝さんのこちらの動画の11:02くらい&lt;/a>でタイマーの話をしていただいているのだが、
+一旦止めたら再開するときのタイミング合わせが難しかったり、「数秒戻したい」ということができないのは確かに困るなぁ、
+と思ったので簡素だが作ってみることにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="こんな挙動になります"
+>
+こんな挙動になります
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-ff-bwd-button/#こんな挙動になります" class="gblog-post__anchor clip flex align-center" aria-label="Anchor こんな挙動になります" href="#%e3%81%93%e3%82%93%e3%81%aa%e6%8c%99%e5%8b%95%e3%81%ab%e3%81%aa%e3%82%8a%e3%81%be%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;figure>&lt;img src="/posts/2022/12/add-ff-bwd-button/synctimer-ff-bwd-button.gif" width="70%">
+&lt;/figure>
+&lt;p>技術的には全然難しくはないけど、ボタンの配置とかデザイン面でやっつけ仕事なので、もっと良い配置があるかもしれない。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="要望があれば考えたいこと"
+>
+要望があれば考えたいこと
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-ff-bwd-button/#要望があれば考えたいこと" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 要望があれば考えたいこと" href="#%e8%a6%81%e6%9c%9b%e3%81%8c%e3%81%82%e3%82%8c%e3%81%b0%e8%80%83%e3%81%88%e3%81%9f%e3%81%84%e3%81%93%e3%81%a8">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>たとえばこんな機能は使う人がいるかもなぁ、と思ったりしている。&lt;/p>
+&lt;ul>
+&lt;li>視聴する動画の頭からではなく途中から見るので、指定された時間まで進めたい&lt;/li>
+&lt;li>スタート時間はマイナス30秒じゃ足りない（今回の機能でもっとマイナスにできるようになったけど）&lt;/li>
+&lt;/ul>
+&lt;p>が、ひとまずリクエストがなければ手を付けないことにしようと思う。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>カウントダウン時の残り時間をバーで視覚化する</title><link href="https://mather.github.io/posts/2022/12/add-progress-countdown/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/12/add-progress-countdown/</id><published>2022-12-07T19:00:17+09:00</published><updated>2022-12-07T19:00:17+09:00</updated><content type="html">
+&lt;p>カウントダウンの表示に追加要素として進み具合をバーで視覚化できるようにしてみた。&lt;/p>
+&lt;figure>&lt;img src="/posts/2022/12/add-progress-countdown/synctimer-progress-countdown.gif" width="30%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ミリ秒を表示していない理由"
+>
+ミリ秒を表示していない理由
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-progress-countdown/#ミリ秒を表示していない理由" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ミリ秒を表示していない理由" href="#%e3%83%9f%e3%83%aa%e7%a7%92%e3%82%92%e8%a1%a8%e7%a4%ba%e3%81%97%e3%81%a6%e3%81%84%e3%81%aa%e3%81%84%e7%90%86%e7%94%b1">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>SyncTimerではミリ秒の表示をしておらず、カウントダウンの表示をするときに進み具合がわかりにくい。&lt;/p>
+&lt;p>ミリ秒を表示しないのは理由があって、そもそもSyncTimerで表示されている値は「ミリ秒を表示していない」のではなく「0秒を表示するときの挙動」をわかりやすくするためのものだ。&lt;/p>
+&lt;p>具体的にミリ秒まで含めるとタイマーがどんな値を表示するのか考えてみると良い。例えばちょうど1秒ずつ進んだとすると、こんな表示になるはずだ。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">-00:00:01.234
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-00:00:00.234
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:00.766
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:01.766
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>この表示から単純にミリ秒を削ると、マイナス0秒が発生していることがわかる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">-00:00:01
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:01
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>こうなってしまうと、視覚的には 3, 2, 1, 0 のタイミングで再生開始したいように見えるのに、-3, -2, -1, -0, 0, 1, 2 となってタイミングが曖昧になってしまう。
+（人間がミリ秒の高速カウントダウンを読めるならそれでもいいけど多分読めないので、おそらく秒の表示の方を参考にしてしまうだろう）&lt;/p>
+&lt;p>そこで、タイマーは次のように「実際の値を超えない最大の秒」を計算して表示している。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">-00:00:01.234 =&amp;gt; -00:00:02
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-00:00:00.234 =&amp;gt; -00:00:01
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:00.766 =&amp;gt; 00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:01.766 =&amp;gt; 00:00:01
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>これであれば、&lt;code>00:00:00&lt;/code> を表示したタイミングが実際の0秒と一致している。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="リリースして反応を見よう"
+>
+リリースして反応を見よう
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-progress-countdown/#リリースして反応を見よう" class="gblog-post__anchor clip flex align-center" aria-label="Anchor リリースして反応を見よう" href="#%e3%83%aa%e3%83%aa%e3%83%bc%e3%82%b9%e3%81%97%e3%81%a6%e5%8f%8d%e5%bf%9c%e3%82%92%e8%a6%8b%e3%82%88%e3%81%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そんなわけで適切に0秒を表示するためやむを得ずミリ秒を表示していないのだが、やはり視覚的にわかりにくい気がしたので残り時間を表示できるようにしてみた。&lt;/p>
+&lt;p>反応があるかどうか、改善案が出てくるかどうかはわからないが、ひとまずリリースして反応を見てみることにする。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimer の紹介ページを作った</title><link href="https://mather.github.io/posts/2022/11/about-synctimer-page/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/about-synctimer-page/</id><published>2022-11-27T18:40:11+09:00</published><updated>2022-11-27T18:40:11+09:00</updated><content type="html">
+&lt;p>タイトルそのままなのだが、これまでモーダルとして表示していた使い方動画なども紹介ページへ移動してみた。
+これはもともと存在していたのだが、Github Pages として公開しておりアプリケーションと同じドメインではなかったので、同じドメインに &lt;code>/about&lt;/code> として表示するようにした。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://sync-timer.netlify.app/about/"
+>https://sync-timer.netlify.app/about/&lt;/a>&lt;/p>
+&lt;p>モーダルのほうがわかりやすかっただろうか？という疑問もあるが、一旦公開することにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="紹介ページで使用している技術"
+>
+紹介ページで使用している技術
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/about-synctimer-page/#紹介ページで使用している技術" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 紹介ページで使用している技術" href="#%e7%b4%b9%e4%bb%8b%e3%83%9a%e3%83%bc%e3%82%b8%e3%81%a7%e4%bd%bf%e7%94%a8%e3%81%97%e3%81%a6%e3%81%84%e3%82%8b%e6%8a%80%e8%a1%93">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://bulma.io/"
+>Bulma&lt;/a> というCSSフレームワークを使用している。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://bulma.io/documentation/components/tabs/"
+>タブ表示&lt;/a> の見た目についてはこのフレームワークでも対応しているのだが、
+実際に動かすためにはJavaScriptコードを書かないといけなくなる。&lt;/p>
+&lt;p>検索したらすぐ出てくると思うのだが、実例としてここにメモしておこう。&lt;/p>
+&lt;p>HTML上はタブで切り替えるコンテンツに &lt;code>id&lt;/code> を振ってあり、一つだけ表示状態にしてある。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;tab-content&amp;#34;&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;about-content&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;caution-content&amp;#34;&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;tab-content&amp;#34;&lt;/span> &lt;span class="na">style&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;display: none&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;tab-content&amp;#34;&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;inquiry-content&amp;#34;&lt;/span> &lt;span class="na">style&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;display: none&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>タブの方はBulmaのスタイルを適用し、ボタンのように機能するようにする。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;container tabs is-centered is-large is-boxed&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">ul&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">li&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;about-tab&amp;#34;&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;is-active&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">a&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;activateTab(&amp;#39;about&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>概要&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">a&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">li&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">li&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;caution-tab&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">a&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;activateTab(&amp;#39;caution&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>利用時の注意&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">a&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">li&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">li&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;inquiry-tab&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">a&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;activateTab(&amp;#39;inquiry&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>お問い合わせ&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">a&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">li&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">ul&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>タブがクリックされると、 &lt;code>activateTab&lt;/code> 関数を呼び出してタブの表示を切り替える。
+指定されたクラスにマッチするHTMLエレメントを探して、一旦非表示に切り替えて、指定されたものだけ表示状態に切り替えているシンプルな実装だ。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">function&lt;/span> &lt;span class="nx">activateTab&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">to&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">tabs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">querySelectorAll&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;.tabs li&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">tabContents&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">getElementsByClassName&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;tab-content&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kr">const&lt;/span> &lt;span class="nx">tab&lt;/span> &lt;span class="k">of&lt;/span> &lt;span class="nx">tabs&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">tab&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">className&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">tab&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">id&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="nx">to&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s2">&amp;#34;-tab&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">tab&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">className&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;is-active&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kr">const&lt;/span> &lt;span class="nx">content&lt;/span> &lt;span class="k">of&lt;/span> &lt;span class="nx">tabContents&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">style&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">display&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;none&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">id&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="nx">to&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s2">&amp;#34;-content&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">style&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">display&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;block&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">gtag&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;event&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;activate_tab&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">event_label&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">to&lt;/span> &lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ただ、難点が一つ。 &lt;code>display: none;&lt;/code> を適用して切り替えるまで、 &lt;code>&amp;lt;iframe&amp;gt;&lt;/code> で読み込んでいる要素がロードされないのだ。&lt;/p>
+&lt;p>ユーザーとしては必要ない読み込みが減って良いようにも思えるが、問い合わせフォームをタブで表示すると一瞬遅れて表示される結果になってしまう。&lt;/p>
+&lt;p>微妙にユーザー体験が良くない気がするが、そもそも問い合わせフォームが使われたことがないので許容範囲としている。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/><category scheme="https://mather.github.io/tags/JavaScript" term="JavaScript" label="JavaScript"/></entry><entry><title>時間の表示を切り替えられるようにした</title><link href="https://mather.github.io/posts/2022/11/sync-timer-hide-hours/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/sync-timer-hide-hours/</id><published>2022-11-18T00:29:11+09:00</published><updated>2022-11-18T00:29:11+09:00</updated><content type="html">
+&lt;p>タイマーの利用状況をたまに観察していると、1時間未満（アニメなどはおおよそ30分未満）の動画再生などに使われるケースもそれなりに多いため、
+「時・分・秒」ではなく「分・秒」の表示だけに切り詰めたほうがレイアウトとしても便利かもしれない、と思ったので機能を追加してみた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="どんな機能"
+>
+どんな機能？
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-hide-hours/#どんな機能" class="gblog-post__anchor clip flex align-center" aria-label="Anchor どんな機能？" href="#%e3%81%a9%e3%82%93%e3%81%aa%e6%a9%9f%e8%83%bd">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>百聞は一見にしかず。&lt;/p>
+&lt;figure>&lt;img src="/posts/2022/11/sync-timer-hide-hours/synctimer-show-hour-1.gif" width="50%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="注意点"
+>
+注意点
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-hide-hours/#注意点" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 注意点" href="#%e6%b3%a8%e6%84%8f%e7%82%b9">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>1時間を超えてしまった場合は自動的に「時・分・秒」の表示になる。
+レイアウトが崩れると思うので注意してほしい。&lt;/p>
+&lt;figure>&lt;img src="/posts/2022/11/sync-timer-hide-hours/synctimer-show-hour-2.gif" width="50%">
+&lt;/figure></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimerのリファクタリング</title><link href="https://mather.github.io/posts/2022/11/sync-timer-refactor/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/sync-timer-refactor/</id><published>2022-11-15T22:32:53+09:00</published><updated>2022-11-15T22:32:53+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://github.com/mather/sync-timer/pull/45"
+>SyncTimerのコードをリファクタリング&lt;/a>してみた。&lt;/p>
+&lt;p>リファクタリングとは、動作を変更させずにコードを整理する作業のことである。
+繰り返している無駄な機能をまとめたり、わかりやすく整理することで保守しやすくすることができる。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="リセット時の初期秒数を-setting-にまとめる"
+>
+リセット時の初期秒数を Setting にまとめる
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#リセット時の初期秒数を-setting-にまとめる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor リセット時の初期秒数を Setting にまとめる" href="#%e3%83%aa%e3%82%bb%e3%83%83%e3%83%88%e6%99%82%e3%81%ae%e5%88%9d%e6%9c%9f%e7%a7%92%e6%95%b0%e3%82%92-setting-%e3%81%ab%e3%81%be%e3%81%a8%e3%82%81%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>作るときの順番としてたまたま &lt;code>initialTimeSeconds&lt;/code> の値が &lt;code>Model&lt;/code> に含まれておりそのままにしていたのだが、
+文字色や背景色の設定を追加されたことで複数の設定項目をまとめたくなり、 &lt;code>Setting&lt;/code> という型を作成してまとめた。&lt;/p>
+&lt;p>内容的に &lt;code>Setting&lt;/code> がタイマーの表示の設定値のみであるように思っていたのだが、
+よくよく考えるとクエリ文字列に保存している値を作るために &lt;code>initialTimeSeconds&lt;/code> と渡しているので、これもいわゆる設定値である。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">urlFromConfig&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">BgColor&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Int&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">urlFromConfig&lt;/span> &lt;span class="nv">fg&lt;/span> &lt;span class="nv">bg&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nf">...&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ということで、この後のことも考えて設定値全般を &lt;code>Setting&lt;/code> にまとめることにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="設定の初期値をまとめる"
+>
+設定の初期値をまとめる
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#設定の初期値をまとめる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 設定の初期値をまとめる" href="#%e8%a8%ad%e5%ae%9a%e3%81%ae%e5%88%9d%e6%9c%9f%e5%80%a4%e3%82%92%e3%81%be%e3%81%a8%e3%82%81%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>これまでクエリ文字列をパースしたときに設定値が指定されていない場合に初期値を設定するように定義していた。
+しかし、当初よりも設定情報の種類が増えそうな予感がしたので、
+あちこちに散らばるより &lt;code>Setting&lt;/code> 型の初期値 &lt;code>defaultSetting&lt;/code> を具体的に一つ定義してあげたほうが適切だと思い、
+一つの値として整理した。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">defaultSetting&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">defaultSetting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="s">&amp;#34;#415462&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="kt">GreenBack&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nf">-&lt;/span>&lt;span class="mi">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="urlparserquery-の仕組みを上手く使う"
+>
+Url.Parser.Query の仕組みを上手く使う
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#urlparserquery-の仕組みを上手く使う" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Url.Parser.Query の仕組みを上手く使う" href="#urlparserquery-%e3%81%ae%e4%bb%95%e7%b5%84%e3%81%bf%e3%82%92%e4%b8%8a%e6%89%8b%e3%81%8f%e4%bd%bf%e3%81%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>クエリ文字列からパラメータを取り出す処理に &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query"
+>&lt;code>Url.Parser.Query&lt;/code>&lt;/a> を使っているが、
+これまでは &lt;code>Query.string&lt;/code> などの関数を用いて得られる &lt;code>Maybe String&lt;/code> などの値をそのまま利用していた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Parser&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>そのため、得られる値を定義した型 &lt;code>InitParams&lt;/code> が &lt;code>Setting&lt;/code> とほぼ同じ内容ですべて &lt;code>Maybe&lt;/code> がついた状態となっていた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">type&lt;/span> &lt;span class="kr">alias&lt;/span> &lt;span class="kt">InitParams&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">BgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">Int&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>しかし、改めて考えてみると &lt;code>Parser (Maybe String)&lt;/code> に初期値を加えてあらかじめ &lt;code>Parser String&lt;/code> に変換しておけばよい。
+ということで以下の処理を加えた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="nv">a&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Parser&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Parser&lt;/span> &lt;span class="nv">a&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">default&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="nv">default&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>Query.map : (a -&amp;gt; b) -&amp;gt; Parser a -&amp;gt; Parser b&lt;/code> を用いることで「存在しなければ初期値を返す」という関数適用を行えば、&lt;code>Maybe&lt;/code> ではなく確実に値を返すパーサーが出来上がる。&lt;/p>
+&lt;p>これを最後に &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query#map3"
+>&lt;code>Query.map3&lt;/code>&lt;/a> を使って &lt;code>Setting&lt;/code> に変換することができる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">queryParser&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Parser&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">queryParser&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span>&lt;span class="mi">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span>&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">enum&lt;/span> &lt;span class="s">&amp;#34;bg&amp;#34;&lt;/span> &lt;span class="nv">dictBgColor&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span>&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="s">&amp;#34;fg&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span>&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">int&lt;/span> &lt;span class="s">&amp;#34;init&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ここで &lt;code>Setting&lt;/code> そのものは本来は型エイリアスなのだが、3つの値を受け取って &lt;code>Setting&lt;/code> を返すコンストラクタとしても使えることに留意する。&lt;/p>
+&lt;p>これにより &lt;code>InitParams&lt;/code> という中間処理の型が不要になった。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ネストしたモデルの更新方法"
+>
+ネストしたモデルの更新方法
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#ネストしたモデルの更新方法" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ネストしたモデルの更新方法" href="#%e3%83%8d%e3%82%b9%e3%83%88%e3%81%97%e3%81%9f%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e6%9b%b4%e6%96%b0%e6%96%b9%e6%b3%95">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そんな文法があることを知らなかっただけなのだが、ネストしたモデルの更新などに使える方法を見つけたので使ってみた。&lt;/p>
+&lt;p>これまで、 &lt;code>update&lt;/code> には &lt;code>Model&lt;/code> の値をそのまま渡しており、その内部の &lt;code>Setting&lt;/code> の値を更新したいときは専用の関数を作ってこんな風にしていた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span> &lt;span class="nv">model&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">updateBgColor&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nv">model&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">setting&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">updateBgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">BgColor&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Setting&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">updateBgColor&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>しかし、関数の引数で受け取るときに &lt;code>{ setting } as model&lt;/code> という形でネストした値についても変数の束縛ができるのである。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://faq.elm-community.org/#how-can-i-pattern-match-a-record-and-its-values-at-the-same-time"
+>https://faq.elm-community.org/#how-can-i-pattern-match-a-record-and-its-values-at-the-same-time&lt;/a>&lt;/p>
+&lt;p>そんなわけで、これを使えばわざわざ専用の関数を作る必要はなくシンプルに記述できた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">update&lt;/span> &lt;span class="nv">msg&lt;/span> &lt;span class="p">({&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="nv">model&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nf">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span> &lt;span class="nv">model&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>「みんな面倒に思うポイントだしきっと良い解決方法があるはずだ」と思って探してみれば、やっぱりあるもんだ。納得するまでしつこく調べてみよう。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="リファクタリングは大事"
+>
+リファクタリングは大事
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#リファクタリングは大事" class="gblog-post__anchor clip flex align-center" aria-label="Anchor リファクタリングは大事" href="#%e3%83%aa%e3%83%95%e3%82%a1%e3%82%af%e3%82%bf%e3%83%aa%e3%83%b3%e3%82%b0%e3%81%af%e5%a4%a7%e4%ba%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>その他の細かい修正点もあるが、おおよそ上記のような修正を行った。&lt;/p>
+&lt;p>リファクタリングは機能を追加することもなく変更を行うため、
+ビジネスの現場では「生産性がない」「変更したことでバグを生むリスクがある」という考え方で避けられがちなのだが、
+以下の面でメリットが大きいと思う。&lt;/p>
+&lt;ul>
+&lt;li>改めてコードを見ることで理解を深め、もっと良い方法に気づく&lt;/li>
+&lt;li>出来上がっている機能から本質的な問題（今回でいうと初期時間が &lt;code>Setting&lt;/code> に含まれるべきであること）に還元できる&lt;/li>
+&lt;/ul>
+&lt;p>本来はリファクタリングを行う上で動作するテストを記述し「動作が変わっていないこと」を担保するのが良いが、
+SyncTimerの場合はそもそも機能が少ないことやElmの純粋関数型の利点もあり十分信頼できるのでリファクタリングを行った。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/></entry><entry><title>SyncTimerのレイアウトを変更</title><link href="https://mather.github.io/posts/2022/11/synctimer-layout-change/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/synctimer-layout-change/</id><published>2022-11-10T10:42:00+09:00</published><updated>2022-11-10T10:42:00+09:00</updated><content type="html">
+&lt;p>開始・リセットボタンとタイマーの表示設定の配置を変更した。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="変更前"
+>
+変更前
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/synctimer-layout-change/#変更前" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更前" href="#%e5%a4%89%e6%9b%b4%e5%89%8d">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;figure>&lt;img src="/posts/2022/11/synctimer-layout-change/before.png" width="60%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="変更後"
+>
+変更後
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/synctimer-layout-change/#変更後" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更後" href="#%e5%a4%89%e6%9b%b4%e5%be%8c">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;figure>&lt;img src="/posts/2022/11/synctimer-layout-change/after.png" width="60%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="変更の目的"
+>
+変更の目的
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/synctimer-layout-change/#変更の目的" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更の目的" href="#%e5%a4%89%e6%9b%b4%e3%81%ae%e7%9b%ae%e7%9a%84">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そもそも開始ボタンが大きいほうが押しやすくていいのでは、くらいの安易な気持ちでこの配置にしたのだが、&lt;/p>
+&lt;ul>
+&lt;li>表示設定をもうちょっと拡張しようかな、と思い始めたときに「表示設定」がこの位置にあると狭い&lt;/li>
+&lt;li>タブレットサイズで表示したときにタイマーと再生ボタンの間に設定が入ってしまう
+&lt;ul>
+&lt;li>設定は配信を開始する前に調整するし、一度設定を決めたら基本的には再生とリセットしか押さないはずなので設定が下のほうがいい、と思う&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>という考えがあり配置を変更することにした。&lt;/p>
+&lt;p>技術的には難しくなかった。自動的なグリッドレイアウトって便利だねぇ。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://picocss.com/docs/grid.html"
+>Pico.cssのグリッドレイアウト&lt;/a>はシンプルに等分配置しかできないし、多段階のレスポンシブではないので融通は利かないけど。
+（もっと柔軟なグリッドレイアウトが必要な場合はBootstrapなどの機能を追加する方法が提示されている）&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimer に Google Analytics を導入した</title><link href="https://mather.github.io/posts/2022/04/google-analytics/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/04/google-analytics/</id><published>2022-04-30T19:00:00+09:00</published><updated>2022-04-30T19:00:00+09:00</updated><content type="html">
+&lt;p>たぶん使ってる人はいるんだろうなー、と思いつつも利用報告をしてくれるユーザーはほぼいない。
+それは当然で、報告するメリットもないし、不具合があったり使い勝手が悪いなーと思っても似たような手段はいくらでもあるので別のツールに切り替えるだけになる。
+だったら自分で調べるしか無いよね、ということで Google Analytics を導入して実際のアクセスを調査するしか無いのである。&lt;/p>
+&lt;p>今回は Elm で書いたアプリケーション内のイベントをGA4に送信する実装のお話。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="イベントを送信する"
+>
+イベントを送信する
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/04/google-analytics/#イベントを送信する" class="gblog-post__anchor clip flex align-center" aria-label="Anchor イベントを送信する" href="#%e3%82%a4%e3%83%99%e3%83%b3%e3%83%88%e3%82%92%e9%80%81%e4%bf%a1%e3%81%99%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>素直にタグを記述するだけでページへのアクセスなどは取得できるのだが、そもそもSyncTimerは1ページしか無く、
+「アクセスがあった」「スクロールした」くらいの情報やOS,ブラウザの種類などが取れる程度なので、
+実際にタイマーを動かしたかを知りたい場合はイベントを送信する必要がある。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://developers.google.com/analytics/devguides/collection/ga4/events?client_type=gtag"
+>GA4 - イベントを設定する&lt;/a>&lt;/p>
+&lt;p>Elm側で実行されたイベントを送信するには、Elmコードの外にある &lt;code>gtag()&lt;/code> 関数を呼び出す必要があるので、ここで Ports という機能を使うことになる。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://guide.elm-lang.jp/interop/ports.html"
+>ポート(Ports) - Elm&lt;/a>&lt;/p>
+&lt;p>簡単に言ってしまえば外部とやり取りする方法で、「外部に文字列(String)を送る」「外部からStringを受け取る」しかない。
+今回の場合はイベントを文字列で送るのだが、イベントの種類などの構造を持ったデータを送信したいので JSON 形式に変換する関数を作る。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Json.Encode&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">E&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">encodeAnalyticsEvent&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">Int&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">encodeAnalyticsEvent&lt;/span> &lt;span class="nv">category&lt;/span> &lt;span class="nv">action&lt;/span> &lt;span class="nv">label&lt;/span> &lt;span class="nv">value&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">encode&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">object&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;category&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nv">category&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;action&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nv">action&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;label&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nv">label&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">++&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nf">\&lt;/span>&lt;span class="nv">v&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="p">[&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;value&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">int&lt;/span> &lt;span class="nv">v&lt;/span> &lt;span class="p">)&lt;/span> &lt;span class="p">])&lt;/span> &lt;span class="nv">value&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="p">[])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>で、この関数で生成される文字列を port で外部に送信する&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">port&lt;/span> &lt;span class="nv">sendAnalyticsEvent&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Cmd&lt;/span> &lt;span class="nv">msg&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">timerStartEvent&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Int&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Cmd&lt;/span> &lt;span class="nv">msg&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">timerStartEvent&lt;/span> &lt;span class="nv">currentTime&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">sendAnalyticsEvent&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="nv">encodeAnalyticsEvent&lt;/span> &lt;span class="s">&amp;#34;sync_timer&amp;#34;&lt;/span> &lt;span class="s">&amp;#34;sync_timer_start&amp;#34;&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">formatTimeForAnalytics&lt;/span> &lt;span class="nv">currentTime&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kt">Nothing&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>外部のJSで受け取る方は JSON 文字列をパースして &lt;code>gtag()&lt;/code> 関数でイベントを送信する。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">app&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ports&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">sendAnalyticsEvent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">subscribe&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="nx">event&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">category&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">action&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">JSON&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">parse&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">event&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">debug&lt;/span>&lt;span class="p">({&lt;/span> &lt;span class="nx">category&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">action&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">gtag&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">Object&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">assign&lt;/span>&lt;span class="p">({&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;event_category&amp;#34;&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">category&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;event_label&amp;#34;&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">label&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="p">{});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">gtag&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;event&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">action&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">data&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>という仕組みで送信されている。&lt;/p>
+&lt;p>おかげで利用状況がある程度わかるようになってきた。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimerの使い方動画を作りました</title><link href="https://mather.github.io/posts/2022/03/synctimer-usage-movie/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/03/synctimer-usage-movie/</id><published>2022-03-15T19:00:00+09:00</published><updated>2022-03-15T19:00:00+09:00</updated><content type="html">
+&lt;p>SyncTimerはシンプルなので、使い方は細かく書かなくても分かってくれるかなーと思ってたので書かなかったが、
+やはり具体的な使い方を説明したほうがいいかなーと思ったので動画を作って公開した。&lt;/p>
+&lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+&lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/m1Basm-TqGU?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
+>&lt;/iframe>
+&lt;/div>
+&lt;p>おおよその内容は&lt;/p>
+&lt;ul>
+&lt;li>SyncTimerってどんなタイマーか&lt;/li>
+&lt;li>設定の変更方法&lt;/li>
+&lt;li>URLが連動していること&lt;/li>
+&lt;li>OBSでの使い方の例&lt;/li>
+&lt;/ul>
+&lt;p>といったところ。使う人が迷わないといいな。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry></feed>

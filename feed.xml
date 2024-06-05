@@ -1,0 +1,1538 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.127.0">Hugo</generator><title>Reveal My Ignorance</title><subtitle>Blog by Eisuke Kuwahata</subtitle><link href="https://mather.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://mather.github.io/feed.xml" rel="self" type="application/atom+xml" title="atom"/><updated>2024-06-05T17:06:10+00:00</updated><id>https://mather.github.io/</id><entry><title>SyncTimerのコードをいくつかのモジュールに分解した</title><link href="https://mather.github.io/posts/2023/03/synctimer-split-modules/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2023/03/synctimer-split-modules/</id><published>2023-03-13T17:28:02+09:00</published><updated>2023-03-13T17:28:02+09:00</updated><content type="html">
+&lt;p>これまで &lt;code>Main.elm&lt;/code> だけで作ってきた Elm のコードが増えて見通しが悪くなってきたので、いくつかのモジュールに分解した。
+今回はリファクタリングなので機能の変更はなし。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="モジュールへの分解"
+>
+モジュールへの分解
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#モジュールへの分解" class="gblog-post__anchor clip flex align-center" aria-label="Anchor モジュールへの分解" href="#%e3%83%a2%e3%82%b8%e3%83%a5%e3%83%bc%e3%83%ab%e3%81%b8%e3%81%ae%e5%88%86%e8%a7%a3">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>分解前のコードが691行になっていた。ここまで増えるとスクロールも疲れるし、どこに何があるかわからなくなってしまう。&lt;/p>
+&lt;p>そこで、大きな構成要素を整理しモジュールに分けてみることにした。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Main.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>main&lt;/code> 関数、および起動時のパラメータ管理。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>Model.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>Model&lt;/code> 型を中心としたデータの定義とデータの変換に関する関数群。&lt;/li>
+&lt;li>&lt;code>Cmd Msg&lt;/code> , &lt;code>Html Msg&lt;/code> を含まない純粋なもの。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>Msg.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>Msg&lt;/code> 型、 &lt;code>update&lt;/code> 関数の定義。&lt;/li>
+&lt;li>ユーザーインタラクションに対するふるまい。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>View.elm&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>view&lt;/code> 関数の定義。&lt;/li>
+&lt;li>画面表示に関するもの。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>Analytics.elm&lt;/code>
+&lt;ul>
+&lt;li>Google Analytics 向けのイベント送信の定義。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>どうやって分解するかは我流だが、それぞれのファイルがどのライブラリやモジュールに依存するか見るとだいぶスッキリしたように見える。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="import-で見る依存関係"
+>
+import で見る依存関係
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#import-で見る依存関係" class="gblog-post__anchor clip flex align-center" aria-label="Anchor import で見る依存関係" href="#import-%e3%81%a7%e8%a6%8b%e3%82%8b%e4%be%9d%e5%ad%98%e9%96%a2%e4%bf%82">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>それぞれのファイルから &lt;code>import&lt;/code> を抜き出してみる。&lt;/p>
+&lt;p>&lt;code>Main.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Browser&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Browser.Events&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeBoolean&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeFgFont&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Msg&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Msg&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">update&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">View&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">view&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>main&lt;/code> 関数はすべての起点なので &lt;code>Model&lt;/code>, &lt;code>Msg&lt;/code>, &lt;code>View&lt;/code> のモジュールを使っていることは当然なのだが、
+それ以外が &lt;code>main&lt;/code> 関数を作るための &lt;code>Browser&lt;/code> と、 &lt;code>subscriptions&lt;/code> に使う &lt;code>Browser.Events&lt;/code> だけになっていてかなりシンプルになった。&lt;/p>
+&lt;p>&lt;code>Model.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Dict&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Time&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>たったこれだけ。他のモジュールへの依存もなく、データを中心とした純粋なモジュールになった。&lt;/p>
+&lt;p>&lt;code>Msg.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Analytics&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">timerFastForwardEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerPauseEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerResetEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerRewindEvent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">timerStartEvent&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Dict&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">BgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">FgFont&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBoolean&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeFgFont&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Time&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Url.Builder&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">UB&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>設定の更新時にURLを同期させる目的で &lt;code>Url.Builder&lt;/code> を使用している以外は、 &lt;code>View&lt;/code> にも依存しておらず &lt;code>Model&lt;/code> を中心に動作していることがはっきりしている。&lt;/p>
+&lt;p>&lt;code>View.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">button&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">details&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">div&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">input&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">option&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">select&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">span&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">summary&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">text&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Attributes&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">A&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">checked&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">class&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">for&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">id&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">selected&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">step&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">type_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">value&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Events&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">onClick&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">onInput&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">BgColor&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">FgFont&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">decodeFgFont&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeFgFont&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Msg&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Msg&lt;/span>&lt;span class="nf">(..)&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>Model&lt;/code>, &lt;code>Msg&lt;/code> に依存しているのは言うまでもないが、それ以外は完全に &lt;code>Html&lt;/code> 関連のインポートだけになっている。
+逆に言えば、 &lt;code>Html&lt;/code> 関連のインポートは &lt;code>View.elm&lt;/code> だけしか存在しない。&lt;/p>
+&lt;p>&lt;code>Analytics.elm&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">port&lt;/span> &lt;span class="kr">module&lt;/span> &lt;span class="kt">Analytics&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="nf">(..)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Json.Encode&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">E&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Model&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Setting&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">encodeFgFont&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Analytics に送信するための &lt;code>port&lt;/code> の定義もここに配置したので最初の宣言が &lt;code>port module&lt;/code> となっている。
+また、 &lt;code>Json&lt;/code> 関連のモジュールもここでしか使わないことが明確になっている。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="変更前の-import-を見てみる"
+>
+変更前の import を見てみる
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#変更前の-import-を見てみる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更前の import を見てみる" href="#%e5%a4%89%e6%9b%b4%e5%89%8d%e3%81%ae-import-%e3%82%92%e8%a6%8b%e3%81%a6%e3%81%bf%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>変更前はどうだったかというと、当たり前だが上記を全部放り込んだ形になっている。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Browser&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Dict&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">button&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">details&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">div&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">input&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">option&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">select&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">span&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">summary&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">text&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Attributes&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">A&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">attribute&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">checked&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">class&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">for&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">id&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">selected&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">step&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">type_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">value&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Html.Events&lt;/span> &lt;span class="nv">exposing&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">onClick&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">onInput&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Json.Encode&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">E&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Time&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Url.Builder&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">UB&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>どこかで使ってるんだろうな、ということは理解できるものの、やはり見通しが悪くなるのは否めない。
+（フォーマッタがよしなに整理してくれて使ってないモジュールもエディタがグレーアウトしてくれるのでなんとかなっているが）&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="スコープは小さく依存も小さく"
+>
+スコープは小さく、依存も小さく
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/03/synctimer-split-modules/#スコープは小さく依存も小さく" class="gblog-post__anchor clip flex align-center" aria-label="Anchor スコープは小さく、依存も小さく" href="#%e3%82%b9%e3%82%b3%e3%83%bc%e3%83%97%e3%81%af%e5%b0%8f%e3%81%95%e3%81%8f%e4%be%9d%e5%ad%98%e3%82%82%e5%b0%8f%e3%81%95%e3%81%8f">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>アプリケーションコードが持っている構造を見えるように整理することは読み手を手助けしてくれるし、一つのモジュールについて集中して考えるときに余計なコードが目につかなくなる。&lt;/p>
+&lt;p>また、モジュールに分解されたことで変更履歴の差分をファイル一覧で見るだけでもどこに変更が加わったか予想しやすくなったりする。&lt;/p>
+&lt;p>この規模のコードで一人で開発している分にはメリットはあまりないと思うかもしれないが、逆に大規模になったりチームで開発するときはこのようなリファクタリングを行うタイミングすら少なくなり、
+「いつかコードを整理したい」と思っていても練習すらままならない状態でいきなり取り掛かることも難しいので実現できないリファクタリングをいつまでも夢見ることになる。&lt;/p>
+&lt;p>コードの構造に注目して分解するなどのリファクタリングの実践練習は自己責任で変更できる小さいプロダクトで試しておくのがいいかもしれない。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/></entry><entry><title>SyncTimerにフォントを追加した</title><link href="https://mather.github.io/posts/2023/02/synctimer-font/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2023/02/synctimer-font/</id><published>2023-02-25T18:00:00+09:00</published><updated>2023-02-25T18:00:00+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://fonts.google.com/specimen/Lora"
+>Loraというセリフ体のフォント&lt;/a> を選択可能にしてみた。&lt;/p>
+&lt;figure>&lt;img src="/posts/2023/02/synctimer-font/synctimer-serif-font.png" width="80%">
+&lt;/figure>
+&lt;p>きっかけになったのは今回もとあるVTuberの方の動画がきっかけ。&lt;/p>
+&lt;blockquote class="twitter-tweet">&lt;p lang="ja" dir="ltr">きっかけはreplica.Bさん ( &lt;a href="https://twitter.com/re_plica_B?ref_src=twsrc%5Etfw">@re_plica_B&lt;/a> ) のこちらの配信を見かけたから、需要ありそうだなと思って取り急ぎ作ってみました。&lt;a href="https://t.co/pCtB01iBNr">https://t.co/pCtB01iBNr&lt;/a>&lt;/p>&amp;mdash; mather / Eisuke Kuwahata (@mather314) &lt;a href="https://twitter.com/mather314/status/1628682464700026880?ref_src=twsrc%5Etfw">February 23, 2023&lt;/a>&lt;/blockquote>
+&lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8">&lt;/script>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="google-フォントを使う"
+>
+Google フォントを使う
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#google-フォントを使う" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Google フォントを使う" href="#google-%e3%83%95%e3%82%a9%e3%83%b3%e3%83%88%e3%82%92%e4%bd%bf%e3%81%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>最初から使っている D-DIN フォントはGoogleフォントに存在しないのでダウンロードして著作権表記を入れて利用している。&lt;/p>
+&lt;p>今回は Google フォントを指定して使ってみることにする。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="使いたい文字の分だけ取得する"
+>
+使いたい文字の分だけ取得する
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#使いたい文字の分だけ取得する" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 使いたい文字の分だけ取得する" href="#%e4%bd%bf%e3%81%84%e3%81%9f%e3%81%84%e6%96%87%e5%ad%97%e3%81%ae%e5%88%86%e3%81%a0%e3%81%91%e5%8f%96%e5%be%97%e3%81%99%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>基本的には使いたいフォントをプレビューしながら選択し、表示されるCSSの &lt;code>@import&lt;/code> 文を貼り付けるだけでWebフォントが利用できる。&lt;/p>
+&lt;p>ただ、今回使う部分はタイマーの時刻表示のみなので、 「0から9」と 「-」 と 「:」 の表示に必要な部分だけに絞った最小限のダウンロードサイズであることが望ましい。&lt;/p>
+&lt;p>そこで、フォントを取得するURLの指定方法を&lt;a
+class="gblog-markdown__link"
+href="https://developers.google.com/fonts/docs/css2?hl=en#api_url_specification"
+>APIドキュメント&lt;/a>で確認すると、
+&lt;code>text&lt;/code> パラメータで表示したい文字を指定する事ができるので、次のような &lt;code>@import&lt;/code> を行うことにした。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-css" data-lang="css">&lt;span class="line">&lt;span class="cl">&lt;span class="p">@&lt;/span>&lt;span class="k">import&lt;/span> &lt;span class="nt">url&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s2">&amp;#34;https://fonts.googleapis.com/css2?family=Lora&amp;amp;display=swap&amp;amp;text=-:.0123456789&amp;#34;&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>（使うかどうかわからないけど、 「.」もひっそり追加している）&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="フォント切り替えのアレコレ"
+>
+フォント切り替えのアレコレ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#フォント切り替えのアレコレ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor フォント切り替えのアレコレ" href="#%e3%83%95%e3%82%a9%e3%83%b3%e3%83%88%e5%88%87%e3%82%8a%e6%9b%bf%e3%81%88%e3%81%ae%e3%82%a2%e3%83%ac%e3%82%b3%e3%83%ac">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>新しいフォントをただ適用すればいいかというと実はそんなことはなかったりする。&lt;/p>
+&lt;p>理由は「フォントによって文字の横幅が違う」「コロン(:)の位置を調整できたりできなかったりする」などのブレがあるので個別に表示確認して調整する必要があるためだ。&lt;/p>
+&lt;p>そこで、等幅にするために &lt;code>display: inline-block;&lt;/code> を指定する共通部分とフォントごとに幅調整などのパラメータをいじる部分とにCSSを整理した。&lt;/p>
+&lt;p>これによって新しいフォントを追加することに障壁は少なくなったが、正直なところ面倒なのであんまりやりたくない。
+誰かプルリクエストで実装してくれないか。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="開発しないんじゃなかったの"
+>
+開発しないんじゃなかったの？
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2023/02/synctimer-font/#開発しないんじゃなかったの" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 開発しないんじゃなかったの？" href="#%e9%96%8b%e7%99%ba%e3%81%97%e3%81%aa%e3%81%84%e3%82%93%e3%81%98%e3%82%83%e3%81%aa%e3%81%8b%e3%81%a3%e3%81%9f%e3%81%ae">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>一通りやりきったかなとか思ってたけど、やっぱり追加開発したいときもある。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>早送り・早戻しボタンを追加してみた</title><link href="https://mather.github.io/posts/2022/12/add-ff-bwd-button/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/12/add-ff-bwd-button/</id><published>2022-12-09T19:40:52+09:00</published><updated>2022-12-09T19:40:52+09:00</updated><content type="html">
+&lt;p>エゴサーチしながらライブを拝見してたら、
+とある方がタイマーを停止したときのコメントを話していたのでフィードバックとして受け取り、
+簡単ながら「1秒戻る・1秒進める」ボタンを追加してみた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ご意見ありがとうございます"
+>
+ご意見ありがとうございます
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-ff-bwd-button/#ご意見ありがとうございます" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ご意見ありがとうございます" href="#%e3%81%94%e6%84%8f%e8%a6%8b%e3%81%82%e3%82%8a%e3%81%8c%e3%81%a8%e3%81%86%e3%81%94%e3%81%96%e3%81%84%e3%81%be%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+&lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/arwDA7rupzI?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
+>&lt;/iframe>
+&lt;/div>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://youtu.be/arwDA7rupzI?t=662"
+>九条茘枝さんのこちらの動画の11:02くらい&lt;/a>でタイマーの話をしていただいているのだが、
+一旦止めたら再開するときのタイミング合わせが難しかったり、「数秒戻したい」ということができないのは確かに困るなぁ、
+と思ったので簡素だが作ってみることにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="こんな挙動になります"
+>
+こんな挙動になります
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-ff-bwd-button/#こんな挙動になります" class="gblog-post__anchor clip flex align-center" aria-label="Anchor こんな挙動になります" href="#%e3%81%93%e3%82%93%e3%81%aa%e6%8c%99%e5%8b%95%e3%81%ab%e3%81%aa%e3%82%8a%e3%81%be%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;figure>&lt;img src="/posts/2022/12/add-ff-bwd-button/synctimer-ff-bwd-button.gif" width="70%">
+&lt;/figure>
+&lt;p>技術的には全然難しくはないけど、ボタンの配置とかデザイン面でやっつけ仕事なので、もっと良い配置があるかもしれない。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="要望があれば考えたいこと"
+>
+要望があれば考えたいこと
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-ff-bwd-button/#要望があれば考えたいこと" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 要望があれば考えたいこと" href="#%e8%a6%81%e6%9c%9b%e3%81%8c%e3%81%82%e3%82%8c%e3%81%b0%e8%80%83%e3%81%88%e3%81%9f%e3%81%84%e3%81%93%e3%81%a8">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>たとえばこんな機能は使う人がいるかもなぁ、と思ったりしている。&lt;/p>
+&lt;ul>
+&lt;li>視聴する動画の頭からではなく途中から見るので、指定された時間まで進めたい&lt;/li>
+&lt;li>スタート時間はマイナス30秒じゃ足りない（今回の機能でもっとマイナスにできるようになったけど）&lt;/li>
+&lt;/ul>
+&lt;p>が、ひとまずリクエストがなければ手を付けないことにしようと思う。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>カウントダウン時の残り時間をバーで視覚化する</title><link href="https://mather.github.io/posts/2022/12/add-progress-countdown/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/12/add-progress-countdown/</id><published>2022-12-07T19:00:17+09:00</published><updated>2022-12-07T19:00:17+09:00</updated><content type="html">
+&lt;p>カウントダウンの表示に追加要素として進み具合をバーで視覚化できるようにしてみた。&lt;/p>
+&lt;figure>&lt;img src="/posts/2022/12/add-progress-countdown/synctimer-progress-countdown.gif" width="30%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ミリ秒を表示していない理由"
+>
+ミリ秒を表示していない理由
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-progress-countdown/#ミリ秒を表示していない理由" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ミリ秒を表示していない理由" href="#%e3%83%9f%e3%83%aa%e7%a7%92%e3%82%92%e8%a1%a8%e7%a4%ba%e3%81%97%e3%81%a6%e3%81%84%e3%81%aa%e3%81%84%e7%90%86%e7%94%b1">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>SyncTimerではミリ秒の表示をしておらず、カウントダウンの表示をするときに進み具合がわかりにくい。&lt;/p>
+&lt;p>ミリ秒を表示しないのは理由があって、そもそもSyncTimerで表示されている値は「ミリ秒を表示していない」のではなく「0秒を表示するときの挙動」をわかりやすくするためのものだ。&lt;/p>
+&lt;p>具体的にミリ秒まで含めるとタイマーがどんな値を表示するのか考えてみると良い。例えばちょうど1秒ずつ進んだとすると、こんな表示になるはずだ。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">-00:00:01.234
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-00:00:00.234
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:00.766
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:01.766
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>この表示から単純にミリ秒を削ると、マイナス0秒が発生していることがわかる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">-00:00:01
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:01
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>こうなってしまうと、視覚的には 3, 2, 1, 0 のタイミングで再生開始したいように見えるのに、-3, -2, -1, -0, 0, 1, 2 となってタイミングが曖昧になってしまう。
+（人間がミリ秒の高速カウントダウンを読めるならそれでもいいけど多分読めないので、おそらく秒の表示の方を参考にしてしまうだろう）&lt;/p>
+&lt;p>そこで、タイマーは次のように「実際の値を超えない最大の秒」を計算して表示している。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">-00:00:01.234 =&amp;gt; -00:00:02
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-00:00:00.234 =&amp;gt; -00:00:01
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:00.766 =&amp;gt; 00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 00:00:01.766 =&amp;gt; 00:00:01
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>これであれば、&lt;code>00:00:00&lt;/code> を表示したタイミングが実際の0秒と一致している。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="リリースして反応を見よう"
+>
+リリースして反応を見よう
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/add-progress-countdown/#リリースして反応を見よう" class="gblog-post__anchor clip flex align-center" aria-label="Anchor リリースして反応を見よう" href="#%e3%83%aa%e3%83%aa%e3%83%bc%e3%82%b9%e3%81%97%e3%81%a6%e5%8f%8d%e5%bf%9c%e3%82%92%e8%a6%8b%e3%82%88%e3%81%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そんなわけで適切に0秒を表示するためやむを得ずミリ秒を表示していないのだが、やはり視覚的にわかりにくい気がしたので残り時間を表示できるようにしてみた。&lt;/p>
+&lt;p>反応があるかどうか、改善案が出てくるかどうかはわからないが、ひとまずリリースして反応を見てみることにする。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>Mini Type Puzzle</title><link href="https://mather.github.io/posts/2022/12/mini-type-puzzle/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/12/mini-type-puzzle/</id><published>2022-12-07T17:39:53+09:00</published><updated>2022-12-07T17:39:53+09:00</updated><content type="html">
+&lt;p>飛び入りで &lt;a
+class="gblog-markdown__link"
+href="https://qiita.com/advent-calendar/2022/elm"
+>Elm アドベントカレンダー 2022&lt;/a> の12/7の記事を書いてみようと思う。&lt;/p>
+&lt;p>とはいえ何も準備していないので、最近の気持ちよかったことを書く。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="関数がピッタリハマったときの気持ちよさ"
+>
+関数がピッタリハマったときの気持ちよさ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/mini-type-puzzle/#関数がピッタリハマったときの気持ちよさ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 関数がピッタリハマったときの気持ちよさ" href="#%e9%96%a2%e6%95%b0%e3%81%8c%e3%83%94%e3%83%83%e3%82%bf%e3%83%aa%e3%83%8f%e3%83%9e%e3%81%a3%e3%81%9f%e3%81%a8%e3%81%8d%e3%81%ae%e6%b0%97%e6%8c%81%e3%81%a1%e3%82%88%e3%81%95">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://github.com/mather/sync-timer"
+>趣味で作っているタイマー&lt;/a>のコードをぼちぼちいじってたときに、ラジオボタンをセレクトボックスに変更しようと思って書き換えていた。&lt;/p>
+&lt;p>これまでのラジオボタンなら、各 &lt;code>input&lt;/code> の属性に &lt;code>onClick &amp;lt;| SetBgColor GreenBack&lt;/code> などのように個別に記述すればよかったのだが、 &lt;code>select&lt;/code> になると &lt;code>onInput : String -&amp;gt; Msg&lt;/code> を使う必要が出てくる。&lt;/p>
+&lt;p>でまぁ文字列を変換するコードをちまちま書けばいいじゃないか、という話なのだが、今回はこれまでに書いていたいくつかのパーツがきれいにハマって書くことができたのでちょっと嬉しかったのだ。&lt;/p>
+&lt;p>あらかじめ言っておくと、タイトルにいうほどのパズルではないと思うので期待はしないでいただきたい。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="文字列を代数的データ型に"
+>
+文字列を代数的データ型に
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/mini-type-puzzle/#文字列を代数的データ型に" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 文字列を代数的データ型に" href="#%e6%96%87%e5%ad%97%e5%88%97%e3%82%92%e4%bb%a3%e6%95%b0%e7%9a%84%e3%83%87%e3%83%bc%e3%82%bf%e5%9e%8b%e3%81%ab">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>設定情報をクエリ文字列に変換し、クエリ文字列から設定を復元する、という仕様のため、文字列から代数的データ型の変換を行っている。
+このとき便利なのが &lt;code>Dict&lt;/code> で、次のように対応関係を定義していた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">type&lt;/span> &lt;span class="kt">BgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">=&lt;/span> &lt;span class="kt">Transparent&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">|&lt;/span> &lt;span class="kt">GreenBack&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">|&lt;/span> &lt;span class="kt">BlueBack&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">dictBgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Dict&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Dict&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="kt">BgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">dictBgColor&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">let&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">pairwise&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span> &lt;span class="nv">bgColor&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">in&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Dict&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">fromList&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">List&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="nv">pairwise&lt;/span> &lt;span class="p">[&lt;/span> &lt;span class="kt">GreenBack&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">BlueBack&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Transparent&lt;/span> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>これは以前 &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query#enum"
+>&lt;code>Url.Parser.Query.enum&lt;/code>&lt;/a> を使っていたときの名残だ。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">enum&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Dict&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nv">a&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Parser&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>そもそも、 &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/core/latest/Dict#get"
+>&lt;code>Dict.get&lt;/code>&lt;/a> が似たようなことをしている。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">get&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="nv">comparable&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Dict&lt;/span> &lt;span class="nv">comparable&lt;/span> &lt;span class="nv">v&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="nv">v&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>しかし、この関数の都合の悪いのは引数の順番である。 &lt;code>Dict comparable v&lt;/code> の部分を固定して使いたいときに不便だ。
+そこで、関数型のアイデアとしては &lt;code>flip : (a -&amp;gt; b -&amp;gt; c) -&amp;gt; b -&amp;gt; a -&amp;gt; c&lt;/code> を使いたくなるのだが、 &lt;a
+class="gblog-markdown__link"
+href="https://github.com/elm/compiler/blob/master/docs/upgrade-instructions/0.19.0.md#functions-removed"
+>Elmではすでに削除されている&lt;/a>ので簡単に実装する。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">flip&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">a&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="nv">b&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="nv">c&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="nv">b&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="nv">a&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="nv">c&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">flip&lt;/span> &lt;span class="nv">f&lt;/span> &lt;span class="nv">a&lt;/span> &lt;span class="nv">b&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">f&lt;/span> &lt;span class="nv">b&lt;/span> &lt;span class="nv">a&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>さて、これによって &lt;code>String -&amp;gt; Maybe BgColor&lt;/code> という対応関係が作れる&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">flip&lt;/span> &lt;span class="kt">Dict&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">get&lt;/span> &lt;span class="nv">dictBgColor&lt;/span> &lt;span class="c1">-- String -&amp;gt; Maybe BgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="msg-に変換する"
+>
+&lt;code>Msg&lt;/code> に変換する
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/mini-type-puzzle/#msg-に変換する" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Msg に変換する" href="#msg-%e3%81%ab%e5%a4%89%e6%8f%9b%e3%81%99%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;code>BgColor&lt;/code> の変更を伝える &lt;code>SetBgColor&lt;/code> が定義されていて、これは &lt;code>SetBgColor : BgColor -&amp;gt; Msg&lt;/code> とみなせるので、これを &lt;code>Maybe BgColor&lt;/code> に適用したい。
+つまりは &lt;code>Maybe.map&lt;/code> を使えば良い。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="kt">SetBgColor&lt;/span> &lt;span class="c1">-- Maybe BgColor -&amp;gt; Maybe Msg&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="maybe-msg-のままでは渡せない"
+>
+&lt;code>Maybe Msg&lt;/code> のままでは渡せない
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/mini-type-puzzle/#maybe-msg-のままでは渡せない" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Maybe Msg のままでは渡せない" href="#maybe-msg-%e3%81%ae%e3%81%be%e3%81%be%e3%81%a7%e3%81%af%e6%b8%a1%e3%81%9b%e3%81%aa%e3%81%84">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;code>onInput : (String -&amp;gt; Msg) -&amp;gt; Html.Attribute Msg&lt;/code> のシグネチャには &lt;code>Msg&lt;/code> が要求されるので最後は &lt;code>Maybe&lt;/code> ではだめだ。&lt;/p>
+&lt;p>実際にはそんなケースは発生しないことはわかっているのだが、入力が &lt;code>String&lt;/code> である以上はイレギュラーなケースもカバーしなければならない。&lt;/p>
+&lt;p>そこで、 &lt;code>NoOp&lt;/code> という値が役に立つ。もし &lt;code>BgColor&lt;/code> に該当しないイレギュラーな値が入力されたときは最終的に「何もしない」が送信される。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="kt">NoOp&lt;/span> &lt;span class="c1">-- Maybe Msg -&amp;gt; Msg&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="関数合成"
+>
+関数合成
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/mini-type-puzzle/#関数合成" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 関数合成" href="#%e9%96%a2%e6%95%b0%e5%90%88%e6%88%90">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>3つの関数の入力と出力がうまい具合に噛み合った。あとはこれを合成するだけだ。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">selectBgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Msg&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">selectBgColor&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">flip&lt;/span> &lt;span class="kt">Dict&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">get&lt;/span> &lt;span class="nv">dictBgColor&lt;/span> &lt;span class="nf">&amp;gt;&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="kt">SetBgColor&lt;/span> &lt;span class="nf">&amp;gt;&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="kt">NoOp&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>カッコもなくスッキリと合成できた。
+一つ一つのシンプルな仕組みがうまく合致して整理できたときはやっぱり嬉しいな。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/></entry><entry><title>Elmアプリケーションとしての規模を小さくする</title><link href="https://mather.github.io/posts/2022/12/reduce-elm-scope/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/12/reduce-elm-scope/</id><published>2022-12-04T17:00:00+09:00</published><updated>2022-12-04T17:00:00+09:00</updated><content type="html">
+&lt;p>SyncTimerのリファクタリングを行った。今回のテーマは「どこまでをElmで管理すべきか？」ということ。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="疑問リンククリックの挙動は管理されるべきか"
+>
+疑問：リンククリックの挙動は管理されるべきか？
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/reduce-elm-scope/#疑問リンククリックの挙動は管理されるべきか" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 疑問：リンククリックの挙動は管理されるべきか？" href="#%e7%96%91%e5%95%8f%e3%83%aa%e3%83%b3%e3%82%af%e3%82%af%e3%83%aa%e3%83%83%e3%82%af%e3%81%ae%e6%8c%99%e5%8b%95%e3%81%af%e7%ae%a1%e7%90%86%e3%81%95%e3%82%8c%e3%82%8b%e3%81%b9%e3%81%8d%e3%81%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>紹介ページを作ったことで2ページ目への遷移を行うようになったが、ここで一つ気になるポイントが生まれた。
+単純なリンクのクリックであっても、 &lt;code>Browser.application&lt;/code> では &lt;code>Msg&lt;/code> として管理しなければならないという回りくどい部分だ。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://github.com/mather/sync-timer/blob/bb98a2ad01d76184d9073f9a85a867e09d754a0b/src/Main.elm#L499-L501"
+>https://github.com/mather/sync-timer/blob/bb98a2ad01d76184d9073f9a85a867e09d754a0b/src/Main.elm#L499-L501&lt;/a>&lt;/p>
+&lt;p>これまでのリンクはすべて新規タブで開くようにしていたので該当しなかったが、
+&lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/browser/latest/Browser#application"
+>&lt;code>Browser.application&lt;/code>&lt;/a> はSPAのような挙動を想定して作られているため、
+リクエストされたURLをアプリケーションで処理すべきか、ブラウザ上のページ遷移として扱うべきかをコントロールする必要があるのだ。&lt;/p>
+&lt;p>そもそもなぜ &lt;code>Browser.application&lt;/code> を使っていたのかというと、設定変更時にブラウザのURLを書き換えて反映させるためだった。
+では、その機能や静的なコンテンツであるヘッダー・フッターを HTML、JS 側に移動させるとElmが管理すべき対象はどのくらいシンプルになるのか？&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="アプリケーションの挙動として管理しなくてよい部分"
+>
+アプリケーションの挙動として管理しなくてよい部分
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/reduce-elm-scope/#アプリケーションの挙動として管理しなくてよい部分" class="gblog-post__anchor clip flex align-center" aria-label="Anchor アプリケーションの挙動として管理しなくてよい部分" href="#%e3%82%a2%e3%83%97%e3%83%aa%e3%82%b1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%e3%81%ae%e6%8c%99%e5%8b%95%e3%81%a8%e3%81%97%e3%81%a6%e7%ae%a1%e7%90%86%e3%81%97%e3%81%aa%e3%81%8f%e3%81%a6%e3%82%88%e3%81%84%e9%83%a8%e5%88%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;ul>
+&lt;li>&lt;code>Browser.application&lt;/code> と &lt;code>Browser.document&lt;/code> はページ全体を管理するためHTMLのタイトルなども管理対象だったが必要ない。&lt;/li>
+&lt;li>ヘッダー部分、フッター部分はタイマーの挙動とは関係なく固定されている。&lt;/li>
+&lt;/ul>
+&lt;p>上記のような見直しの結果、タイマーの表示・コントロール・設定の部分のみを切り出して &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/browser/latest/Browser#element"
+>&lt;code>Browser.element&lt;/code>&lt;/a> で実装することにした。
+ただし、このままではブラウザのURLを設定に合わせて変更させる機能が動かなくなるので、JSを使って連動させることにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="読み込み時の初期値をelmに取り込む"
+>
+読み込み時の初期値をElmに取り込む
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/reduce-elm-scope/#読み込み時の初期値をelmに取り込む" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 読み込み時の初期値をElmに取り込む" href="#%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e5%88%9d%e6%9c%9f%e5%80%a4%e3%82%92elm%e3%81%ab%e5%8f%96%e3%82%8a%e8%be%bc%e3%82%80">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;code>Browser.element&lt;/code> ではリクエストされたURLを取得することはできないので、JSで取得してElmアプリケーションに渡す必要がある。
+そのため、以下のようなコードを記述してクエリ文字列のパースを行うことにした。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">parseParams&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">()&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">searchParams&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nx">URL&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">location&lt;/span>&lt;span class="p">)).&lt;/span>&lt;span class="nx">searchParams&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">parseFg&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">re&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sr">/^#[0-9a-f]{6}$/&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">re&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="nx">s&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">parseInit&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">parseInt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">n&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mi">30&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">30&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fg&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">parseFg&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">searchParams&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;fg&amp;#34;&lt;/span>&lt;span class="p">)),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">bg&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">searchParams&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;bg&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">init&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">parseInit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">searchParams&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;init&amp;#34;&lt;/span>&lt;span class="p">)),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">h&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">searchParams&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;h&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">app&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">Elm&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Main&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">init&lt;/span>&lt;span class="p">({&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">node&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">getElementById&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;root&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">flags&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">parseParams&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>RGB値、数値に関してはバリデーションや型変換を行い、 Elmアプリケーションの &lt;code>flags&lt;/code> にシンプルなJavaScriptオブジェクトとして渡すだけ。
+仮にパースに失敗しても、 &lt;code>null&lt;/code> を渡すことでデフォルト値を採用するようにしている。&lt;/p>
+&lt;p>Elm側は &lt;code>flags&lt;/code> の値を次のように処理している。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">type&lt;/span> &lt;span class="kr">alias&lt;/span> &lt;span class="kt">SettingFromQuery&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">fg&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">bg&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">init&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">Int&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">h&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">parseSettingFromQuery&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">SettingFromQuery&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">parseSettingFromQuery&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">fg&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">fgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">bg&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">andThen&lt;/span> &lt;span class="nv">decodeBgColor&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">bgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">init&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">initialTimeSeconds&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">showHour&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">h&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">andThen&lt;/span> &lt;span class="nv">decodeShowHour&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">showHour&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">initialModel&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">SettingFromQuery&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="kt">Model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">Cmd&lt;/span> &lt;span class="kt">Msg&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">initialModel&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">let&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">initSetting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">parseSettingFromQuery&lt;/span> &lt;span class="nv">setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">in&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nv">timeMillis&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">initSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">*&lt;/span> &lt;span class="mi">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">paused&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="kt">True&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">current&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="kt">Nothing&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">parseSettingFromQuery&lt;/span> &lt;span class="nv">setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="kt">Cmd&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">none&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>Browser.element&lt;/code> では &lt;code>flags&lt;/code> は型引数なので、入力値の型を &lt;code>SettingFromQuery&lt;/code> と定義する。
+もしこの型に構造や値が合致しないデータがElmアプリケーションの起動時に渡された場合、Elmアプリケーションはエラーを起こし起動しない。実に潔い。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="設定変更を-ports-で送信する"
+>
+設定変更を Ports で送信する
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/reduce-elm-scope/#設定変更を-ports-で送信する" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 設定変更を Ports で送信する" href="#%e8%a8%ad%e5%ae%9a%e5%a4%89%e6%9b%b4%e3%82%92-ports-%e3%81%a7%e9%80%81%e4%bf%a1%e3%81%99%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>すでに Google Analytics の際に Ports を使ってElmアプリケーション外部への挙動は実装していたが、今回はURLを書き換える機能を呼び出す Ports を作成する。&lt;/p>
+&lt;p>Elm側は設定の変更時に &lt;code>setQueryString&lt;/code>, &lt;code>urlFromSetting&lt;/code> 関数を呼び出している。(背景色変更の例)&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">SetBgColor&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nv">model&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">setQueryString&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="nv">urlFromSetting&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>これらはそれぞれ次のように定義されている。 &lt;code>port setQueryString : String -&amp;gt; Cmd msg&lt;/code> が Ports として外部に実装されている関数を呼び出すことを宣言していることになる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">port&lt;/span> &lt;span class="nv">setQueryString&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Cmd&lt;/span> &lt;span class="nv">msg&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">urlFromSetting&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Setting&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">urlFromSetting&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">UB&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">toQuery&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[&lt;/span> &lt;span class="kt">UB&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="s">&amp;#34;fg&amp;#34;&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">fgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="kt">UB&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="s">&amp;#34;bg&amp;#34;&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="nv">encodeBgColor&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">bgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="kt">UB&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">int&lt;/span> &lt;span class="s">&amp;#34;init&amp;#34;&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">initialTimeSeconds&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="kt">UB&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="s">&amp;#34;h&amp;#34;&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="nv">encodeShowHour&lt;/span> &lt;span class="nv">setting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">showHour&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>JS側では受け取ったクエリ文字列をURLにセットしている。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">app&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ports&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">setQueryString&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">subscribe&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="nx">newQS&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">currentUrl&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">URL&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">location&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">newUrl&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">currentUrl&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">origin&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">currentUrl&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">pathname&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">newQS&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">window&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">history&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">replaceState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">newUrl&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>これで一応同じ挙動を実装することができた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="elmの行数"
+>
+Elmの行数
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/12/reduce-elm-scope/#elmの行数" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Elmの行数" href="#elm%e3%81%ae%e8%a1%8c%e6%95%b0">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>修正の結果、 &lt;code>src/Main.elm&lt;/code> の行数は567行から486行に減った。
+そんなに減ってないように見えるが、Elmアプリケーションとして管理する範囲がシンプルになったのと、
+アプリケーションの挙動に影響しないヘッダー・フッター部分の修正が &lt;code>Main.elm&lt;/code> で行われないことがわかっているとすごく楽に感じられる。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimer の紹介ページを作った</title><link href="https://mather.github.io/posts/2022/11/about-synctimer-page/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/about-synctimer-page/</id><published>2022-11-27T18:40:11+09:00</published><updated>2022-11-27T18:40:11+09:00</updated><content type="html">
+&lt;p>タイトルそのままなのだが、これまでモーダルとして表示していた使い方動画なども紹介ページへ移動してみた。
+これはもともと存在していたのだが、Github Pages として公開しておりアプリケーションと同じドメインではなかったので、同じドメインに &lt;code>/about&lt;/code> として表示するようにした。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://sync-timer.netlify.app/about/"
+>https://sync-timer.netlify.app/about/&lt;/a>&lt;/p>
+&lt;p>モーダルのほうがわかりやすかっただろうか？という疑問もあるが、一旦公開することにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="紹介ページで使用している技術"
+>
+紹介ページで使用している技術
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/about-synctimer-page/#紹介ページで使用している技術" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 紹介ページで使用している技術" href="#%e7%b4%b9%e4%bb%8b%e3%83%9a%e3%83%bc%e3%82%b8%e3%81%a7%e4%bd%bf%e7%94%a8%e3%81%97%e3%81%a6%e3%81%84%e3%82%8b%e6%8a%80%e8%a1%93">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://bulma.io/"
+>Bulma&lt;/a> というCSSフレームワークを使用している。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://bulma.io/documentation/components/tabs/"
+>タブ表示&lt;/a> の見た目についてはこのフレームワークでも対応しているのだが、
+実際に動かすためにはJavaScriptコードを書かないといけなくなる。&lt;/p>
+&lt;p>検索したらすぐ出てくると思うのだが、実例としてここにメモしておこう。&lt;/p>
+&lt;p>HTML上はタブで切り替えるコンテンツに &lt;code>id&lt;/code> を振ってあり、一つだけ表示状態にしてある。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;tab-content&amp;#34;&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;about-content&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;caution-content&amp;#34;&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;tab-content&amp;#34;&lt;/span> &lt;span class="na">style&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;display: none&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;tab-content&amp;#34;&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;inquiry-content&amp;#34;&lt;/span> &lt;span class="na">style&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;display: none&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>タブの方はBulmaのスタイルを適用し、ボタンのように機能するようにする。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;container tabs is-centered is-large is-boxed&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">ul&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">li&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;about-tab&amp;#34;&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;is-active&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">a&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;activateTab(&amp;#39;about&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>概要&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">a&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">li&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">li&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;caution-tab&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">a&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;activateTab(&amp;#39;caution&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>利用時の注意&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">a&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">li&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">li&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;inquiry-tab&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">a&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;activateTab(&amp;#39;inquiry&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>お問い合わせ&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">a&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">li&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">ul&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>タブがクリックされると、 &lt;code>activateTab&lt;/code> 関数を呼び出してタブの表示を切り替える。
+指定されたクラスにマッチするHTMLエレメントを探して、一旦非表示に切り替えて、指定されたものだけ表示状態に切り替えているシンプルな実装だ。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">function&lt;/span> &lt;span class="nx">activateTab&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">to&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">tabs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">querySelectorAll&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;.tabs li&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">tabContents&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">document&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">getElementsByClassName&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;tab-content&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kr">const&lt;/span> &lt;span class="nx">tab&lt;/span> &lt;span class="k">of&lt;/span> &lt;span class="nx">tabs&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">tab&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">className&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">tab&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">id&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="nx">to&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s2">&amp;#34;-tab&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">tab&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">className&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;is-active&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kr">const&lt;/span> &lt;span class="nx">content&lt;/span> &lt;span class="k">of&lt;/span> &lt;span class="nx">tabContents&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">style&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">display&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;none&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">id&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="nx">to&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s2">&amp;#34;-content&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">style&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">display&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;block&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">gtag&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;event&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;activate_tab&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">event_label&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">to&lt;/span> &lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ただ、難点が一つ。 &lt;code>display: none;&lt;/code> を適用して切り替えるまで、 &lt;code>&amp;lt;iframe&amp;gt;&lt;/code> で読み込んでいる要素がロードされないのだ。&lt;/p>
+&lt;p>ユーザーとしては必要ない読み込みが減って良いようにも思えるが、問い合わせフォームをタブで表示すると一瞬遅れて表示される結果になってしまう。&lt;/p>
+&lt;p>微妙にユーザー体験が良くない気がするが、そもそも問い合わせフォームが使われたことがないので許容範囲としている。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/><category scheme="https://mather.github.io/tags/JavaScript" term="JavaScript" label="JavaScript"/></entry><entry><title>時間の表示を切り替えられるようにした</title><link href="https://mather.github.io/posts/2022/11/sync-timer-hide-hours/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/sync-timer-hide-hours/</id><published>2022-11-18T00:29:11+09:00</published><updated>2022-11-18T00:29:11+09:00</updated><content type="html">
+&lt;p>タイマーの利用状況をたまに観察していると、1時間未満（アニメなどはおおよそ30分未満）の動画再生などに使われるケースもそれなりに多いため、
+「時・分・秒」ではなく「分・秒」の表示だけに切り詰めたほうがレイアウトとしても便利かもしれない、と思ったので機能を追加してみた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="どんな機能"
+>
+どんな機能？
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-hide-hours/#どんな機能" class="gblog-post__anchor clip flex align-center" aria-label="Anchor どんな機能？" href="#%e3%81%a9%e3%82%93%e3%81%aa%e6%a9%9f%e8%83%bd">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>百聞は一見にしかず。&lt;/p>
+&lt;figure>&lt;img src="/posts/2022/11/sync-timer-hide-hours/synctimer-show-hour-1.gif" width="50%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="注意点"
+>
+注意点
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-hide-hours/#注意点" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 注意点" href="#%e6%b3%a8%e6%84%8f%e7%82%b9">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>1時間を超えてしまった場合は自動的に「時・分・秒」の表示になる。
+レイアウトが崩れると思うので注意してほしい。&lt;/p>
+&lt;figure>&lt;img src="/posts/2022/11/sync-timer-hide-hours/synctimer-show-hour-2.gif" width="50%">
+&lt;/figure></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimerのリファクタリング</title><link href="https://mather.github.io/posts/2022/11/sync-timer-refactor/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/sync-timer-refactor/</id><published>2022-11-15T22:32:53+09:00</published><updated>2022-11-15T22:32:53+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://github.com/mather/sync-timer/pull/45"
+>SyncTimerのコードをリファクタリング&lt;/a>してみた。&lt;/p>
+&lt;p>リファクタリングとは、動作を変更させずにコードを整理する作業のことである。
+繰り返している無駄な機能をまとめたり、わかりやすく整理することで保守しやすくすることができる。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="リセット時の初期秒数を-setting-にまとめる"
+>
+リセット時の初期秒数を Setting にまとめる
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#リセット時の初期秒数を-setting-にまとめる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor リセット時の初期秒数を Setting にまとめる" href="#%e3%83%aa%e3%82%bb%e3%83%83%e3%83%88%e6%99%82%e3%81%ae%e5%88%9d%e6%9c%9f%e7%a7%92%e6%95%b0%e3%82%92-setting-%e3%81%ab%e3%81%be%e3%81%a8%e3%82%81%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>作るときの順番としてたまたま &lt;code>initialTimeSeconds&lt;/code> の値が &lt;code>Model&lt;/code> に含まれておりそのままにしていたのだが、
+文字色や背景色の設定を追加されたことで複数の設定項目をまとめたくなり、 &lt;code>Setting&lt;/code> という型を作成してまとめた。&lt;/p>
+&lt;p>内容的に &lt;code>Setting&lt;/code> がタイマーの表示の設定値のみであるように思っていたのだが、
+よくよく考えるとクエリ文字列に保存している値を作るために &lt;code>initialTimeSeconds&lt;/code> と渡しているので、これもいわゆる設定値である。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">urlFromConfig&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">BgColor&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Int&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">urlFromConfig&lt;/span> &lt;span class="nv">fg&lt;/span> &lt;span class="nv">bg&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nf">...&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ということで、この後のことも考えて設定値全般を &lt;code>Setting&lt;/code> にまとめることにした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="設定の初期値をまとめる"
+>
+設定の初期値をまとめる
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#設定の初期値をまとめる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 設定の初期値をまとめる" href="#%e8%a8%ad%e5%ae%9a%e3%81%ae%e5%88%9d%e6%9c%9f%e5%80%a4%e3%82%92%e3%81%be%e3%81%a8%e3%82%81%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>これまでクエリ文字列をパースしたときに設定値が指定されていない場合に初期値を設定するように定義していた。
+しかし、当初よりも設定情報の種類が増えそうな予感がしたので、
+あちこちに散らばるより &lt;code>Setting&lt;/code> 型の初期値 &lt;code>defaultSetting&lt;/code> を具体的に一つ定義してあげたほうが適切だと思い、
+一つの値として整理した。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">defaultSetting&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">defaultSetting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="s">&amp;#34;#415462&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="kt">GreenBack&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nf">-&lt;/span>&lt;span class="mi">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="urlparserquery-の仕組みを上手く使う"
+>
+Url.Parser.Query の仕組みを上手く使う
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#urlparserquery-の仕組みを上手く使う" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Url.Parser.Query の仕組みを上手く使う" href="#urlparserquery-%e3%81%ae%e4%bb%95%e7%b5%84%e3%81%bf%e3%82%92%e4%b8%8a%e6%89%8b%e3%81%8f%e4%bd%bf%e3%81%86">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>クエリ文字列からパラメータを取り出す処理に &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query"
+>&lt;code>Url.Parser.Query&lt;/code>&lt;/a> を使っているが、
+これまでは &lt;code>Query.string&lt;/code> などの関数を用いて得られる &lt;code>Maybe String&lt;/code> などの値をそのまま利用していた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Parser&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>そのため、得られる値を定義した型 &lt;code>InitParams&lt;/code> が &lt;code>Setting&lt;/code> とほぼ同じ内容ですべて &lt;code>Maybe&lt;/code> がついた状態となっていた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">type&lt;/span> &lt;span class="kr">alias&lt;/span> &lt;span class="kt">InitParams&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">BgColor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">Int&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>しかし、改めて考えてみると &lt;code>Parser (Maybe String)&lt;/code> に初期値を加えてあらかじめ &lt;code>Parser String&lt;/code> に変換しておけばよい。
+ということで以下の処理を加えた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="nv">a&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Parser&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span> &lt;span class="nv">a&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Parser&lt;/span> &lt;span class="nv">a&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">default&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="nv">default&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>Query.map : (a -&amp;gt; b) -&amp;gt; Parser a -&amp;gt; Parser b&lt;/code> を用いることで「存在しなければ初期値を返す」という関数適用を行えば、&lt;code>Maybe&lt;/code> ではなく確実に値を返すパーサーが出来上がる。&lt;/p>
+&lt;p>これを最後に &lt;a
+class="gblog-markdown__link--code"
+href="https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query#map3"
+>&lt;code>Query.map3&lt;/code>&lt;/a> を使って &lt;code>Setting&lt;/code> に変換することができる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">queryParser&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="kt">Parser&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">queryParser&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span>&lt;span class="mi">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span>&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">enum&lt;/span> &lt;span class="s">&amp;#34;bg&amp;#34;&lt;/span> &lt;span class="nv">dictBgColor&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span>&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">fgColor&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="s">&amp;#34;fg&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">(&lt;/span>&lt;span class="nv">parserWithDefault&lt;/span> &lt;span class="nv">defaultSetting&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">initialTimeSeconds&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="kt">Query&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">int&lt;/span> &lt;span class="s">&amp;#34;init&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ここで &lt;code>Setting&lt;/code> そのものは本来は型エイリアスなのだが、3つの値を受け取って &lt;code>Setting&lt;/code> を返すコンストラクタとしても使えることに留意する。&lt;/p>
+&lt;p>これにより &lt;code>InitParams&lt;/code> という中間処理の型が不要になった。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ネストしたモデルの更新方法"
+>
+ネストしたモデルの更新方法
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#ネストしたモデルの更新方法" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ネストしたモデルの更新方法" href="#%e3%83%8d%e3%82%b9%e3%83%88%e3%81%97%e3%81%9f%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e6%9b%b4%e6%96%b0%e6%96%b9%e6%b3%95">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そんな文法があることを知らなかっただけなのだが、ネストしたモデルの更新などに使える方法を見つけたので使ってみた。&lt;/p>
+&lt;p>これまで、 &lt;code>update&lt;/code> には &lt;code>Model&lt;/code> の値をそのまま渡しており、その内部の &lt;code>Setting&lt;/code> の値を更新したいときは専用の関数を作ってこんな風にしていた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span> &lt;span class="nv">model&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">updateBgColor&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nv">model&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">setting&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">updateBgColor&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">BgColor&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Setting&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Setting&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">updateBgColor&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>しかし、関数の引数で受け取るときに &lt;code>{ setting } as model&lt;/code> という形でネストした値についても変数の束縛ができるのである。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://faq.elm-community.org/#how-can-i-pattern-match-a-record-and-its-values-at-the-same-time"
+>https://faq.elm-community.org/#how-can-i-pattern-match-a-record-and-its-values-at-the-same-time&lt;/a>&lt;/p>
+&lt;p>そんなわけで、これを使えばわざわざ専用の関数を作る必要はなくシンプルに記述できた。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">update&lt;/span> &lt;span class="nv">msg&lt;/span> &lt;span class="p">({&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="nv">model&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nf">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span> &lt;span class="nv">model&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nv">setting&lt;/span> &lt;span class="nf">|&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="nf">=&lt;/span> &lt;span class="nv">bgColor&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>「みんな面倒に思うポイントだしきっと良い解決方法があるはずだ」と思って探してみれば、やっぱりあるもんだ。納得するまでしつこく調べてみよう。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="リファクタリングは大事"
+>
+リファクタリングは大事
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/sync-timer-refactor/#リファクタリングは大事" class="gblog-post__anchor clip flex align-center" aria-label="Anchor リファクタリングは大事" href="#%e3%83%aa%e3%83%95%e3%82%a1%e3%82%af%e3%82%bf%e3%83%aa%e3%83%b3%e3%82%b0%e3%81%af%e5%a4%a7%e4%ba%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>その他の細かい修正点もあるが、おおよそ上記のような修正を行った。&lt;/p>
+&lt;p>リファクタリングは機能を追加することもなく変更を行うため、
+ビジネスの現場では「生産性がない」「変更したことでバグを生むリスクがある」という考え方で避けられがちなのだが、
+以下の面でメリットが大きいと思う。&lt;/p>
+&lt;ul>
+&lt;li>改めてコードを見ることで理解を深め、もっと良い方法に気づく&lt;/li>
+&lt;li>出来上がっている機能から本質的な問題（今回でいうと初期時間が &lt;code>Setting&lt;/code> に含まれるべきであること）に還元できる&lt;/li>
+&lt;/ul>
+&lt;p>本来はリファクタリングを行う上で動作するテストを記述し「動作が変わっていないこと」を担保するのが良いが、
+SyncTimerの場合はそもそも機能が少ないことやElmの純粋関数型の利点もあり十分信頼できるのでリファクタリングを行った。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/></entry><entry><title>SyncTimerのレイアウトを変更</title><link href="https://mather.github.io/posts/2022/11/synctimer-layout-change/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/11/synctimer-layout-change/</id><published>2022-11-10T10:42:00+09:00</published><updated>2022-11-10T10:42:00+09:00</updated><content type="html">
+&lt;p>開始・リセットボタンとタイマーの表示設定の配置を変更した。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="変更前"
+>
+変更前
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/synctimer-layout-change/#変更前" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更前" href="#%e5%a4%89%e6%9b%b4%e5%89%8d">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;figure>&lt;img src="/posts/2022/11/synctimer-layout-change/before.png" width="60%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="変更後"
+>
+変更後
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/synctimer-layout-change/#変更後" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更後" href="#%e5%a4%89%e6%9b%b4%e5%be%8c">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;figure>&lt;img src="/posts/2022/11/synctimer-layout-change/after.png" width="60%">
+&lt;/figure>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="変更の目的"
+>
+変更の目的
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/11/synctimer-layout-change/#変更の目的" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 変更の目的" href="#%e5%a4%89%e6%9b%b4%e3%81%ae%e7%9b%ae%e7%9a%84">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そもそも開始ボタンが大きいほうが押しやすくていいのでは、くらいの安易な気持ちでこの配置にしたのだが、&lt;/p>
+&lt;ul>
+&lt;li>表示設定をもうちょっと拡張しようかな、と思い始めたときに「表示設定」がこの位置にあると狭い&lt;/li>
+&lt;li>タブレットサイズで表示したときにタイマーと再生ボタンの間に設定が入ってしまう
+&lt;ul>
+&lt;li>設定は配信を開始する前に調整するし、一度設定を決めたら基本的には再生とリセットしか押さないはずなので設定が下のほうがいい、と思う&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>という考えがあり配置を変更することにした。&lt;/p>
+&lt;p>技術的には難しくなかった。自動的なグリッドレイアウトって便利だねぇ。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://picocss.com/docs/grid.html"
+>Pico.cssのグリッドレイアウト&lt;/a>はシンプルに等分配置しかできないし、多段階のレスポンシブではないので融通は利かないけど。
+（もっと柔軟なグリッドレイアウトが必要な場合はBootstrapなどの機能を追加する方法が提示されている）&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimer に Google Analytics を導入した</title><link href="https://mather.github.io/posts/2022/04/google-analytics/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/04/google-analytics/</id><published>2022-04-30T19:00:00+09:00</published><updated>2022-04-30T19:00:00+09:00</updated><content type="html">
+&lt;p>たぶん使ってる人はいるんだろうなー、と思いつつも利用報告をしてくれるユーザーはほぼいない。
+それは当然で、報告するメリットもないし、不具合があったり使い勝手が悪いなーと思っても似たような手段はいくらでもあるので別のツールに切り替えるだけになる。
+だったら自分で調べるしか無いよね、ということで Google Analytics を導入して実際のアクセスを調査するしか無いのである。&lt;/p>
+&lt;p>今回は Elm で書いたアプリケーション内のイベントをGA4に送信する実装のお話。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="イベントを送信する"
+>
+イベントを送信する
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/04/google-analytics/#イベントを送信する" class="gblog-post__anchor clip flex align-center" aria-label="Anchor イベントを送信する" href="#%e3%82%a4%e3%83%99%e3%83%b3%e3%83%88%e3%82%92%e9%80%81%e4%bf%a1%e3%81%99%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>素直にタグを記述するだけでページへのアクセスなどは取得できるのだが、そもそもSyncTimerは1ページしか無く、
+「アクセスがあった」「スクロールした」くらいの情報やOS,ブラウザの種類などが取れる程度なので、
+実際にタイマーを動かしたかを知りたい場合はイベントを送信する必要がある。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://developers.google.com/analytics/devguides/collection/ga4/events?client_type=gtag"
+>GA4 - イベントを設定する&lt;/a>&lt;/p>
+&lt;p>Elm側で実行されたイベントを送信するには、Elmコードの外にある &lt;code>gtag()&lt;/code> 関数を呼び出す必要があるので、ここで Ports という機能を使うことになる。&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://guide.elm-lang.jp/interop/ports.html"
+>ポート(Ports) - Elm&lt;/a>&lt;/p>
+&lt;p>簡単に言ってしまえば外部とやり取りする方法で、「外部に文字列(String)を送る」「外部からStringを受け取る」しかない。
+今回の場合はイベントを文字列で送るのだが、イベントの種類などの構造を持ったデータを送信したいので JSON 形式に変換する関数を作る。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import &lt;/span>&lt;span class="nc">Json.Encode&lt;/span> &lt;span class="kr">as&lt;/span> &lt;span class="kt">E&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">encodeAnalyticsEvent&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span> &lt;span class="kt">Int&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">String&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">encodeAnalyticsEvent&lt;/span> &lt;span class="nv">category&lt;/span> &lt;span class="nv">action&lt;/span> &lt;span class="nv">label&lt;/span> &lt;span class="nv">value&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">encode&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">object&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;category&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nv">category&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;action&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nv">action&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">,&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;label&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">string&lt;/span> &lt;span class="nv">label&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">++&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">map&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nf">\&lt;/span>&lt;span class="nv">v&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="p">[&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="s">&amp;#34;value&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">E&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">int&lt;/span> &lt;span class="nv">v&lt;/span> &lt;span class="p">)&lt;/span> &lt;span class="p">])&lt;/span> &lt;span class="nv">value&lt;/span> &lt;span class="nf">|&amp;gt;&lt;/span> &lt;span class="kt">Maybe&lt;/span>&lt;span class="nf">.&lt;/span>&lt;span class="nv">withDefault&lt;/span> &lt;span class="p">[])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>で、この関数で生成される文字列を port で外部に送信する&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-elm" data-lang="elm">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">port&lt;/span> &lt;span class="nv">sendAnalyticsEvent&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">String&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Cmd&lt;/span> &lt;span class="nv">msg&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">timerStartEvent&lt;/span> &lt;span class="nf">:&lt;/span> &lt;span class="kt">Int&lt;/span> &lt;span class="nf">-&amp;gt;&lt;/span> &lt;span class="kt">Cmd&lt;/span> &lt;span class="nv">msg&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">timerStartEvent&lt;/span> &lt;span class="nv">currentTime&lt;/span> &lt;span class="nf">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">sendAnalyticsEvent&lt;/span> &lt;span class="nf">&amp;lt;|&lt;/span> &lt;span class="nv">encodeAnalyticsEvent&lt;/span> &lt;span class="s">&amp;#34;sync_timer&amp;#34;&lt;/span> &lt;span class="s">&amp;#34;sync_timer_start&amp;#34;&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">formatTimeForAnalytics&lt;/span> &lt;span class="nv">currentTime&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kt">Nothing&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>外部のJSで受け取る方は JSON 文字列をパースして &lt;code>gtag()&lt;/code> 関数でイベントを送信する。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">app&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ports&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">sendAnalyticsEvent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">subscribe&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="nx">event&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">category&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">action&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">JSON&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">parse&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">event&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">debug&lt;/span>&lt;span class="p">({&lt;/span> &lt;span class="nx">category&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">action&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">label&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">gtag&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">Object&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">assign&lt;/span>&lt;span class="p">({&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;event_category&amp;#34;&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">category&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;event_label&amp;#34;&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">label&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">value&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="p">{});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">gtag&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;event&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">action&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">data&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>という仕組みで送信されている。&lt;/p>
+&lt;p>おかげで利用状況がある程度わかるようになってきた。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>SyncTimerの使い方動画を作りました</title><link href="https://mather.github.io/posts/2022/03/synctimer-usage-movie/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/03/synctimer-usage-movie/</id><published>2022-03-15T19:00:00+09:00</published><updated>2022-03-15T19:00:00+09:00</updated><content type="html">
+&lt;p>SyncTimerはシンプルなので、使い方は細かく書かなくても分かってくれるかなーと思ってたので書かなかったが、
+やはり具体的な使い方を説明したほうがいいかなーと思ったので動画を作って公開した。&lt;/p>
+&lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+&lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/m1Basm-TqGU?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
+>&lt;/iframe>
+&lt;/div>
+&lt;p>おおよその内容は&lt;/p>
+&lt;ul>
+&lt;li>SyncTimerってどんなタイマーか&lt;/li>
+&lt;li>設定の変更方法&lt;/li>
+&lt;li>URLが連動していること&lt;/li>
+&lt;li>OBSでの使い方の例&lt;/li>
+&lt;/ul>
+&lt;p>といったところ。使う人が迷わないといいな。&lt;/p></content><category scheme="https://mather.github.io/categories/SyncTimer%E9%96%8B%E7%99%BA" term="SyncTimer%E9%96%8B%E7%99%BA" label="SyncTimer開発"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>続・ランダム生成IDの衝突確率について</title><link href="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/02/another-form-for-hash-collision/</id><published>2022-02-10T17:25:18+09:00</published><updated>2022-02-10T17:25:18+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="/posts/2022/02/hash-collision"
+>前回&lt;/a> では数学的な側面として誕生日パラドックスに関する確率を求めた。&lt;/p>
+&lt;link
+rel="stylesheet"
+href="/"
+/>
+&lt;script defer src="/js/katex-e9218a95.bundle.min.js">&lt;/script>
+&lt;span class="gblog-katex ">
+\[\]&lt;/span>
+&lt;p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;p>これは余事象である「一度も衝突しない確率」を求めることで計算したが、余事象を使わずに求めることができるだろうか？&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="余事象を使わない方法"
+>
+余事象を使わない方法
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/#余事象を使わない方法" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 余事象を使わない方法" href="#%e4%bd%99%e4%ba%8b%e8%b1%a1%e3%82%92%e4%bd%bf%e3%82%8f%e3%81%aa%e3%81%84%e6%96%b9%e6%b3%95">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>「 \(n\) 回目までに衝突が発生する確率」を求めるには&lt;/p>
+&lt;ul>
+&lt;li>1回目に「初めて」衝突する確率 \(P_\text{fc}(1)\)( = 0 )&lt;/li>
+&lt;li>2回目に「初めて」衝突する確率 \(P_\text{fc}(2)\)&lt;/li>
+&lt;li>&amp;hellip;&lt;/li>
+&lt;li>\(n\) 回目に「初めて」衝突する確率 \(P_\text{fc}(n)\)&lt;/li>
+&lt;/ul>
+&lt;p>をそれぞれ求めて足し合わせれば良い。
+注意すべきポイントはそれぞれの「初めて衝突する事象」が重複していないことである。&lt;/p>
+&lt;p>具体的に求めていこう。&lt;/p>
+&lt;p>\(n = 1\) ならばどれが選ばれても衝突しないので、&lt;/p>
+&lt;p>$$ P_\text{fc}(1) = \frac{0}{M} = 0$$&lt;/p>
+&lt;p>となる。次に \(n = 2\) ならば、1つ目は何を選んでもよく、最初に選んだ1つと一致した場合なので、&lt;/p>
+&lt;p>$$ P_\text{fc}(2) = \frac{M}{M}\frac{1}{M} = \frac{1}{M}$$&lt;/p>
+&lt;p>となる。続いて、 \(n = 3\) ならば、2つ目までは衝突せず、先に選ばれた2つと一致した場合なので、&lt;/p>
+&lt;p>$$ P_\text{fc}(3) = \frac{M}{M}\frac{M-1}{M}\frac{2}{M}$$&lt;/p>
+&lt;p>となる。これを \(n\) の場合について考えると&lt;/p>
+&lt;p>$$ P_\text{fc}(n) = \frac{M!}{M^{n-1}(M-(n-1))!}\frac{n-1}{M}$$&lt;/p>
+&lt;p>となる。したがって求めるべき \(n\) 回目までに衝突が発生する確率は&lt;/p>
+&lt;p>$$ P_{\text{c}}&amp;rsquo;(n) = \sum_{k=1}^n P_\text{fc}(k) = \sum_{k=1}^n \frac{M!}{M^{k-1}(M-(k-1))!}\frac{k-1}{M}$$&lt;/p>
+&lt;p>となるはずである。&lt;/p>
+&lt;p>はたして、 \( P_{\text{c}}(n) = P_{\text{c}}&amp;rsquo;(n)\) となるだろうか？（一致しないとおかしいはずだが）&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="一致することを示す"
+>
+一致することを示す
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/#一致することを示す" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 一致することを示す" href="#%e4%b8%80%e8%87%b4%e3%81%99%e3%82%8b%e3%81%93%e3%81%a8%e3%82%92%e7%a4%ba%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>一致することを示そう。&lt;/p>
+&lt;p>まず、 \( P_\text{nc}(k)\) のときの数式とよく見比べて、形の違う部分 \(\frac{k-1}{M}\) に注目し次のように変形する。&lt;/p>
+&lt;p>$$ \frac{k-1}{M} = \frac{M-M+k-1}{M} = 1 - \frac{M-(k-1)}{M}$$&lt;/p>
+&lt;p>これにより、 \(P_\text{fc}(k)\) は次のように変形できる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_\text{fc}(k) &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!}\bigg\{1 - \frac{M-(k-1)}{M}\bigg\} \\
+&amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!}
+\end{align*}
+$$&lt;/p>
+&lt;p>したがって、総和である \(P_{\text{c}}&amp;rsquo;(n)\) は&lt;/p>
+&lt;p>$$ P_{\text{c}}&amp;rsquo;(n) = \sum_{k=1}^n \bigg\{ \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \bigg\} $$&lt;/p>
+&lt;p>となるが、総和の各項は次のように打ち消すことができる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_\text{fc}(k) + P_\text{fc}(k+1) &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} + \frac{M!}{M^{k}(M-k)!} - \frac{M!}{M^{k+1}(M-(k+1))!} \\ &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^{k+1}(M-(k+1))!}
+\end{align*}
+$$&lt;/p>
+&lt;p>結果として最初と最後だけが残り、次の結果が得られる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_{\text{c}}&amp;rsquo;(n) &amp;amp;= \sum_{k=1}^n \bigg\{ \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \bigg\} \\
+&amp;amp;= 1 - \frac{M!}{M^n(M-n)!} \\
+&amp;amp;= P_{\text{c}}(n)
+\end{align*}
+$$&lt;/p>
+&lt;p>よって、一致することが示せた。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="別の考え方"
+>
+別の考え方
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/another-form-for-hash-collision/#別の考え方" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 別の考え方" href="#%e5%88%a5%e3%81%ae%e8%80%83%e3%81%88%e6%96%b9">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>\(n\) 回目で初めて衝突する確率 \(P_\text{fc}(n)\) から \(n\) 回目までに衝突が発生する確率 \(P_\text{c}(n)\) を計算してみたが、逆に考えることもできる。&lt;/p>
+&lt;p>\(P_\text{fc}(k)\) の変形後の数式を更に変形すると( \(P_\text{c}(0)\) は定義されていないため) \(k \geq 2\) の場合について次のことがわかる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_\text{fc}(k) &amp;amp;= \frac{M!}{M^{k-1}(M-(k-1))!} - \frac{M!}{M^k(M-k)!} \\
+&amp;amp;= \bigg(1 - \frac{M!}{M^k(M-k)!}\bigg) - \bigg(1 - \frac{M!}{M^{k-1}(M-(k-1))!}\bigg) \\
+&amp;amp;= P_\text{c}(k) - P_\text{c}(k-1)
+\end{align*}
+$$&lt;/p>
+&lt;p>よく考えればわかることだが、 \(n\) 回目で「初めて」衝突する場合というのは「\(n\) 回目までに衝突が起こる場合」から「 \(n-1\) 回目までに衝突が発生する場合」を取り除いたものに等しく、この変形は納得の行く結果となる。&lt;/p>
+&lt;p>この結果から改めて \(P_{\text{c}}&amp;rsquo;(n)\) を計算してみると同様の結果が得られる。&lt;/p>
+&lt;p>$$
+\begin{align*}
+P_{\text{c}}&amp;rsquo;(n) &amp;amp;= \sum_{k=2}^n\{P_\text{c}(k) - P_\text{c}(k-1)\} + P_\text{fc}(1) \\
+&amp;amp;= P_\text{c}(k) - P_\text{c}(1) + P_\text{fc}(1) \\
+&amp;amp;= P_\text{c}(k)
+\end{align*}
+$$&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6" term="%E6%95%B0%E5%AD%A6" label="数学"/></entry><entry><title>ランダムに生成したIDが衝突する確率の議論</title><link href="https://mather.github.io/posts/2022/02/hash-collision/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2022/02/hash-collision/</id><published>2022-02-03T20:00:00+09:00</published><updated>2022-02-03T20:00:00+09:00</updated><content type="html">
+&lt;p>「ランダムなIDをあるパターンに従って生成するとき、どう設計すべきか？」という質問があったので技術的な側面と数学的な側面で説明してみよう。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="技術的な側面"
+>
+技術的な側面
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#技術的な側面" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 技術的な側面" href="#%e6%8a%80%e8%a1%93%e7%9a%84%e3%81%aa%e5%81%b4%e9%9d%a2">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>そもそも衝突したくないなら典型的な方法として「時間の情報を含めてIDを生成する」という方法があり、
+UUIDv1にもタイムスタンプが使われているし、 &lt;a
+class="gblog-markdown__link"
+href="https://github.com/ulid/spec"
+>ULID&lt;/a> という選択肢もある。&lt;/p>
+&lt;p>しかし、UUIDv1はMACアドレスに依存してしまう設計なので現在はほぼ使われていないし、ULIDは最初の10桁がタイムスタンプ情報なので短く詰めることでランダム性を失ったり、IDそのものに特定の構造を定義したいという場合はそのままでは使えない。&lt;/p>
+&lt;p>今回の質問でも特定の構造が指定された場合の話だったので、シンプルにランダム生成することを前提とした。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="もし衝突したら何が問題か"
+>
+もし衝突したら何が問題か
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#もし衝突したら何が問題か" class="gblog-post__anchor clip flex align-center" aria-label="Anchor もし衝突したら何が問題か" href="#%e3%82%82%e3%81%97%e8%a1%9d%e7%aa%81%e3%81%97%e3%81%9f%e3%82%89%e4%bd%95%e3%81%8c%e5%95%8f%e9%a1%8c%e3%81%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>IDの生成直後にすぐDBに保存する仕組みであれば、DBに登録済みか確認し重複している場合には再生成すれば実用上は問題なく使える。
+（もちろん、衝突が何度も発生するような状況ではパフォーマンスの問題に発展してしまうが）&lt;/p>
+&lt;p>それでも問題になるのは次のようなケースが考えられる。&lt;/p>
+&lt;ul>
+&lt;li>一時的にIDを生成しユーザーがデータを入力したタイミングでDBに保存するため、生成時には重複が検知できない&lt;/li>
+&lt;li>多数の同時リクエストや冗長構成によって、ほぼ同時にID生成される可能性が高く、DBに保存されていたとして生成時の重複が検知できない可能性がある
+&lt;ul>
+&lt;li>かといってINSERT時のテーブルロックなどをしてしまうとパフォーマンス上の問題となってしまう&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>そのような状況の解決を図ったID生成方法の実例に &lt;a
+class="gblog-markdown__link"
+href="https://developer.twitter.com/ja/docs/basics/twitter-ids"
+>Twitter IDs(Snowflake)&lt;/a> がある。
+大規模なサービスではID生成だけでもミッションクリティカルな機能になったりもする。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="数学的な側面"
+>
+数学的な側面
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#数学的な側面" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 数学的な側面" href="#%e6%95%b0%e5%ad%a6%e7%9a%84%e3%81%aa%e5%81%b4%e9%9d%a2">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;link
+rel="stylesheet"
+href="/"
+/>
+&lt;script defer src="/js/katex-e9218a95.bundle.min.js">&lt;/script>
+&lt;span class="gblog-katex ">
+\(\)&lt;/span>
+&lt;p>数学的には「&lt;a
+class="gblog-markdown__link"
+href="https://ja.wikipedia.org/wiki/%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AE%E3%83%91%E3%83%A9%E3%83%89%E3%83%83%E3%82%AF%E3%82%B9"
+>誕生日のパラドックス&lt;/a>」が有名である。&lt;/p>
+&lt;p>\( M \) を生成可能なパターン数とする。
+例えば 8 桁の数字でランダムな値を作る場合、&lt;code>00000000&lt;/code> から &lt;code>99999999&lt;/code> までの範囲で \(10^8\) 個生成可能である。&lt;/p>
+&lt;p>このうち、 \(n\) 回ランダムに生成したとき「一度でも衝突が発生する確率」を考える。
+「\( n \) 回目で発生する確率」と読み間違えないように注意してほしい。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="余事象の確率で考える"
+>
+余事象の確率で考える
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#余事象の確率で考える" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 余事象の確率で考える" href="#%e4%bd%99%e4%ba%8b%e8%b1%a1%e3%81%ae%e7%a2%ba%e7%8e%87%e3%81%a7%e8%80%83%e3%81%88%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>「\(n\) 回生成したときに一度でも衝突が発生する」ということを考えたいとき、「\(n\) 回生成しても一度も衝突が発生しなかった場合」の余事象を考えれば良い。&lt;/p>
+&lt;p>「全く衝突が発生しなかった場合」の反対なので、「少なくとも一度は衝突が発生している場合」ということになる。&lt;/p>
+&lt;p>「\(n\) 回生成しても一度も衝突が発生しない確率 \(P_\text{nc}(n)\)」を求めよう。&lt;/p>
+&lt;p>\(n=1\) ならば、 \(M\)個中どれが選ばれても衝突することがないので、 \(\frac{M}{M} = 1\) (100%)である。&lt;/p>
+&lt;p>次に \(n=2\) ならば、 \(M\)個中最初に選んだものを除く \(M-1\) 個から選ばれても衝突することがないので、 \(\frac{M}{M} \frac{M-1}{M}\) である。&lt;/p>
+&lt;p>このようにして、衝突が発生しない確率が次のように計算できる&lt;/p>
+&lt;p>$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;p>つまり衝突が発生する確率は全確率 1 から発生しない確率を引いたものとなる。&lt;/p>
+&lt;p>$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="数値計算してみる"
+>
+数値計算してみる
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#数値計算してみる" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 数値計算してみる" href="#%e6%95%b0%e5%80%a4%e8%a8%88%e7%ae%97%e3%81%97%e3%81%a6%e3%81%bf%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>Node.js で次のようなコードを実行してみる&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">M&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">8&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">1.0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">p_nc&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mf">0.5&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">n&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">*=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">M&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="nx">M&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sb">`n = &lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">`&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>数値計算上の誤差はあるだろうが、計算結果は &lt;code>n = 11775&lt;/code> となる。
+上記の「8桁の数字」で生成されるIDでは、11,775回生成するだけで衝突が発生する確率が50%を超える結果となる。&lt;/p>
+&lt;p>では、実際に生成してみて衝突が発生するまでの生成回数を調べてみよう。100回試してみて、その平均値を取ってみる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">M&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">8&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">function&lt;/span> &lt;span class="nx">collisionTest&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">memo&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">generated&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ceil&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">random&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">M&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">memo&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">generated&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">memo&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">generated&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">generated&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ceil&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">random&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">M&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nb">Object&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">keys&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">memo&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nx">length&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">trial&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">100&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">results&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[...&lt;/span>&lt;span class="nb">Array&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">trial&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nx">keys&lt;/span>&lt;span class="p">()].&lt;/span>&lt;span class="nx">map&lt;/span>&lt;span class="p">(()&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="nx">collisionTest&lt;/span>&lt;span class="p">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">average&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">results&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">reduce&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="nx">a&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">b&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="nx">a&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="nx">b&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mf">1.0&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="nx">trial&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sb">`average = &lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">average&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">`&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>average = 11866.35&lt;/code> という結果になる。
+ランダムなので実行ごとにばらつきはあるが、平均値が上記の50%の確率で衝突する値に近いことがわかる。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="実用的な範囲は"
+>
+実用的な範囲は？
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#実用的な範囲は" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 実用的な範囲は？" href="#%e5%ae%9f%e7%94%a8%e7%9a%84%e3%81%aa%e7%af%84%e5%9b%b2%e3%81%af">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>実用性を考えると、衝突確率が1%未満である安全性の高い範囲を考えておきたい。
+&lt;code>p_nc &amp;gt; 0.99&lt;/code> と置き換えればその値は計算でき、 &lt;code>n = 1419&lt;/code> である。
+設計するサービスが1,000個未満のIDで運用できるなら衝突する可能性はかなり少ないだろうが、それを超え始めると度々衝突が発生することも考えられるため、サービスのスケールを見積もりながら安全な範囲を計算すると良い。&lt;/p>
+&lt;p>一例として、先程の確率計算を関数化したものを使ってみる。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * max_ids: 生成可能なIDの数
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * p_under: 衝突確率がこれ以下である最大値を求める (0以上1未満の値を指定)
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">function&lt;/span> &lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">max_ids&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">p_under&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">1.0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">p_nc&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="nx">p_under&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">n&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">p_nc&lt;/span> &lt;span class="o">*=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">max_ids&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="nx">max_ids&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">8&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.01&lt;/span>&lt;span class="p">);&lt;/span> &lt;span class="c1">// =&amp;gt; 1419
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">9&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.01&lt;/span>&lt;span class="p">);&lt;/span> &lt;span class="c1">// =&amp;gt; 4484
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">collisionSafe&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.01&lt;/span>&lt;span class="p">);&lt;/span> &lt;span class="c1">// =&amp;gt; 14179
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2022/02/hash-collision/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>「誕生日のパラドックス」の解説にもあるように、「思ったより少ない生成個数で衝突が発生しやすい」ということを意識して、ランダムなIDを生成すると良い。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6" term="%E6%95%B0%E5%AD%A6" label="数学"/></entry><entry><title>同時視聴配信用のタイマーを作った話</title><link href="https://mather.github.io/posts/2021/08/sync-timer/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2021/08/sync-timer/</id><published>2021-08-16T16:43:12+09:00</published><updated>2021-08-16T16:43:12+09:00</updated><content type="html">
+&lt;p>作ったものはこちら&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://sync-timer.netlify.app/"
+>https://sync-timer.netlify.app/&lt;/a>&lt;/p>
+&lt;p>ソースコードはこちら&lt;/p>
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://github.com/mather/simple-stopwatch"
+>https://github.com/mather/simple-stopwatch&lt;/a>&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="経緯"
+>
+経緯
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#経緯" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 経緯" href="#%e7%b5%8c%e7%b7%af">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。&lt;/p>
+&lt;blockquote class="twitter-tweet">&lt;p lang="ja" dir="ltr">以前VTuberの磁富モノエさん( &lt;a href="https://twitter.com/Jitomi_Monoe?ref_src=twsrc%5Etfw">@Jitomi_Monoe&lt;/a> )の Nintendo Direct 同時視聴配信で「マイナスからスタートするストップウォッチがほしい」って話があったから、最近Elmを書いてなかったから試しに作ってみた。&lt;a href="https://t.co/kCVSEZBV0C">https://t.co/kCVSEZBV0C&lt;/a>&lt;/p>&amp;mdash; mather / Eisuke Kuwahata (@mather314) &lt;a href="https://twitter.com/mather314/status/1292112179018137600?ref_src=twsrc%5Etfw">August 8, 2020&lt;/a>&lt;/blockquote>
+&lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8">&lt;/script>
+&lt;p>誰かに使われる予定もなく自己満足で開発を終え早一年…。&lt;/p>
+&lt;p>本当はグリーンバックとか入れたほうがいいのかな、とか考えながらやり残した感はあったのですが、細かく実装を追加してもどうせ使わないかと思うのでとりあえず放置していた。&lt;/p>
+&lt;p>そんな折、きっかけとなった VTuber の方も突然の引退…。
+「推しは推せるときに推しておけ」とはこのこと。&lt;/p>
+&lt;p>しかし、そういったイベントとは一切関係なく開発意欲は突然湧き上がってくるもので、&lt;/p>
+&lt;ul>
+&lt;li>使い慣れてたので Tailwind CSS を使ってたけど、1 ページだけのアプリに Tailwind はやりすぎ感があった&lt;/li>
+&lt;li>Elm アプリに対してもっと簡単に導入できる CSS はないだろうかと考えてた
+&lt;ul>
+&lt;li>最近 Pico.css というものの存在を知って使ってみたくなった&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>どうせ開発するならグリーンバックとか作っちゃえ&lt;/li>
+&lt;li>どうせ開発するならヘルプとか作って使いやすくしたい&lt;/li>
+&lt;/ul>
+&lt;p>と週末に思いついたことをガンガン作ってみた。&lt;/p>
+&lt;p>ひとまず、やりたいことはやったかな。
+あとはもし誰かからフィードバックがあったら考えよう。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="技術について"
+>
+技術について
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#技術について" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 技術について" href="#%e6%8a%80%e8%a1%93%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>言語、フレームワークなど技術的な要素は次のようなものです。&lt;/p>
+&lt;ul>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://elm-lang.org/"
+>Elm&lt;/a> 0.19.1
+&lt;ul>
+&lt;li>関数型プログラミング言語&lt;/li>
+&lt;li>TEA (The Elm Architecture)&lt;/li>
+&lt;li>0.19.0 がリリースされたのが 2018 年。 0.19.1 が 2019 年。なんかもうこれで慣れてきた。&lt;/li>
+&lt;li>未体験の方はぜひ一度触ってみて欲しい。エラーメッセージの丁寧さは群を抜いている。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://picocss.com/"
+>Pico.css&lt;/a> master(2021-08-13)
+&lt;ul>
+&lt;li>ミニマル CSS フレームワーク&lt;/li>
+&lt;li>&lt;code>div&lt;/code> とかではなく &lt;code>main&lt;/code>, &lt;code>section&lt;/code>, &lt;code>article&lt;/code> など適切な HTML を書くことで自然にスタイルが適用されるように設計されている&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://v2.parceljs.org/"
+>Parcel 2&lt;/a>
+&lt;ul>
+&lt;li>設定ファイルの（ほぼ）不要なビルドツール&lt;/li>
+&lt;li>Elm にも対応している&lt;/li>
+&lt;li>昨年の段階で使っていた v1 が非推奨になったので v2 へ変更したが、 &lt;code>2.0.0-rc.0&lt;/code> が最新だった。正式版をリリースしてから旧バージョンを非推奨にしたほうが良いのでは…？&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a
+class="gblog-markdown__link"
+href="https://www.netlify.com/"
+>Netlify&lt;/a>
+&lt;ul>
+&lt;li>Github と連携すると Github Actions なしでもある程度の CI, CD を行ってくれるホスティングサービス&lt;/li>
+&lt;li>静的ホスティングだけなら 10 サイトまで無料で公開できる&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="振り返って"
+>
+振り返って
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#振り返って" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 振り返って" href="#%e6%8c%af%e3%82%8a%e8%bf%94%e3%81%a3%e3%81%a6">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="ユーザーテストをしていない"
+>
+ユーザーテストをしていない
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#ユーザーテストをしていない" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ユーザーテストをしていない" href="#%e3%83%a6%e3%83%bc%e3%82%b6%e3%83%bc%e3%83%86%e3%82%b9%e3%83%88%e3%82%92%e3%81%97%e3%81%a6%e3%81%84%e3%81%aa%e3%81%84">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>本来ならちゃんと動いて満足行く出来になっているかユーザーにテストしてもらいたいのだが、そもそもユーザーを捕まえてテストしようとしていない。&lt;/p>
+&lt;p>誰か使ってみてくれないか。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="elm-と-css"
+>
+Elm と CSS
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#elm-と-css" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Elm と CSS" href="#elm-%e3%81%a8-css">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>関数型プログラミング言語のため、 &lt;a
+class="gblog-markdown__link"
+href="https://github.com/rtfeldman/elm-css"
+>elm-css&lt;/a> などで型付きの CSS 記述(CSS-in-JS)をするなどの選択肢も考えられる。&lt;/p>
+&lt;p>今回は CSS フレームワークに乗っかって手軽に書きたいという考えで、敢えて CSS を分離することにしてみた。
+個人的にはこれもありだと感じている。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="技術を試す"
+>
+技術を試す
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#技術を試す" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 技術を試す" href="#%e6%8a%80%e8%a1%93%e3%82%92%e8%a9%a6%e3%81%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>不利益をもたらさない小さなサービスで新しい技術要素や実験的な試みをするのは大事だと改めて思った。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="小ネタ"
+>
+小ネタ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2021/08/sync-timer/#小ネタ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 小ネタ" href="#%e5%b0%8f%e3%83%8d%e3%82%bf">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>タイマーのフォントは「D-DIN」。
+きっかけとなった VTuber の初回配信のカウントダウンに使われているフォント（だと思う）。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/Elm" term="Elm" label="Elm"/><category scheme="https://mather.github.io/tags/%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9" term="%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9" label="サービス"/><category scheme="https://mather.github.io/tags/SyncTimer" term="SyncTimer" label="SyncTimer"/></entry><entry><title>自分が感じる東京と宮崎の勉強会の違い</title><link href="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</id><published>2019-12-09T14:01:16+09:00</published><updated>2019-12-09T14:01:16+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://qiita.com/advent-calendar/2019/miyazaki"
+>宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a> 9 日目の記事です。
+投稿がものすごく遅れてしまい申し訳ない…。&lt;/p>
+&lt;p>数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="東京の場合"
+>
+東京の場合
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#東京の場合" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 東京の場合" href="#%e6%9d%b1%e4%ba%ac%e3%81%ae%e5%a0%b4%e5%90%88">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>まずはそもそもエンジニア  を含む人口密度が大きいために、勉強会の開催数や参加人数がものすごく多いです。
+そのため、こんなことが起こります。&lt;/p>
+&lt;ul>
+&lt;li>細分化 : 地域型、専門化、ニッチな領域の勉強会&lt;/li>
+&lt;li>参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い&lt;/li>
+&lt;li>ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="宮崎の場合"
+>
+宮崎の場合
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#宮崎の場合" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 宮崎の場合" href="#%e5%ae%ae%e5%b4%8e%e3%81%ae%e5%a0%b4%e5%90%88">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。
+東京の場合とは逆に次のような状況です。&lt;/p>
+&lt;ul>
+&lt;li>総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある&lt;/li>
+&lt;li>キャンセル率が低い（これは僕も結構驚き）&lt;/li>
+&lt;li>ある程度定番の登壇者や LT 登壇者がいる&lt;/li>
+&lt;li>多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい&lt;/li>
+&lt;li>ゆるふわ&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。&lt;/p>
+&lt;p>宮崎は点と点の結びつきでアットホームなコミュニティが形成されている面白い場所だと感じています。
+そのようなコミュニティをより盛り上げていくために、会社という枠を超えたところでエンジニア同士の会話や意見交換を楽しむ場として勉強会の形を模索していくことになるでしょう。&lt;/p>
+&lt;p>これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。
+そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。&lt;/p></content><category scheme="https://mather.github.io/tags/meetup" term="meetup" label="meetup"/><category scheme="https://mather.github.io/tags/%E5%AE%AE%E5%B4%8E" term="%E5%AE%AE%E5%B4%8E" label="宮崎"/><category scheme="https://mather.github.io/tags/advent-calendar-2019" term="advent-calendar-2019" label="advent calendar 2019"/></entry><entry><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link href="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</id><published>2019-12-07T23:57:04+09:00</published><updated>2019-12-07T23:57:04+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://qiita.com/advent-calendar/2019/miyazaki"
+>宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a> 8 日目の記事です。&lt;/p>
+&lt;p>皆さん、Github 活用してますか？&lt;/p>
+&lt;p>Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。
+特に、 &lt;code>[アカウント名].github.io&lt;/code> という名前のリポジトリの場合はドメイン直下のページが作成できます。&lt;/p>
+&lt;p>参考: &lt;a
+class="gblog-markdown__link"
+href="https://help.github.com/ja/github/working-with-github-pages/about-github-pages#github-pages-%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E"
+>GitHub Pages サイトの種類&lt;/a>&lt;/p>
+&lt;p>それに加えて、&lt;a
+class="gblog-markdown__link"
+href="https://github.blog/changelog/2019-11-11-github-actions-is-generally-available/"
+>Github Actions が一般に公開されました&lt;/a>。
+これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。&lt;/p>
+&lt;p>これらを組み合わせると、以下のようなワークフローが可能になります。&lt;/p>
+&lt;ul>
+&lt;li>静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る&lt;/li>
+&lt;li>ローカルでレビューし、問題なければ指定のブランチにプッシュ&lt;/li>
+&lt;li>Github Actions でプッシュを検知し、静的サイトをビルド&lt;/li>
+&lt;li>&lt;code>[アカウント名].github.io&lt;/code> の場合、ビルド完了した静的サイトを &lt;code>master&lt;/code> ブランチにデプロイ
+&lt;ul>
+&lt;li>それ以外のリポジトリの場合は &lt;code>gh-pages&lt;/code> ブランチがデプロイ先となります&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>今回はこれを &lt;a
+class="gblog-markdown__link"
+href="https://gohugo.io/"
+>Hugo&lt;/a> でやってみよう、という話です。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ポートフォリオを作る"
+>
+ポートフォリオを作る
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#ポートフォリオを作る" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ポートフォリオを作る" href="#%e3%83%9d%e3%83%bc%e3%83%88%e3%83%95%e3%82%a9%e3%83%aa%e3%82%aa%e3%82%92%e4%bd%9c%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>Hugo をインストールします。Mac なので Homebrew でインストールできます。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ brew install hugo
+&lt;/code>&lt;/pre>&lt;p>今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ hugo new site . --force
+&lt;/code>&lt;/pre>&lt;p>Hugo のテーマはシンプルな &lt;a
+class="gblog-markdown__link"
+href="https://themes.gohugo.io/hermit/"
+>hermit&lt;/a> にしてみました。
+個人的にはこのくらい落ち着いた色合いが好みです。&lt;/p>
+&lt;p>インストール手順はテーマのページに記載されているドキュメントのとおりですので割愛します。&lt;/p>
+&lt;p>設定ファイルである &lt;code>config.toml&lt;/code> は&lt;a
+class="gblog-markdown__link"
+href="https://github.com/Track3/hermit/blob/master/exampleSite/config.toml"
+>テーマのデモページで適用されているもの&lt;/a>を参考に自分のページに合わせて編集します。&lt;/p>
+&lt;p>トップページのメニューはこれから作るパスを考えながら設定します。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">menu&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[[&lt;/span>&lt;span class="nx">menu&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">main&lt;/span>&lt;span class="p">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">name&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;Posts&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">url&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;posts/&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">weight&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="mi">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[[&lt;/span>&lt;span class="nx">menu&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">main&lt;/span>&lt;span class="p">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">name&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;About&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">url&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;pages/about/&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">weight&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="mi">20&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>以下のコマンドで Hugo のホットリロードサーバーを起動します。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ hugo server -D
+&lt;/code>&lt;/pre>&lt;p>&lt;code>-D&lt;/code> は &lt;code>draft: true&lt;/code> となっているドラフト記事（本番ではまだ表示しない）もビルドして表示してくれるフラグです。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="自己紹介を書く"
+>
+自己紹介を書く
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#自己紹介を書く" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 自己紹介を書く" href="#%e8%87%aa%e5%b7%b1%e7%b4%b9%e4%bb%8b%e3%82%92%e6%9b%b8%e3%81%8f">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;code>pages/about/&lt;/code> に自己紹介を掲載するので、以下のコマンドでページを作ります。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ hugo new pages/about.md
+&lt;/code>&lt;/pre>&lt;p>このコマンドで &lt;code>content/pages/about.md&lt;/code> が生成されます。
+生成されたファイルの内容は &lt;code>archetypes/default.md&lt;/code> をテンプレートとして生成したものですが、この &lt;code>archetypes/&lt;/code> フォルダには固定ページ向け、ブログ記事向けなどに切り分けたテンプレートも設置できます。&lt;/p>
+&lt;p>参考: &lt;a
+class="gblog-markdown__link"
+href="https://gohugo.io/content-management/archetypes/"
+>Archetypes | Hugo&lt;/a>&lt;/p>
+&lt;p>生成された Markdown ファイルに内容を記載して保存すると自動的にビルドが行われ、ブラウザで表示している場合は自動的にリロードされます。&lt;/p>
+&lt;p>表示された内容を確認し、内容に問題がなければ &lt;code>draft: true&lt;/code> を削除し &lt;code>git commit&lt;/code> しましょう。
+今回は &lt;code>hugo&lt;/code> ブランチを作ってコミットします。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ git checkout -b hugo
+$ git commit -v
+&lt;/code>&lt;/pre>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="github-actions-の準備"
+>
+Github Actions の準備
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#github-actions-の準備" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Github Actions の準備" href="#github-actions-%e3%81%ae%e6%ba%96%e5%82%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>リポジトリメニューの Actions を選択すると Github Actions のワークフロー (workflow) を作成できます。&lt;/p>
+&lt;p>ワークフローを作るときはすでに用意されているワークフローを参考に生成することもできますが、今回は自分で作るので &amp;ldquo;Set up a workflow yourself&amp;rdquo; ボタンを押します。&lt;/p>
+&lt;p>すると YAML ファイルを作成するエディタとマーケットプレイス(Marketplace)が表示されます。
+エディタではワークフロー定義の文法エラーなどを指摘してくれます。
+また、Marketplace にはすでに Actions で利用可能なアクションが検索可能な状態になっていますので、目当てのものを探して導入することでワークフローを手軽に構成できます。&lt;/p>
+&lt;p>今回はエディタ開始時にすでに指定されている &lt;code>actions/checkout@v1&lt;/code> 以外に、以下の action を利用します。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>peaceiris/actions-hugo@v2.3.0&lt;/code> : Hugo をインストールする&lt;/li>
+&lt;li>&lt;code>peaceiris/actions-gh-pages@v2.5.1&lt;/code> : Github Pages をデプロイする&lt;/li>
+&lt;/ul>
+&lt;p>これらを使って構成した Workflow は次のようになります。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yml" data-lang="yml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Deploy Github Pages&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">push&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">branches&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="l">hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">jobs&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">build&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">runs-on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ubuntu-latest&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">steps&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Checkout Source&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">actions/checkout@v1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Clone submodule&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">git submodule update --init --recursive&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Hugo setup&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-hugo@v2.3.0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># The Hugo version to download (if necessary) and use. Example: 0.58.2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">hugo-version&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">0.60.1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Download (if necessary) and use Hugo extended version. Example: true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">extended&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Build Hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">hugo -v&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">GitHub Pages action&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-gh-pages@v2.5.1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">env&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">ACTIONS_DEPLOY_KEY&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">${{ secrets.ACTIONS_DEPLOY_KEY }}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PUBLISH_BRANCH&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">master&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PUBLISH_DIR&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">./public&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>内容は各ステップの &lt;code>name&lt;/code> にあるとおりです。&lt;/p>
+&lt;ul>
+&lt;li>ソースコードをチェックアウト&lt;/li>
+&lt;li>submodule をチェックアウト ( &lt;code>themes/hermit&lt;/code> を submodule で導入したため )&lt;/li>
+&lt;li>Hugo をインストール&lt;/li>
+&lt;li>Hugo をビルド&lt;/li>
+&lt;li>Github Pages へデプロイ&lt;/li>
+&lt;/ul>
+&lt;p>&lt;code>uses&lt;/code> ではなく &lt;code>run&lt;/code> になっているステップでは、実際にこのコマンドをシェルで実行するだけです。&lt;/p>
+&lt;p>作成が完了したら &amp;ldquo;Start Commit&amp;rdquo; を押してコミットを作成するのですが、直接 &lt;code>master&lt;/code> ブランチにコミットするのではなく、 &lt;code>hugo&lt;/code> ブランチに作成したいのでプルリクエストを作成する方を選びます。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="デプロイキー-deploy-key-の登録"
+>
+デプロイキー (Deploy Key) の登録
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#デプロイキー-deploy-key-の登録" class="gblog-post__anchor clip flex align-center" aria-label="Anchor デプロイキー (Deploy Key) の登録" href="#%e3%83%87%e3%83%97%e3%83%ad%e3%82%a4%e3%82%ad%e3%83%bc-deploy-key-%e3%81%ae%e7%99%bb%e9%8c%b2">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>上記ワークフロー定義の &lt;code>ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}&lt;/code> となっている部分でデプロイキーの指定が必要なのですが、こちらはローカルで SSH 鍵ペアを生成する必要があります。&lt;/p>
+&lt;p>以下はパスフレーズなしの鍵ペアを作成するコマンドの例です。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &amp;#34;[Githubアカウントのメールアドレス]&amp;#34; -N &amp;#34;&amp;#34;
+&lt;/code>&lt;/pre>&lt;p>生成した鍵ペアをリポジトリのメニューから以下のように登録します。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Setting&lt;/code> -&amp;gt; &lt;code>Deploy Key&lt;/code> -&amp;gt; 公開鍵 (&lt;code>.pub&lt;/code> の方) を追加&lt;/li>
+&lt;li>&lt;code>Setting&lt;/code> -&amp;gt; &lt;code>Secrets&lt;/code> -&amp;gt; &lt;code>ACTIONS_DEPLOY_KEY&lt;/code> というキー名で秘密鍵を登録&lt;/li>
+&lt;/ul>
+&lt;p>これで準備完了です。 &lt;code>hugo&lt;/code> ブランチが更新されたら、ワークフローが起動します。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>やや操作は多くなりましたが、静的サイトジェネレーターを使って Github Pages を自動デプロイする方法が Github だけで完結するのはとても便利だと思います。&lt;/p>
+&lt;p>ぜひ皆さんもワークフローを作ってみてください。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/hugo" term="hugo" label="hugo"/><category scheme="https://mather.github.io/tags/advent-calendar-2019" term="advent-calendar-2019" label="advent calendar 2019"/></entry></feed>

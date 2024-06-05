@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.127.0">Hugo</generator><title>Advent Calendar 2019 on Reveal My Ignorance</title><subtitle>Blog by Eisuke Kuwahata</subtitle><link href="https://mather.github.io/tags/advent-calendar-2019/" rel="alternate" type="text/html" title="html"/><link href="https://mather.github.io/tags/advent-calendar-2019/feed.xml" rel="self" type="application/atom+xml" title="atom"/><updated>2024-06-05T17:06:10+00:00</updated><id>https://mather.github.io/tags/advent-calendar-2019/</id><entry><title>自分が感じる東京と宮崎の勉強会の違い</title><link href="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</id><published>2019-12-09T14:01:16+09:00</published><updated>2019-12-09T14:01:16+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://qiita.com/advent-calendar/2019/miyazaki"
+>宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a> 9 日目の記事です。
+投稿がものすごく遅れてしまい申し訳ない…。&lt;/p>
+&lt;p>数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="東京の場合"
+>
+東京の場合
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#東京の場合" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 東京の場合" href="#%e6%9d%b1%e4%ba%ac%e3%81%ae%e5%a0%b4%e5%90%88">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>まずはそもそもエンジニア  を含む人口密度が大きいために、勉強会の開催数や参加人数がものすごく多いです。
+そのため、こんなことが起こります。&lt;/p>
+&lt;ul>
+&lt;li>細分化 : 地域型、専門化、ニッチな領域の勉強会&lt;/li>
+&lt;li>参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い&lt;/li>
+&lt;li>ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="宮崎の場合"
+>
+宮崎の場合
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#宮崎の場合" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 宮崎の場合" href="#%e5%ae%ae%e5%b4%8e%e3%81%ae%e5%a0%b4%e5%90%88">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。
+東京の場合とは逆に次のような状況です。&lt;/p>
+&lt;ul>
+&lt;li>総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある&lt;/li>
+&lt;li>キャンセル率が低い（これは僕も結構驚き）&lt;/li>
+&lt;li>ある程度定番の登壇者や LT 登壇者がいる&lt;/li>
+&lt;li>多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい&lt;/li>
+&lt;li>ゆるふわ&lt;/li>
+&lt;/ul>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/09/miyazaki_meetups/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。&lt;/p>
+&lt;p>宮崎は点と点の結びつきでアットホームなコミュニティが形成されている面白い場所だと感じています。
+そのようなコミュニティをより盛り上げていくために、会社という枠を超えたところでエンジニア同士の会話や意見交換を楽しむ場として勉強会の形を模索していくことになるでしょう。&lt;/p>
+&lt;p>これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。
+そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。&lt;/p></content><category scheme="https://mather.github.io/tags/meetup" term="meetup" label="meetup"/><category scheme="https://mather.github.io/tags/%E5%AE%AE%E5%B4%8E" term="%E5%AE%AE%E5%B4%8E" label="宮崎"/><category scheme="https://mather.github.io/tags/advent-calendar-2019" term="advent-calendar-2019" label="advent calendar 2019"/></entry><entry><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link href="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/" rel="alternate" type="text/html" hreflang="en"/><id>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</id><published>2019-12-07T23:57:04+09:00</published><updated>2019-12-07T23:57:04+09:00</updated><content type="html">
+&lt;p>&lt;a
+class="gblog-markdown__link"
+href="https://qiita.com/advent-calendar/2019/miyazaki"
+>宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a> 8 日目の記事です。&lt;/p>
+&lt;p>皆さん、Github 活用してますか？&lt;/p>
+&lt;p>Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。
+特に、 &lt;code>[アカウント名].github.io&lt;/code> という名前のリポジトリの場合はドメイン直下のページが作成できます。&lt;/p>
+&lt;p>参考: &lt;a
+class="gblog-markdown__link"
+href="https://help.github.com/ja/github/working-with-github-pages/about-github-pages#github-pages-%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E"
+>GitHub Pages サイトの種類&lt;/a>&lt;/p>
+&lt;p>それに加えて、&lt;a
+class="gblog-markdown__link"
+href="https://github.blog/changelog/2019-11-11-github-actions-is-generally-available/"
+>Github Actions が一般に公開されました&lt;/a>。
+これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。&lt;/p>
+&lt;p>これらを組み合わせると、以下のようなワークフローが可能になります。&lt;/p>
+&lt;ul>
+&lt;li>静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る&lt;/li>
+&lt;li>ローカルでレビューし、問題なければ指定のブランチにプッシュ&lt;/li>
+&lt;li>Github Actions でプッシュを検知し、静的サイトをビルド&lt;/li>
+&lt;li>&lt;code>[アカウント名].github.io&lt;/code> の場合、ビルド完了した静的サイトを &lt;code>master&lt;/code> ブランチにデプロイ
+&lt;ul>
+&lt;li>それ以外のリポジトリの場合は &lt;code>gh-pages&lt;/code> ブランチがデプロイ先となります&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>今回はこれを &lt;a
+class="gblog-markdown__link"
+href="https://gohugo.io/"
+>Hugo&lt;/a> でやってみよう、という話です。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="ポートフォリオを作る"
+>
+ポートフォリオを作る
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#ポートフォリオを作る" class="gblog-post__anchor clip flex align-center" aria-label="Anchor ポートフォリオを作る" href="#%e3%83%9d%e3%83%bc%e3%83%88%e3%83%95%e3%82%a9%e3%83%aa%e3%82%aa%e3%82%92%e4%bd%9c%e3%82%8b">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>Hugo をインストールします。Mac なので Homebrew でインストールできます。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ brew install hugo
+&lt;/code>&lt;/pre>&lt;p>今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ hugo new site . --force
+&lt;/code>&lt;/pre>&lt;p>Hugo のテーマはシンプルな &lt;a
+class="gblog-markdown__link"
+href="https://themes.gohugo.io/hermit/"
+>hermit&lt;/a> にしてみました。
+個人的にはこのくらい落ち着いた色合いが好みです。&lt;/p>
+&lt;p>インストール手順はテーマのページに記載されているドキュメントのとおりですので割愛します。&lt;/p>
+&lt;p>設定ファイルである &lt;code>config.toml&lt;/code> は&lt;a
+class="gblog-markdown__link"
+href="https://github.com/Track3/hermit/blob/master/exampleSite/config.toml"
+>テーマのデモページで適用されているもの&lt;/a>を参考に自分のページに合わせて編集します。&lt;/p>
+&lt;p>トップページのメニューはこれから作るパスを考えながら設定します。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">menu&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[[&lt;/span>&lt;span class="nx">menu&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">main&lt;/span>&lt;span class="p">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">name&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;Posts&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">url&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;posts/&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">weight&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="mi">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[[&lt;/span>&lt;span class="nx">menu&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">main&lt;/span>&lt;span class="p">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">name&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;About&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">url&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;pages/about/&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">weight&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="mi">20&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>以下のコマンドで Hugo のホットリロードサーバーを起動します。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ hugo server -D
+&lt;/code>&lt;/pre>&lt;p>&lt;code>-D&lt;/code> は &lt;code>draft: true&lt;/code> となっているドラフト記事（本番ではまだ表示しない）もビルドして表示してくれるフラグです。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="自己紹介を書く"
+>
+自己紹介を書く
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#自己紹介を書く" class="gblog-post__anchor clip flex align-center" aria-label="Anchor 自己紹介を書く" href="#%e8%87%aa%e5%b7%b1%e7%b4%b9%e4%bb%8b%e3%82%92%e6%9b%b8%e3%81%8f">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>&lt;code>pages/about/&lt;/code> に自己紹介を掲載するので、以下のコマンドでページを作ります。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ hugo new pages/about.md
+&lt;/code>&lt;/pre>&lt;p>このコマンドで &lt;code>content/pages/about.md&lt;/code> が生成されます。
+生成されたファイルの内容は &lt;code>archetypes/default.md&lt;/code> をテンプレートとして生成したものですが、この &lt;code>archetypes/&lt;/code> フォルダには固定ページ向け、ブログ記事向けなどに切り分けたテンプレートも設置できます。&lt;/p>
+&lt;p>参考: &lt;a
+class="gblog-markdown__link"
+href="https://gohugo.io/content-management/archetypes/"
+>Archetypes | Hugo&lt;/a>&lt;/p>
+&lt;p>生成された Markdown ファイルに内容を記載して保存すると自動的にビルドが行われ、ブラウザで表示している場合は自動的にリロードされます。&lt;/p>
+&lt;p>表示された内容を確認し、内容に問題がなければ &lt;code>draft: true&lt;/code> を削除し &lt;code>git commit&lt;/code> しましょう。
+今回は &lt;code>hugo&lt;/code> ブランチを作ってコミットします。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ git checkout -b hugo
+$ git commit -v
+&lt;/code>&lt;/pre>&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="github-actions-の準備"
+>
+Github Actions の準備
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#github-actions-の準備" class="gblog-post__anchor clip flex align-center" aria-label="Anchor Github Actions の準備" href="#github-actions-%e3%81%ae%e6%ba%96%e5%82%99">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>リポジトリメニューの Actions を選択すると Github Actions のワークフロー (workflow) を作成できます。&lt;/p>
+&lt;p>ワークフローを作るときはすでに用意されているワークフローを参考に生成することもできますが、今回は自分で作るので &amp;ldquo;Set up a workflow yourself&amp;rdquo; ボタンを押します。&lt;/p>
+&lt;p>すると YAML ファイルを作成するエディタとマーケットプレイス(Marketplace)が表示されます。
+エディタではワークフロー定義の文法エラーなどを指摘してくれます。
+また、Marketplace にはすでに Actions で利用可能なアクションが検索可能な状態になっていますので、目当てのものを探して導入することでワークフローを手軽に構成できます。&lt;/p>
+&lt;p>今回はエディタ開始時にすでに指定されている &lt;code>actions/checkout@v1&lt;/code> 以外に、以下の action を利用します。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>peaceiris/actions-hugo@v2.3.0&lt;/code> : Hugo をインストールする&lt;/li>
+&lt;li>&lt;code>peaceiris/actions-gh-pages@v2.5.1&lt;/code> : Github Pages をデプロイする&lt;/li>
+&lt;/ul>
+&lt;p>これらを使って構成した Workflow は次のようになります。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yml" data-lang="yml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Deploy Github Pages&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">push&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">branches&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="l">hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">jobs&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">build&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">runs-on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ubuntu-latest&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">steps&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Checkout Source&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">actions/checkout@v1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Clone submodule&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">git submodule update --init --recursive&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Hugo setup&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-hugo@v2.3.0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># The Hugo version to download (if necessary) and use. Example: 0.58.2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">hugo-version&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">0.60.1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Download (if necessary) and use Hugo extended version. Example: true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">extended&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Build Hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">hugo -v&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">GitHub Pages action&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-gh-pages@v2.5.1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">env&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">ACTIONS_DEPLOY_KEY&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">${{ secrets.ACTIONS_DEPLOY_KEY }}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PUBLISH_BRANCH&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">master&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PUBLISH_DIR&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">./public&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>内容は各ステップの &lt;code>name&lt;/code> にあるとおりです。&lt;/p>
+&lt;ul>
+&lt;li>ソースコードをチェックアウト&lt;/li>
+&lt;li>submodule をチェックアウト ( &lt;code>themes/hermit&lt;/code> を submodule で導入したため )&lt;/li>
+&lt;li>Hugo をインストール&lt;/li>
+&lt;li>Hugo をビルド&lt;/li>
+&lt;li>Github Pages へデプロイ&lt;/li>
+&lt;/ul>
+&lt;p>&lt;code>uses&lt;/code> ではなく &lt;code>run&lt;/code> になっているステップでは、実際にこのコマンドをシェルで実行するだけです。&lt;/p>
+&lt;p>作成が完了したら &amp;ldquo;Start Commit&amp;rdquo; を押してコミットを作成するのですが、直接 &lt;code>master&lt;/code> ブランチにコミットするのではなく、 &lt;code>hugo&lt;/code> ブランチに作成したいのでプルリクエストを作成する方を選びます。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h3 id="デプロイキー-deploy-key-の登録"
+>
+デプロイキー (Deploy Key) の登録
+&lt;/h3>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#デプロイキー-deploy-key-の登録" class="gblog-post__anchor clip flex align-center" aria-label="Anchor デプロイキー (Deploy Key) の登録" href="#%e3%83%87%e3%83%97%e3%83%ad%e3%82%a4%e3%82%ad%e3%83%bc-deploy-key-%e3%81%ae%e7%99%bb%e9%8c%b2">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>上記ワークフロー定義の &lt;code>ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}&lt;/code> となっている部分でデプロイキーの指定が必要なのですが、こちらはローカルで SSH 鍵ペアを生成する必要があります。&lt;/p>
+&lt;p>以下はパスフレーズなしの鍵ペアを作成するコマンドの例です。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ ssh-keygen -t rsa -b 4096 -f /path/to/key -C &amp;#34;[Githubアカウントのメールアドレス]&amp;#34; -N &amp;#34;&amp;#34;
+&lt;/code>&lt;/pre>&lt;p>生成した鍵ペアをリポジトリのメニューから以下のように登録します。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Setting&lt;/code> -&amp;gt; &lt;code>Deploy Key&lt;/code> -&amp;gt; 公開鍵 (&lt;code>.pub&lt;/code> の方) を追加&lt;/li>
+&lt;li>&lt;code>Setting&lt;/code> -&amp;gt; &lt;code>Secrets&lt;/code> -&amp;gt; &lt;code>ACTIONS_DEPLOY_KEY&lt;/code> というキー名で秘密鍵を登録&lt;/li>
+&lt;/ul>
+&lt;p>これで準備完了です。 &lt;code>hugo&lt;/code> ブランチが更新されたら、ワークフローが起動します。&lt;/p>
+&lt;div class="flex align-center gblog-post__anchorwrap">
+&lt;h2 id="まとめ"
+>
+まとめ
+&lt;/h2>
+&lt;a data-clipboard-text="https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/#まとめ" class="gblog-post__anchor clip flex align-center" aria-label="Anchor まとめ" href="#%e3%81%be%e3%81%a8%e3%82%81">
+&lt;svg class="gblog-icon gblog_link">&lt;use xlink:href="#gblog_link">&lt;/use>&lt;/svg>
+&lt;/a>
+&lt;/div>
+&lt;p>やや操作は多くなりましたが、静的サイトジェネレーターを使って Github Pages を自動デプロイする方法が Github だけで完結するのはとても便利だと思います。&lt;/p>
+&lt;p>ぜひ皆さんもワークフローを作ってみてください。&lt;/p></content><category scheme="https://mather.github.io/tags/%E6%8A%80%E8%A1%93" term="%E6%8A%80%E8%A1%93" label="技術"/><category scheme="https://mather.github.io/tags/hugo" term="hugo" label="hugo"/><category scheme="https://mather.github.io/tags/advent-calendar-2019" term="advent-calendar-2019" label="advent calendar 2019"/></entry></feed>
