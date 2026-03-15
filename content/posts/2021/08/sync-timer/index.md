@@ -22,7 +22,7 @@ https://github.com/mather/simple-stopwatch
 
 きっかけは 2020 年 8 月にとある VTuber の同時視聴配信でつぶやかれた一言。
 
-{{<tweet user="mather314" id="1292112179018137600">}}
+{{<x user="mather314" id="1292112179018137600">}}
 
 誰かに使われる予定もなく自己満足で開発を終え早一年…。
 
