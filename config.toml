@@ -1,17 +1,19 @@
 baseURL = "https://mather.github.io"
 title = "Reveal My Ignorance"
-theme = "hugo-geekblog"
+theme = "hugo-coder"
+languageCode = "ja"
+defaultContentLanguage = "ja"
 
-pluralizeListTitles = false
 hasCJKLanguage = true
+enableEmoji = true
+enableRobotsTXT = true
 
-# Geekblog required configuration
-pygmentsUseClasses = true
-pygmentsCodeFences = true
-disablePathToLower = true
+[pagination]
+pagerSize = 10
 
-# Needed for mermaid shortcodes
 [markup]
+  [markup.highlight]
+    noClasses = false
   [markup.goldmark.renderer]
     unsafe = true
   [markup.tableOfContents]
@@ -19,33 +21,59 @@ disablePathToLower = true
     endLevel = 9
 
 [params]
-  subtitle = "Blog by Eisuke Kuwahata"
-  logo = "images/friendly-bear.png"
+  author = "Kuwahata Eisuke"
+  info = ["フリーランスソフトウェアエンジニア", "Blog by Eisuke Kuwahata"]
+  description = "Blog and Profile for Eisuke Kuwahata"
+  keywords = "blog,developer,personal"
+  avatarURL = "images/friendly-bear.png"
+  dateFormat = "2006-01-02"
+  since = 2019
+  colorScheme = "auto"
+  customCSS = ["css/text_style.css"]
 
-  geekblogTagsToMenu = false
+  [params.googleTagManager]
+    id = "G-ZCQPRE4NBR"
+
+[[params.social]]
+name = "GitHub"
+icon = "fa-brands fa-github fa-2x"
+weight = 1
+url = "https://github.com/mather"
+
+[[params.social]]
+name = "Instagram"
+icon = "fa-brands fa-instagram fa-2x"
+weight = 2
+url = "https://instagram.com/mather"
+
+[[params.social]]
+name = "YouTube"
+icon = "fa-brands fa-youtube fa-2x"
+weight = 3
+url = "https://www.youtube.com/@mather314"
+
+[[params.social]]
+name = "Facebook"
+icon = "fa-brands fa-facebook fa-2x"
+weight = 4
+url = "https://facebook.com/ekuwahata"
 
 [taxonomies]
   category = "categories"
   tag = "tags"
+  series = "series"
 
-[mediaTypes]
-  [mediaTypes."application/atom+xml"]
-    suffixes = ["xml"]
+[[menu.main]]
+name = "Posts"
+weight = 1
+url = "posts/"
 
-[outputFormats]
-  [outputFormats.Atom]
-    name = "Atom"
-    mediaType = "application/atom+xml"
-    baseName = "feed"
-    isPlainText = false
-    rel = "alternate"
-    isHTML = false
-    noUgly = true
-    permalinkable = false
+[[menu.main]]
+name = "Tags"
+weight = 2
+url = "tags/"
 
-[outputs]
-  home = ["HTML", "ATOM"]
-  page = ["HTML"]
-  section = ["HTML"]
-  taxonomy = ["HTML"]
-  term = ["HTML", "ATOM"]
+[[menu.main]]
+name = "Profile"
+weight = 3
+url = "pages/profile/"
