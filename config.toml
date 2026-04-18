@@ -22,7 +22,7 @@ pagerSize = 10
 
 [params]
   author = "Kuwahata Eisuke"
-  info = ["フリーランスソフトウェアエンジニア", "Blog by Eisuke Kuwahata"]
+  info = ["認定こども園 園長", "元ソフトウェアエンジニア"]
   description = "Blog and Profile for Eisuke Kuwahata"
   keywords = "blog,developer,personal"
   avatarURL = "images/friendly-bear.png"
