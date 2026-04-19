@@ -4,35 +4,25 @@ theme = "hugo-coder"
 languageCode = "ja"
 defaultContentLanguage = "ja"
 
-hasCJKLanguage = true
-enableEmoji = true
-enableRobotsTXT = true
-
 [pagination]
 pagerSize = 10
 
-[markup]
-  [markup.highlight]
-    noClasses = false
-  [markup.goldmark.renderer]
-    unsafe = true
-  [markup.tableOfContents]
-    startLevel = 1
-    endLevel = 9
+[markup.highlight]
+style = "monokai"
 
 [params]
-  author = "Kuwahata Eisuke"
-  info = ["認定こども園 園長", "元ソフトウェアエンジニア"]
-  description = "Blog and Profile for Eisuke Kuwahata"
-  keywords = "blog,developer,personal"
-  avatarURL = "images/friendly-bear.png"
-  dateFormat = "2006-01-02"
-  since = 2019
-  colorScheme = "auto"
-  customCSS = ["css/text_style.css"]
+author = "Kuwahata Eisuke"
+info = ["認定こども園 園長", "元ソフトウェアエンジニア"]
+description = "Blog and Profile for Eisuke Kuwahata"
+keywords = "blog,developer,personal"
+avatarURL = "images/friendly-bear.png"
+dateFormat = "2006-01-02"
+since = 2019
+colorScheme = "auto"
+customCSS = ["css/text_style.css"]
 
-  [params.googleTagManager]
-    id = "G-ZCQPRE4NBR"
+[params.googleTagManager]
+id = "G-ZCQPRE4NBR"
 
 [[params.social]]
 name = "GitHub"
@@ -59,9 +49,9 @@ weight = 4
 url = "https://facebook.com/ekuwahata"
 
 [taxonomies]
-  category = "categories"
-  tag = "tags"
-  series = "series"
+category = "categories"
+tag = "tags"
+series = "series"
 
 [[menu.main]]
 name = "Posts"
