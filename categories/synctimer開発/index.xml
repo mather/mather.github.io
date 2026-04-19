@@ -11,4 +11,16 @@
 それは当然で、報告するメリットもないし、不具合があったり使い勝手が悪いなーと思っても似たような手段はいくらでもあるので別のツールに切り替えるだけになる。
 だったら自分で調べるしか無いよね、ということで Google Analytics を導入して実際のアクセスを調査するしか無いのである。&lt;/p&gt;
 &lt;p&gt;今回は Elm で書いたアプリケーション内のイベントをGA4に送信する実装のお話。&lt;/p&gt;</description></item><item><title>SyncTimerの使い方動画を作りました</title><link>https://mather.github.io/posts/2022/03/synctimer-usage-movie/</link><pubDate>Tue, 15 Mar 2022 19:00:00 +0900</pubDate><guid>https://mather.github.io/posts/2022/03/synctimer-usage-movie/</guid><description>&lt;p&gt;SyncTimerはシンプルなので、使い方は細かく書かなくても分かってくれるかなーと思ってたので書かなかったが、
-やはり具体的な使い方を説明したほうがいいかなーと思ったので動画を作って公開した。&lt;/p&gt;</description></item></channel></rss>
+やはり具体的な使い方を説明したほうがいいかなーと思ったので動画を作って公開した。&lt;/p&gt;
+&lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;"&gt;
+ &lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/m1Basm-TqGU?autoplay=0&amp;amp;controls=1&amp;amp;end=0&amp;amp;loop=0&amp;amp;mute=0&amp;amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
+&lt;p&gt;おおよその内容は&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SyncTimerってどんなタイマーか&lt;/li&gt;
+&lt;li&gt;設定の変更方法&lt;/li&gt;
+&lt;li&gt;URLが連動していること&lt;/li&gt;
+&lt;li&gt;OBSでの使い方の例&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;といったところ。使う人が迷わないといいな。&lt;/p&gt;</description></item></channel></rss>

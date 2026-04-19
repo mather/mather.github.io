@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Advent Calendar 2019 on Reveal My Ignorance</title><link>https://mather.github.io/tags/advent-calendar-2019/</link><description>Recent content in Advent Calendar 2019 on Reveal My Ignorance</description><generator>Hugo</generator><language>ja</language><lastBuildDate>Mon, 09 Dec 2019 14:01:16 +0900</lastBuildDate><atom:link href="https://mather.github.io/tags/advent-calendar-2019/index.xml" rel="self" type="application/rss+xml"/><item><title>自分が感じる東京と宮崎の勉強会の違い</title><link>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</link><pubDate>Mon, 09 Dec 2019 14:01:16 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/09/miyazaki_meetups/</guid><description>&lt;p&gt;&lt;a href="https://qiita.com/advent-calendar/2019/miyazaki" class="external-link" target="_blank" rel="noopener"&gt;宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a&gt; 9 日目の記事です。
 投稿がものすごく遅れてしまい申し訳ない…。&lt;/p&gt;
-&lt;p&gt;数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。&lt;/p&gt;</description></item><item><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link><pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid><description>&lt;p&gt;&lt;a href="https://qiita.com/advent-calendar/2019/miyazaki" class="external-link" target="_blank" rel="noopener"&gt;宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a&gt; 8 日目の記事です。&lt;/p&gt;
+&lt;p&gt;数年前まで東京でお仕事をしていたときにも勉強会に参加していたのですが、宮崎でも積極的に勉強会に参加するようになって思ったことをつらつらと書いてみます。&lt;/p&gt;
+&lt;h2 id="東京の場合"&gt;
+ 東京の場合
+ &lt;a class="heading-link" href="#%e6%9d%b1%e4%ba%ac%e3%81%ae%e5%a0%b4%e5%90%88"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;まずはそもそもエンジニア を含む人口密度が大きいために、勉強会の開催数や参加人数がものすごく多いです。
+そのため、こんなことが起こります。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;細分化 : 地域型、専門化、ニッチな領域の勉強会&lt;/li&gt;
+&lt;li&gt;参加枠が埋まりやすいためとりあえずで登録する人がいるため、キャンセル率がそれなりに高く、キャンセル連絡もなく来ないケースも多い&lt;/li&gt;
+&lt;li&gt;ピラミッド構造 : エヴァンジェリスト、積極的にコミュニティ運営する人、ある程度質問などをする人、聞くだけの人などに分かれやすい&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="宮崎の場合"&gt;
+ 宮崎の場合
+ &lt;a class="heading-link" href="#%e5%ae%ae%e5%b4%8e%e3%81%ae%e5%a0%b4%e5%90%88"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;エンジニアの人口密度が低いです。そのため、当然ながら勉強会の開催頻度もそこまで多くないです。
+東京の場合とは逆に次のような状況です。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;総合化 : 各回でテーマはそれなりに決めるけど、細かすぎず参加しやすいテーマを選ぶ傾向がある&lt;/li&gt;
+&lt;li&gt;キャンセル率が低い（これは僕も結構驚き）&lt;/li&gt;
+&lt;li&gt;ある程度定番の登壇者や LT 登壇者がいる&lt;/li&gt;
+&lt;li&gt;多くても 30 人程度なので、参加者の顔が認識しやすく、質問とかはしやすい&lt;/li&gt;
+&lt;li&gt;ゆるふわ&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="まとめ"&gt;
+ まとめ
+ &lt;a class="heading-link" href="#%e3%81%be%e3%81%a8%e3%82%81"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;僕自身は良い悪いということを論じるつもりはなく、人口密度の違いによってコミュニティの形は自然とこのような違いになっていくんだと思います。&lt;/p&gt;
+&lt;p&gt;宮崎は点と点の結びつきでアットホームなコミュニティが形成されている面白い場所だと感じています。
+そのようなコミュニティをより盛り上げていくために、会社という枠を超えたところでエンジニア同士の会話や意見交換を楽しむ場として勉強会の形を模索していくことになるでしょう。&lt;/p&gt;
+&lt;p&gt;これからは地方を拠点として活動するエンジニアの幅も大きくなってきて、ワーケーションとかフルリモートで活動される方も増えてくると思います。
+そのような方々と接点を作る場としても、定期開催（または随時思いつきで開催）される勉強会を積極的に作っていきたいですね。&lt;/p&gt;</description></item><item><title>ポートフォリオサイトを Hugo で Github Pages + Github Actions で構築する話</title><link>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</link><pubDate>Sat, 07 Dec 2019 23:57:04 +0900</pubDate><guid>https://mather.github.io/posts/2019/12/08/hugo_with_github_pages/</guid><description>&lt;p&gt;&lt;a href="https://qiita.com/advent-calendar/2019/miyazaki" class="external-link" target="_blank" rel="noopener"&gt;宮崎 IT 関連勉強会 Advent Calendar 2019&lt;/a&gt; 8 日目の記事です。&lt;/p&gt;
 &lt;p&gt;皆さん、Github 活用してますか？&lt;/p&gt;
 &lt;p&gt;Github には Github Pages という機能があり、静的サイトのホスティングを行うことができます。
-特に、 &lt;code&gt;[アカウント名].github.io&lt;/code&gt; という名前のリポジトリの場合はドメイン直下のページが作成できます。&lt;/p&gt;</description></item></channel></rss>
+特に、 &lt;code&gt;[アカウント名].github.io&lt;/code&gt; という名前のリポジトリの場合はドメイン直下のページが作成できます。&lt;/p&gt;
+&lt;p&gt;参考: &lt;a href="https://help.github.com/ja/github/working-with-github-pages/about-github-pages#github-pages-%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%A8%AE%E9%A1%9E" class="external-link" target="_blank" rel="noopener"&gt;GitHub Pages サイトの種類&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;それに加えて、&lt;a href="https://github.blog/changelog/2019-11-11-github-actions-is-generally-available/" class="external-link" target="_blank" rel="noopener"&gt;Github Actions が一般に公開されました&lt;/a&gt;。
+これは Push などのイベントをトリガーとしてビルド、テスト、デプロイなどが自動的に実行できる仕組みです。いわゆる CI(継続的インテグレーション)や CD(継続的デプロイ)として機能させることができますし、他にもプルリクのレビュー補助や通知などの機能にも利用できるでしょう。&lt;/p&gt;
+&lt;p&gt;これらを組み合わせると、以下のようなワークフローが可能になります。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;静的サイトジェネレーター(Hugo, Jekyll, etc&amp;hellip;) でサイトを作る&lt;/li&gt;
+&lt;li&gt;ローカルでレビューし、問題なければ指定のブランチにプッシュ&lt;/li&gt;
+&lt;li&gt;Github Actions でプッシュを検知し、静的サイトをビルド&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[アカウント名].github.io&lt;/code&gt; の場合、ビルド完了した静的サイトを &lt;code&gt;master&lt;/code&gt; ブランチにデプロイ
+&lt;ul&gt;
+&lt;li&gt;それ以外のリポジトリの場合は &lt;code&gt;gh-pages&lt;/code&gt; ブランチがデプロイ先となります&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;今回はこれを &lt;a href="https://gohugo.io/" class="external-link" target="_blank" rel="noopener"&gt;Hugo&lt;/a&gt; でやってみよう、という話です。&lt;/p&gt;
+&lt;h2 id="ポートフォリオを作る"&gt;
+ ポートフォリオを作る
+ &lt;a class="heading-link" href="#%e3%83%9d%e3%83%bc%e3%83%88%e3%83%95%e3%82%a9%e3%83%aa%e3%82%aa%e3%82%92%e4%bd%9c%e3%82%8b"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;Hugo をインストールします。Mac なので Homebrew でインストールできます。&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;$ brew install hugo
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;今回は空っぽの Jekyll サイト(5 年ほど前に作って放置してた)を削除して作り直しますので、既存のファイルを削除したあとは以下のように Hugo の初期化を行います。&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;$ hugo new site . --force
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hugo のテーマはシンプルな &lt;a href="https://themes.gohugo.io/hermit/" class="external-link" target="_blank" rel="noopener"&gt;hermit&lt;/a&gt; にしてみました。
+個人的にはこのくらい落ち着いた色合いが好みです。&lt;/p&gt;</description></item></channel></rss>

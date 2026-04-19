@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>数学 on Reveal My Ignorance</title><link>https://mather.github.io/tags/%E6%95%B0%E5%AD%A6/</link><description>Recent content in 数学 on Reveal My Ignorance</description><generator>Hugo</generator><language>ja</language><lastBuildDate>Thu, 10 Feb 2022 17:25:18 +0900</lastBuildDate><atom:link href="https://mather.github.io/tags/%E6%95%B0%E5%AD%A6/index.xml" rel="self" type="application/rss+xml"/><item><title>続・ランダム生成IDの衝突確率について</title><link>https://mather.github.io/posts/2022/02/another-form-for-hash-collision/</link><pubDate>Thu, 10 Feb 2022 17:25:18 +0900</pubDate><guid>https://mather.github.io/posts/2022/02/another-form-for-hash-collision/</guid><description>&lt;p&gt;&lt;a href="https://mather.github.io/posts/2022/02/hash-collision" &gt;前回&lt;/a&gt; では数学的な側面として誕生日パラドックスに関する確率を求めた。&lt;/p&gt;
 &lt;p&gt;$$ P_{\text{nc}}(n) = \frac{M}{M}\frac{M-1}{M} \dots \frac{M-(n-1)}{M} = \frac{M!}{M^n (M-n)!} $$&lt;/p&gt;
 &lt;p&gt;$$ P_{\text{c}}(n) = 1 - P_{\text{nc}}(n) = 1 - \frac{M!}{M^n (M-n)!} $$&lt;/p&gt;
-&lt;p&gt;これは余事象である「一度も衝突しない確率」を求めることで計算したが、余事象を使わずに求めることができるだろうか？&lt;/p&gt;</description></item><item><title>ランダムに生成したIDが衝突する確率の議論</title><link>https://mather.github.io/posts/2022/02/hash-collision/</link><pubDate>Thu, 03 Feb 2022 20:00:00 +0900</pubDate><guid>https://mather.github.io/posts/2022/02/hash-collision/</guid><description>&lt;p&gt;「ランダムなIDをあるパターンに従って生成するとき、どう設計すべきか？」という質問があったので技術的な側面と数学的な側面で説明してみよう。&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;これは余事象である「一度も衝突しない確率」を求めることで計算したが、余事象を使わずに求めることができるだろうか？&lt;/p&gt;
+&lt;h2 id="余事象を使わない方法"&gt;
+ 余事象を使わない方法
+ &lt;a class="heading-link" href="#%e4%bd%99%e4%ba%8b%e8%b1%a1%e3%82%92%e4%bd%bf%e3%82%8f%e3%81%aa%e3%81%84%e6%96%b9%e6%b3%95"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;「 \(n\) 回目までに衝突が発生する確率」を求めるには&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1回目に「初めて」衝突する確率 \(P_\text{fc}(1)\)( = 0 )&lt;/li&gt;
+&lt;li&gt;2回目に「初めて」衝突する確率 \(P_\text{fc}(2)\)&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;li&gt;\(n\) 回目に「初めて」衝突する確率 \(P_\text{fc}(n)\)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;をそれぞれ求めて足し合わせれば良い。
+注意すべきポイントはそれぞれの「初めて衝突する事象」が重複していないことである。&lt;/p&gt;
+&lt;p&gt;具体的に求めていこう。&lt;/p&gt;
+&lt;p&gt;\(n = 1\) ならばどれが選ばれても衝突しないので、&lt;/p&gt;
+&lt;p&gt;$$ P_\text{fc}(1) = \frac{0}{M} = 0$$&lt;/p&gt;
+&lt;p&gt;となる。次に \(n = 2\) ならば、1つ目は何を選んでもよく、最初に選んだ1つと一致した場合なので、&lt;/p&gt;
+&lt;p&gt;$$ P_\text{fc}(2) = \frac{M}{M}\frac{1}{M} = \frac{1}{M}$$&lt;/p&gt;
+&lt;p&gt;となる。続いて、 \(n = 3\) ならば、2つ目までは衝突せず、先に選ばれた2つと一致した場合なので、&lt;/p&gt;</description></item><item><title>ランダムに生成したIDが衝突する確率の議論</title><link>https://mather.github.io/posts/2022/02/hash-collision/</link><pubDate>Thu, 03 Feb 2022 20:00:00 +0900</pubDate><guid>https://mather.github.io/posts/2022/02/hash-collision/</guid><description>&lt;p&gt;「ランダムなIDをあるパターンに従って生成するとき、どう設計すべきか？」という質問があったので技術的な側面と数学的な側面で説明してみよう。&lt;/p&gt;</description></item></channel></rss>

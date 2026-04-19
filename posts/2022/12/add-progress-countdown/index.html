@@ -3,25 +3,25 @@
 <label class="menu-button float-right" for=menu-toggle><i class="fa-solid fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li><li class=navigation-item><a class=navigation-link href=/tags/>Tags</a></li><li class=navigation-item><a class=navigation-link href=/pages/profile/>Profile</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://mather.github.io/posts/2022/12/add-progress-countdown/>カウントダウン時の残り時間をバーで視覚化する</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa-solid fa-calendar" aria-hidden=true></i>
 <time datetime=2022-12-07T19:00:17+09:00>2022-12-07
 </time></span><span class=reading-time><i class="fa-solid fa-clock" aria-hidden=true></i>
-2分で読めます</span></div><div class=categories><i class="fa-solid fa-folder" aria-hidden=true></i>
+1分で読めます</span></div><div class=categories><i class="fa-solid fa-folder" aria-hidden=true></i>
 <a href=/categories/synctimer%E9%96%8B%E7%99%BA/>SyncTimer開発</a></div><div class=tags><i class="fa-solid fa-tag" aria-hidden=true></i>
 <span class=tag><a href=/tags/%E6%8A%80%E8%A1%93/>技術</a>
 </span><span class=separator>•</span>
 <span class=tag><a href=/tags/synctimer/>SyncTimer</a></span></div></div></header><div class=post-content><p>カウントダウンの表示に追加要素として進み具合をバーで視覚化できるようにしてみた。</p><figure><img src=/posts/2022/12/add-progress-countdown/synctimer-progress-countdown.gif width=30%></figure><h2 id=ミリ秒を表示していない理由>ミリ秒を表示していない理由
 <a class=heading-link href=#%e3%83%9f%e3%83%aa%e7%a7%92%e3%82%92%e8%a1%a8%e7%a4%ba%e3%81%97%e3%81%a6%e3%81%84%e3%81%aa%e3%81%84%e7%90%86%e7%94%b1><i class="fa-solid fa-link" aria-hidden=true title=見出しへのリンク></i>
-<span class=sr-only>見出しへのリンク</span></a></h2><p>SyncTimerではミリ秒の表示をしておらず、カウントダウンの表示をするときに進み具合がわかりにくい。</p><p>ミリ秒を表示しないのは理由があって、そもそもSyncTimerで表示されている値は「ミリ秒を表示していない」のではなく「0秒を表示するときの挙動」をわかりやすくするためのものだ。</p><p>具体的にミリ秒まで含めるとタイマーがどんな値を表示するのか考えてみると良い。例えばちょうど1秒ずつ進んだとすると、こんな表示になるはずだ。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>-00:00:01.234
-</span></span><span class=line><span class=cl>-00:00:00.234
-</span></span><span class=line><span class=cl> 00:00:00.766
-</span></span><span class=line><span class=cl> 00:00:01.766
-</span></span></code></pre></div><p>この表示から単純にミリ秒を削ると、マイナス0秒が発生していることがわかる。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>-00:00:01
-</span></span><span class=line><span class=cl>-00:00:00
-</span></span><span class=line><span class=cl> 00:00:00
-</span></span><span class=line><span class=cl> 00:00:01
+<span class=sr-only>見出しへのリンク</span></a></h2><p>SyncTimerではミリ秒の表示をしておらず、カウントダウンの表示をするときに進み具合がわかりにくい。</p><p>ミリ秒を表示しないのは理由があって、そもそもSyncTimerで表示されている値は「ミリ秒を表示していない」のではなく「0秒を表示するときの挙動」をわかりやすくするためのものだ。</p><p>具体的にミリ秒まで含めるとタイマーがどんな値を表示するのか考えてみると良い。例えばちょうど1秒ずつ進んだとすると、こんな表示になるはずだ。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>-00:00:01.234
+</span></span><span style=display:flex><span>-00:00:00.234
+</span></span><span style=display:flex><span> 00:00:00.766
+</span></span><span style=display:flex><span> 00:00:01.766
+</span></span></code></pre></div><p>この表示から単純にミリ秒を削ると、マイナス0秒が発生していることがわかる。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>-00:00:01
+</span></span><span style=display:flex><span>-00:00:00
+</span></span><span style=display:flex><span> 00:00:00
+</span></span><span style=display:flex><span> 00:00:01
 </span></span></code></pre></div><p>こうなってしまうと、視覚的には 3, 2, 1, 0 のタイミングで再生開始したいように見えるのに、-3, -2, -1, -0, 0, 1, 2 となってタイミングが曖昧になってしまう。
-（人間がミリ秒の高速カウントダウンを読めるならそれでもいいけど多分読めないので、おそらく秒の表示の方を参考にしてしまうだろう）</p><p>そこで、タイマーは次のように「実際の値を超えない最大の秒」を計算して表示している。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>-00:00:01.234 =&gt; -00:00:02
-</span></span><span class=line><span class=cl>-00:00:00.234 =&gt; -00:00:01
-</span></span><span class=line><span class=cl> 00:00:00.766 =&gt;  00:00:00
-</span></span><span class=line><span class=cl> 00:00:01.766 =&gt;  00:00:01
+（人間がミリ秒の高速カウントダウンを読めるならそれでもいいけど多分読めないので、おそらく秒の表示の方を参考にしてしまうだろう）</p><p>そこで、タイマーは次のように「実際の値を超えない最大の秒」を計算して表示している。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>-00:00:01.234 =&gt; -00:00:02
+</span></span><span style=display:flex><span>-00:00:00.234 =&gt; -00:00:01
+</span></span><span style=display:flex><span> 00:00:00.766 =&gt;  00:00:00
+</span></span><span style=display:flex><span> 00:00:01.766 =&gt;  00:00:01
 </span></span></code></pre></div><p>これであれば、<code>00:00:00</code> を表示したタイミングが実際の0秒と一致している。</p><h2 id=リリースして反応を見よう>リリースして反応を見よう
 <a class=heading-link href=#%e3%83%aa%e3%83%aa%e3%83%bc%e3%82%b9%e3%81%97%e3%81%a6%e5%8f%8d%e5%bf%9c%e3%82%92%e8%a6%8b%e3%82%88%e3%81%86><i class="fa-solid fa-link" aria-hidden=true title=見出しへのリンク></i>
 <span class=sr-only>見出しへのリンク</span></a></h2><p>そんなわけで適切に0秒を表示するためやむを得ずミリ秒を表示していないのだが、やはり視覚的にわかりにくい気がしたので残り時間を表示できるようにしてみた。</p><p>反応があるかどうか、改善案が出てくるかどうかはわからないが、ひとまずリリースして反応を見てみることにする。</p></div><footer></footer></article></section></div><footer class=footer><section class=container>©
