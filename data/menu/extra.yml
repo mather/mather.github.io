@@ -1,6 +1,0 @@
----
-header:
-  - name: Profile
-    ref: "/pages/profile"
-  - name: Tags
-    ref: "/tags"
