@@ -1,4 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Reveal My Ignorance</title><link>https://mather.github.io/</link><description>Recent content on Reveal My Ignorance</description><generator>Hugo</generator><language>ja</language><lastBuildDate>Sat, 18 Apr 2026 00:00:00 +0900</lastBuildDate><atom:link href="https://mather.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>プロフィール - Profile</title><link>https://mather.github.io/pages/profile/</link><pubDate>Sat, 18 Apr 2026 00:00:00 +0900</pubDate><guid>https://mather.github.io/pages/profile/</guid><description>&lt;p&gt;(2026 年 4 月現在の情報です)&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Reveal My Ignorance</title><link>https://mather.github.io/</link><description>Recent content on Reveal My Ignorance</description><generator>Hugo</generator><language>ja</language><lastBuildDate>Thu, 30 Apr 2026 01:12:16 +0900</lastBuildDate><atom:link href="https://mather.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>2022から2025までのSyncTimerのアクセスを振り返ってみる</title><link>https://mather.github.io/posts/2026/04/analysis-synctimer-2022-2025/</link><pubDate>Thu, 30 Apr 2026 01:12:16 +0900</pubDate><guid>https://mather.github.io/posts/2026/04/analysis-synctimer-2022-2025/</guid><description>&lt;p&gt;&lt;a href="https://sync-timer.netlify.app/" class="external-link" target="_blank" rel="noopener"&gt;SyncTimer&lt;/a&gt;を開発してから6年ほど経とうとしています。
+それほど手を加えているわけではないんですが、今どのくらいアクセスされているのか気になったので昨年までの推移を振り返ってみようと思いました。&lt;/p&gt;
+&lt;h2 id="ga4のデータから"&gt;
+ GA4のデータから
+ &lt;a class="heading-link" href="#ga4%e3%81%ae%e3%83%87%e3%83%bc%e3%82%bf%e3%81%8b%e3%82%89"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;2022年から2025年末までのアクティブユーザー数と新規ユーザー数の推移はこんな感じになっています。&lt;/p&gt;
+&lt;p&gt;&lt;img src="SyncTimerAnalytics.png" alt="SyncTimerユーザー推移グラフ"&gt;&lt;/p&gt;
+&lt;p&gt;ありがたいことにずっと右肩上がりにユーザーが増え続けている状況です。
+時々新規ユーザー数が跳ね上がっているときがありますが、こういうときはフォロー数の多い有名な方の配信で概要欄に載っていたり、Xなどで紹介されたりしたときのようです。&lt;/p&gt;
+&lt;p&gt;折れ線グラフの真ん中に入っている曲線はトレンドラインといって、グラフのおおよその形を多項式で表現してみたものです。アクティブユーザーはおおよそ2次関数でフィットできました。新規ユーザーの増加はおおよそ線形（1次関数）です。
+このことから、次のようなことが推測できます。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SyncTimerを使う人が増えて紹介いただける数が増えたことで、新規ユーザーも増えている。（あるいは同時配信などの配信数がどんどん増えている）&lt;/li&gt;
+&lt;li&gt;リピーターが多い。加速度・速度・距離の関係のように、新規ユーザー数の増える勢い（加速度）に対して2次関数的にアクティブユーザー（距離）が増えている。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2023年頃にもゆるやかな右肩上がりだなーと思っていましたが、まさか2次の勢いでアクティブユーザー数が増えていたのはちょっと驚きでした。
+たくさんのリピーターに使ってもらえて、開発者としてはとても嬉しいです。&lt;/p&gt;
+&lt;h2 id="今後について"&gt;
+ 今後について
+ &lt;a class="heading-link" href="#%e4%bb%8a%e5%be%8c%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;映像の時間に対してカウントダウンを並記してほしい、などいくつか要望は届いています。ただ、そのような機能要望についてはSyncTimerで対応する予定はありません。あくまで当初の設計である「マイナスからカウントダウンし、そのままカウントアップに入るタイマー」で行こうと思っています。&lt;/p&gt;
+&lt;p&gt;また、このサービスによる収入はありませんし、本業にしっかりと取り組む必要があるため、これ以降の追加開発はないと思っていてください。（これまで何回か言ってますね…）&lt;/p&gt;
+&lt;p&gt;もし、フォークして開発してみたい物好きな方がいれば、ご自由にお使いください。もちろん、うまくいかなくても責任は取れませんが…。&lt;/p&gt;
+&lt;p&gt;また機会があればアクセス数などの状況を確認して報告できるかもしれません。&lt;/p&gt;
+&lt;p&gt;それでは。&lt;/p&gt;</description></item><item><title>プロフィール - Profile</title><link>https://mather.github.io/pages/profile/</link><pubDate>Sat, 18 Apr 2026 00:00:00 +0900</pubDate><guid>https://mather.github.io/pages/profile/</guid><description>&lt;p&gt;(2026 年 4 月現在の情報です)&lt;/p&gt;
 &lt;h2 id="桑畑英資-kuwahata-eisuke"&gt;
  桑畑英資 (Kuwahata Eisuke)
  &lt;a class="heading-link" href="#%e6%a1%91%e7%95%91%e8%8b%b1%e8%b3%87-kuwahata-eisuke"&gt;

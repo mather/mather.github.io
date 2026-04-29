@@ -1,4 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SyncTimer開発 on Reveal My Ignorance</title><link>https://mather.github.io/categories/synctimer%E9%96%8B%E7%99%BA/</link><description>Recent content in SyncTimer開発 on Reveal My Ignorance</description><generator>Hugo</generator><language>ja</language><lastBuildDate>Mon, 13 Mar 2023 17:28:02 +0900</lastBuildDate><atom:link href="https://mather.github.io/categories/synctimer%E9%96%8B%E7%99%BA/index.xml" rel="self" type="application/rss+xml"/><item><title>SyncTimerのコードをいくつかのモジュールに分解した</title><link>https://mather.github.io/posts/2023/03/synctimer-split-modules/</link><pubDate>Mon, 13 Mar 2023 17:28:02 +0900</pubDate><guid>https://mather.github.io/posts/2023/03/synctimer-split-modules/</guid><description>&lt;p&gt;これまで &lt;code&gt;Main.elm&lt;/code&gt; だけで作ってきた Elm のコードが増えて見通しが悪くなってきたので、いくつかのモジュールに分解した。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SyncTimer開発 on Reveal My Ignorance</title><link>https://mather.github.io/categories/synctimer%E9%96%8B%E7%99%BA/</link><description>Recent content in SyncTimer開発 on Reveal My Ignorance</description><generator>Hugo</generator><language>ja</language><lastBuildDate>Thu, 30 Apr 2026 01:12:16 +0900</lastBuildDate><atom:link href="https://mather.github.io/categories/synctimer%E9%96%8B%E7%99%BA/index.xml" rel="self" type="application/rss+xml"/><item><title>2022から2025までのSyncTimerのアクセスを振り返ってみる</title><link>https://mather.github.io/posts/2026/04/analysis-synctimer-2022-2025/</link><pubDate>Thu, 30 Apr 2026 01:12:16 +0900</pubDate><guid>https://mather.github.io/posts/2026/04/analysis-synctimer-2022-2025/</guid><description>&lt;p&gt;&lt;a href="https://sync-timer.netlify.app/" class="external-link" target="_blank" rel="noopener"&gt;SyncTimer&lt;/a&gt;を開発してから6年ほど経とうとしています。
+それほど手を加えているわけではないんですが、今どのくらいアクセスされているのか気になったので昨年までの推移を振り返ってみようと思いました。&lt;/p&gt;
+&lt;h2 id="ga4のデータから"&gt;
+ GA4のデータから
+ &lt;a class="heading-link" href="#ga4%e3%81%ae%e3%83%87%e3%83%bc%e3%82%bf%e3%81%8b%e3%82%89"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;2022年から2025年末までのアクティブユーザー数と新規ユーザー数の推移はこんな感じになっています。&lt;/p&gt;
+&lt;p&gt;&lt;img src="SyncTimerAnalytics.png" alt="SyncTimerユーザー推移グラフ"&gt;&lt;/p&gt;
+&lt;p&gt;ありがたいことにずっと右肩上がりにユーザーが増え続けている状況です。
+時々新規ユーザー数が跳ね上がっているときがありますが、こういうときはフォロー数の多い有名な方の配信で概要欄に載っていたり、Xなどで紹介されたりしたときのようです。&lt;/p&gt;
+&lt;p&gt;折れ線グラフの真ん中に入っている曲線はトレンドラインといって、グラフのおおよその形を多項式で表現してみたものです。アクティブユーザーはおおよそ2次関数でフィットできました。新規ユーザーの増加はおおよそ線形（1次関数）です。
+このことから、次のようなことが推測できます。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SyncTimerを使う人が増えて紹介いただける数が増えたことで、新規ユーザーも増えている。（あるいは同時配信などの配信数がどんどん増えている）&lt;/li&gt;
+&lt;li&gt;リピーターが多い。加速度・速度・距離の関係のように、新規ユーザー数の増える勢い（加速度）に対して2次関数的にアクティブユーザー（距離）が増えている。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2023年頃にもゆるやかな右肩上がりだなーと思っていましたが、まさか2次の勢いでアクティブユーザー数が増えていたのはちょっと驚きでした。
+たくさんのリピーターに使ってもらえて、開発者としてはとても嬉しいです。&lt;/p&gt;
+&lt;h2 id="今後について"&gt;
+ 今後について
+ &lt;a class="heading-link" href="#%e4%bb%8a%e5%be%8c%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6"&gt;
+ &lt;i class="fa-solid fa-link" aria-hidden="true" title="見出しへのリンク"&gt;&lt;/i&gt;
+ &lt;span class="sr-only"&gt;見出しへのリンク&lt;/span&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;映像の時間に対してカウントダウンを並記してほしい、などいくつか要望は届いています。ただ、そのような機能要望についてはSyncTimerで対応する予定はありません。あくまで当初の設計である「マイナスからカウントダウンし、そのままカウントアップに入るタイマー」で行こうと思っています。&lt;/p&gt;
+&lt;p&gt;また、このサービスによる収入はありませんし、本業にしっかりと取り組む必要があるため、これ以降の追加開発はないと思っていてください。（これまで何回か言ってますね…）&lt;/p&gt;
+&lt;p&gt;もし、フォークして開発してみたい物好きな方がいれば、ご自由にお使いください。もちろん、うまくいかなくても責任は取れませんが…。&lt;/p&gt;
+&lt;p&gt;また機会があればアクセス数などの状況を確認して報告できるかもしれません。&lt;/p&gt;
+&lt;p&gt;それでは。&lt;/p&gt;</description></item><item><title>SyncTimerのコードをいくつかのモジュールに分解した</title><link>https://mather.github.io/posts/2023/03/synctimer-split-modules/</link><pubDate>Mon, 13 Mar 2023 17:28:02 +0900</pubDate><guid>https://mather.github.io/posts/2023/03/synctimer-split-modules/</guid><description>&lt;p&gt;これまで &lt;code&gt;Main.elm&lt;/code&gt; だけで作ってきた Elm のコードが増えて見通しが悪くなってきたので、いくつかのモジュールに分解した。
 今回はリファクタリングなので機能の変更はなし。&lt;/p&gt;</description></item><item><title>SyncTimerにフォントを追加した</title><link>https://mather.github.io/posts/2023/02/synctimer-font/</link><pubDate>Sat, 25 Feb 2023 18:00:00 +0900</pubDate><guid>https://mather.github.io/posts/2023/02/synctimer-font/</guid><description>Loraというセリフ体のフォントを追加してタイマー表示で選択可能にしてみた</description></item><item><title>早送り・早戻しボタンを追加してみた</title><link>https://mather.github.io/posts/2022/12/add-ff-bwd-button/</link><pubDate>Fri, 09 Dec 2022 19:40:52 +0900</pubDate><guid>https://mather.github.io/posts/2022/12/add-ff-bwd-button/</guid><description>&lt;p&gt;エゴサーチしながらライブを拝見してたら、
 とある方がタイマーを停止したときのコメントを話していたのでフィードバックとして受け取り、
 簡単ながら「1秒戻る・1秒進める」ボタンを追加してみた。&lt;/p&gt;</description></item><item><title>カウントダウン時の残り時間をバーで視覚化する</title><link>https://mather.github.io/posts/2022/12/add-progress-countdown/</link><pubDate>Wed, 07 Dec 2022 19:00:17 +0900</pubDate><guid>https://mather.github.io/posts/2022/12/add-progress-countdown/</guid><description>&lt;p&gt;カウントダウンの表示に追加要素として進み具合をバーで視覚化できるようにしてみた。&lt;/p&gt;</description></item><item><title>SyncTimer の紹介ページを作った</title><link>https://mather.github.io/posts/2022/11/about-synctimer-page/</link><pubDate>Sun, 27 Nov 2022 18:40:11 +0900</pubDate><guid>https://mather.github.io/posts/2022/11/about-synctimer-page/</guid><description>&lt;p&gt;タイトルそのままなのだが、これまでモーダルとして表示していた使い方動画なども紹介ページへ移動してみた。
