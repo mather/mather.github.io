@@ -68,3 +68,8 @@ url = "tags/"
 name = "Profile"
 weight = 3
 url = "pages/profile/"
+
+[[menu.main]]
+name = "Dev"
+weight = 4
+url = "pages/dev/"
