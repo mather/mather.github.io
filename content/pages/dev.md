@@ -44,7 +44,7 @@ LT + Reaction で LeacTion! と命名した。
 
 - [Solid.js](https://www.solidjs.com/)
   - TypeScript
-- Github Actions
+- GitHub Actions
 - Firebase
   - Hosting
   - Auth
